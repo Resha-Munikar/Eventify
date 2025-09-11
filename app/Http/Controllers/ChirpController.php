@@ -72,4 +72,12 @@ class ChirpController extends Controller
         return redirect()->route('chirps.index');
     }
 
+    public function welcome(){
+        return view('welcome');
+    }
+
+    public function about(){
+        return view('about');
+    }
+
 }

@@ -1,78 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Management Landing Page</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Flowbite CSS -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css"
-      rel="stylesheet"
-    />
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+@extends('layouts.app')
 
-    <style>
-      .brand-color {
-        background-color: #8d85ec;
-      }
-      .brand-text {
-        color: #8d85ec;
-      }
-      .brand-logo {
-  font-family: 'Pacifico', cursive;
-}
-nav a.active {
-  color: #8d85ec !important;
-  font-weight: 600;
-}
- 
+@section('title', 'Home')
 
-     /* Hide scrollbar for all modern browsers */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
-}
-.scrollbar-hide {
-  -ms-overflow-style: none; /* IE 10+ */
-  scrollbar-width: none; /* Firefox */
-}
- body, h1, h2, h3, h4, h5, h6, p, a, span {
-  color: #000 ;
-}
-
-    </style>
-  </head>
-<body class="font-sans text-black bg-gray-50">
-
-
-<!-- Navbar -->
-<header class="w-full bg-[#8D85EC] shadow-md">
-  <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
-    <!-- Logo + Title -->
-    <div class="flex items-center space-x-4">
-      <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">
-        <img src="uploads/eventicon.png" alt="E Icon" class="w-8 h-8 object-contain" />
-      </div>
-      <span class="text-black text-4xl brand-logo">Eventify</span>
-    </div>
-
-    <nav class="hidden md:flex bg-white rounded-full px-8 py-3 shadow-md space-x-10 w-1/2 justify-center">
-  <a href="#" class="text-black font-semibold hover:underline active">Home</a>
-  <a href="#" class="text-black hover:underline">Services</a>
-  <a href="#" class="text-black hover:underline">Events</a>
-  <a href="#" class="text-black hover:underline">Venues</a>
-  <a href="#" class="text-black hover:underline">Contact</a>
-</nav>
-
-
-    <!-- Buttons -->
-    <div class="hidden md:flex items-center space-x-4">
-      <a href="{{ route('login') }}" class="bg-white text-[#8D85EC] font-semibold px-5 py-2 rounded-full hover:bg-gray-100 transition">Login</a>
-      <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#6f69d9] transition">Sign Up</a>
-    </div>
-  </div>
-</header>
+@section('content')
 
 <!-- Hero Section -->
 <section class="relative w-full bg-[#d9d4f7] h-[80vh] overflow-hidden">
@@ -473,4 +403,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Flowbite JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+@endsection
+>>>>>>> d58f6832f311256e01043f007ecbb174e7618e67

@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Chirper')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css"
+      rel="stylesheet"
+    />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
     <script>
         // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -15,49 +21,73 @@
             document.documentElement.classList.remove('dark')
         }
     </script>
+    <style>
+        .brand-color {
+            background-color: #8d85ec;
+        }
+        .brand-text {
+            color: #8d85ec;
+        }
+        nav a.active {
+            color: #8d85ec !important;
+            font-weight: 600;
+        }
+        .brand-logo {
+            font-family: 'Pacifico', cursive;
+        }
+        /* Hide scrollbar for all modern browsers */
+        .scrollbar-hide::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Edge */
+        }
+        .scrollbar-hide {
+        -ms-overflow-style: none; /* IE 10+ */
+        scrollbar-width: none; /* Firefox */
+        }
+        body, h1, h2, h3, h4, h5, h6, p, a, span {
+        color: #000 ;
+        }
+
+    </style>
 </head>
-<body class="bg-gray-300 dark:bg-gray-500">
+<body class="font-sans bg-gray-300 dark:bg-gray-500">
 
     {{-- Navbar only shows if $noNavbar is not set or false --}}
     @if (!isset($noNavbar) || !$noNavbar)
-        <nav class="bg-white border-gray-200 dark:bg-gray-900">
-            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                    <span class="self-center text-2xl font-bold whitespace-nowrap text-blue-700 dark:text-white">Chirps</span>
-                </a>
-                <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                    </svg>
-                </button>
-                <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-                    <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                        <li>
-                            <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Services</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Pricing</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</a>
-                        </li>
-                        <li>
-                            <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ">
-                                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+        <!-- Navbar -->
+        <header class="w-full bg-[#8D85EC] shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
+            <!-- Logo + Title -->
+            <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">
+                <img src="uploads/eventicon.png" alt="E Icon" class="w-8 h-8 object-contain" />
             </div>
-        </nav>
+            <span class="text-black text-4xl brand-logo">Eventify</span>
+            </div>
+            <nav class="hidden md:flex bg-white rounded-full px-8 py-3 shadow-md w-1/2 justify-center">
+                <a href="{{ route('welcome') }}" 
+                class="text-black font-semibold hover:underline mx-4 {{ request()->routeIs('welcome') ? 'active' : '' }}">
+                Home
+                </a>
+
+                <a href="{{ route('about') }}" 
+                class="text-black font-semibold hover:underline mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">
+                About Us
+                </a>
+
+                <a href="#" class="text-black font-semibold hover:underline mx-4">Events</a>
+                <a href="#" class="text-black font-semibold hover:underline mx-4">Venues</a>
+                <a href="#" class="text-black font-semibold hover:underline mx-4">Contact</a>
+            </nav>
+
+
+
+            <!-- Buttons -->
+            <div class="hidden md:flex items-center space-x-4">
+            <a href="{{ route('login') }}" class="bg-white text-[#8D85EC] font-semibold px-5 py-2 rounded-full hover:bg-gray-100 transition">Login</a>
+            <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#6f69d9] transition">Sign Up</a>
+            </div>
+        </div>
+        </header>
     @endif
 
     @yield('content')
