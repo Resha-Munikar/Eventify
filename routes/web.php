@@ -159,6 +159,10 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/welcome',[ChirpController::class, 'welcome'])->name('welcome');
+Route::get('/about',[ChirpController::class, 'about'])->name('about');
+
+
 Route::middleware(['auth'])->group(function (){
     Route::get('/chirps', [ChirpController::class, 'index'])->name('chirps.index');
     Route::post('/chirps', [ChirpController::class, 'store'])->name('chirps.store');
