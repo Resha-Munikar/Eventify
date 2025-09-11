@@ -41,11 +41,6 @@
 </section>
 
 
-
-
-
-
-
 <!-- Features -->
 <section class="py-12 px-4 max-w-7xl mx-auto">
   <h2 class="text-3xl font-bold mb-12 text-center">Our Services</h2>

@@ -35,13 +35,13 @@
         .brand-logo {
             font-family: 'Pacifico', cursive;
         }
-        /* Hide scrollbar for all modern browsers */
+        /* Hide scrollbar for all modern browsers /
         .scrollbar-hide::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Edge */
+        display: none; / Chrome, Safari, Edge /
         }
         .scrollbar-hide {
-        -ms-overflow-style: none; /* IE 10+ */
-        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; / IE 10+ /
+        scrollbar-width: none; / Firefox */
         }
         body, h1, h2, h3, h4, h5, h6, p, a, span {
         color: #000 ;
@@ -49,7 +49,7 @@
 
     </style>
 </head>
-<body class="font-sans bg-gray-300 dark:bg-gray-500">
+<body class="font-sans">
 
     {{-- Navbar only shows if $noNavbar is not set or false --}}
     @if (!isset($noNavbar) || !$noNavbar)
