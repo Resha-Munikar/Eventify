@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\PostControllercls;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -155,6 +157,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function (){
     Route::get('/chirps', [ChirpController::class, 'index'])->name('chirps.index');
@@ -165,6 +168,19 @@ Route::middleware(['auth'])->group(function (){
 
     Route::delete('/chirps/{id}', [ChirpController::class, 'destroy'])->name('chirps.destroy');
 });
+
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/chirps', [ChirpController::class, 'adminIndex'])->name('chirps.adminIndex');
+    Route::post('/admin/chirps', [ChirpController::class, 'adminStore'])->name('chirps.adminStore');
+    Route::get('/admin/chirps/{id}/edit', [ChirpController::class, 'adminEdit'])->name('chirps.adminEdit');
+    Route::put('/admin/chirps/{id}', [ChirpController::class, 'adminUpdate'])->name('chirps.adminUpdate');
+    Route::delete('/admin/chirps/{id}', [ChirpController::class, 'adminDestroy'])->name('chirps.adminDestroy');
+    Route::get('/admin/users', [UserController::class, 'adminView'])->name('chirps.user');
+    Route::post('/admin/logout', [AuthController::class, 'logout'])->name('chirps.adminLogout');
+
+});
+
 
 
 

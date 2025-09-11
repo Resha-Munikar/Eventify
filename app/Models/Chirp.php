@@ -8,5 +8,13 @@ class Chirp extends Model
 {
     protected $table = 'chirps';
     
-    protected $fillable = ['chirp'];
+    protected $fillable = [
+        'chirp',
+        'user_id',
+    ];
+
+     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
