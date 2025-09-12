@@ -8,7 +8,7 @@
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-28">
         <!-- Left Content -->
         <div class="max-w-lg text-center md:text-left mb-10 md:mb-0 z-10 relative">
-          <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
             Organize Memorable <br />
             <span class="text-[#8D85EC] dark:text-[#a78df0]">Events with Ease</span>
           </h1>
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="grid md:grid-cols-2 gap-12 items-center">
     <div>
       <h2 class="text-3xl font-bold mb-4 relative inline-block text-gray-900 dark:text-white">
-        Why Choose Us?
+        What Makes Us Unique?
         <!-- Optional underline -->
         <!-- <span class="absolute left-0 -bottom-1 w-20 h-1 bg-[#8D85EC] rounded-full"></span> -->
       </h2>
