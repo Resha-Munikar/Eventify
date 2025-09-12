@@ -50,7 +50,7 @@
 <section class="bg-gray-100 py-20 px-6">
   <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
     <div>
-      <h2 class="text-4xl font-extrabold mb-6 text-[#8D85EC]">Why Choose Eventify?</h2>
+      <h2 class="text-4xl font-extrabold mb-6 text-black">Why Choose Eventify?</h2>
       <ul class="space-y-4 text-lg text-gray-700">
         <li>✔️ Experienced and creative team of professionals</li>
         <li>✔️ Client-first approach with tailored solutions</li>
@@ -163,7 +163,7 @@
 <!-- Our Journey Timeline Section -->
 <section class="bg-white py-16">
   <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Our Journey</h2>
+    <h2 class="text-4xl font-bold text-center text-black mb-12">Our Journey</h2>
     <div class="relative border-l-4 border-indigo-500 ml-6">
 
       <!-- Step 1 -->
@@ -209,7 +209,7 @@
 <!-- FAQs Section -->
 <section class="bg-gray-100 py-16 px-6">
   <div class="max-w-4xl mx-auto">
-    <h2 class="text-3xl font-bold text-center text-black mb-8">Frequently Asked Questions</h2>
+    <h2 class="text-4xl font-bold text-center text-black mb-12">Frequently Asked Questions</h2>
     
     <!-- Accordion Container -->
     <div id="faq-accordion" class="space-y-4">
@@ -305,10 +305,10 @@
 
 
 <!-- Call to Action -->
-<section class="bg-[#d9d4f7] py-20 px-6 text-white text-center">
+<section class="bg- py-20 px-6 text-white text-center">
   <div class="max-w-4xl mx-auto">
-    <h2 class="text-4xl font-bold mb-6">Let’s Create Your Next Unforgettable Event</h2>
-    <p class="mb-8 text-lg">From intimate gatherings to grand celebrations, Eventify is here to bring your vision to life.</p>
+    <h2 class="text-4xl font-bold text-black mb-6">Let’s Create Your Next Unforgettable Event</h2>
+    <p class="mb-8 text-gray-600 text-lg">From intimate gatherings to grand celebrations, Eventify is here to bring your vision to life.</p>
     <a href="{{ route('contact') }}" class="bg-[#8D85EC] text-white px-8 py-3 rounded-lg font-semibold 
       shadow-md hover:bg-[#7a73d9] hover:shadow-xl hover:-translate-y-1 
       transition-all duration-300 transform">
