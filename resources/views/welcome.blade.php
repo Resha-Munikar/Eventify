@@ -211,8 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
         Learn More
       </a>
     </div>
-    <img src="uploads/event.jpg" alt="event planning"
-      class="rounded-lg shadow-xl transform hover:scale-105 transition duration-500" />
+   <div class="overflow-hidden inline-block">
+  <img src="uploads/event.jpg" alt="event planning"
+       class="rounded-lg shadow-xl transform hover:scale-105 transition duration-500" />
+</div>
   </div>
 </section>
 
