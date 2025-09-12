@@ -1,20 +1,58 @@
 @extends('layouts.app')
 
-@section('title', 'Chirps')
+@section('title', 'Edit User')
+@php
+    $noNavbar = true;
+@endphp
+@include('admin.sidebar')
 
 @section('content')
+<div class="max-w-3xl mx-auto mt-12 ml-72">
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-[#8D85EC] mb-6">Edit User</h2>
 
+        <form action="{{ route('users.adminUpdate', $user->id) }}" method="POST" class="space-y-6">
+            @csrf
+            @method('PUT')
 
-<div class="mt-8">
-  <h1 class="text-3xl font-bold text-center text-blue-700">Edit Chirps</h1>
-  <form action="{{ route('chirps.update', $chirp->id) }}" method="POST" class="max-w-2xl mx-auto px-12">
-    @csrf
-    @method('PUT')
-    <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Update your message</label>
-    <textarea id="message" name="chirp" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Leave a comment...">{{ $chirp->chirp }}</textarea>
-    <button type="submit" class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit</button>
-  </form>
+            <!-- Name -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Name</label>
+                <input type="text" name="name" value="{{ old('name', $user->name) }}" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8D85EC] focus:border-[#8D85EC]">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Email</label>
+                <input type="email" name="email" value="{{ old('email', $user->email) }}" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8D85EC] focus:border-[#8D85EC]">
+            </div>
+
+            <!-- Role -->
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Role</label>
+                <select name="role" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8D85EC] focus:border-[#8D85EC]">
+                    <option value="User" {{ $user->role === 'User' ? 'selected' : '' }}>User</option>
+                    <option value="Admin" {{ $user->role === 'Admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="Vendor" {{ $user->role === 'Vendor' ? 'selected' : '' }}>Vendor</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-center justify-between">
+                <button type="submit"
+                    class="bg-[#8D85EC] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#7a73d9] transition">
+                    Update User
+                </button>
+                <a href="{{ route('chirps.user') }}"
+                   class="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition">
+                   Cancel
+                </a>
+                
+            </div>
+        </form>
+    </div>
 </div>
-
-
 @endsection

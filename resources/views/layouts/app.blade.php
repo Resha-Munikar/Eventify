@@ -1,3 +1,14 @@
+@if(session('success'))
+    <div class="max-w-4xl mx-auto mt-4 bg-green-100 text-green-800 p-4 rounded-lg">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="max-w-4xl mx-auto mt-4 bg-red-100 text-red-800 p-4 rounded-lg">
+        {{ session('error') }}
+    </div>
+@endif
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="">
 <head>
@@ -38,10 +49,10 @@
             </div>
             <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-8 py-3 shadow-md w-1/2 justify-center">
                <a href="{{ route('welcome') }}" 
-   class="text-black dark:text-white font-semibold hover:underline mx-4 
-   {{ request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
-   Home
-</a>
+                    class="text-black dark:text-white font-semibold hover:underline mx-4 
+                    {{ request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
+                    Home
+                </a>
 
                 <a href="{{ route('about') }}" 
                 class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">
@@ -135,3 +146,4 @@
     </script>
 </body>
 </html>
+

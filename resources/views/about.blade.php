@@ -305,7 +305,7 @@
 
 
 <!-- Call to Action -->
-<section class="bg- py-20 px-6 text-white text-center">
+<section class="bg-[#] py-20 px-6 text-white text-center">
   <div class="max-w-4xl mx-auto">
     <h2 class="text-4xl font-bold text-black mb-6">Let’s Create Your Next Unforgettable Event</h2>
     <p class="mb-8 text-gray-600 text-lg">From intimate gatherings to grand celebrations, Eventify is here to bring your vision to life.</p>

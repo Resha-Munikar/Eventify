@@ -179,9 +179,9 @@ Route::middleware(['auth'])->group(function (){
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/chirps', [ChirpController::class, 'adminIndex'])->name('chirps.adminIndex');
     Route::post('/admin/chirps', [ChirpController::class, 'adminStore'])->name('chirps.adminStore');
-    Route::get('/admin/chirps/{id}/edit', [ChirpController::class, 'adminEdit'])->name('chirps.adminEdit');
-    Route::put('/admin/chirps/{id}', [ChirpController::class, 'adminUpdate'])->name('chirps.adminUpdate');
-    Route::delete('/admin/chirps/{id}', [ChirpController::class, 'adminDestroy'])->name('chirps.adminDestroy');
+    Route::get('/admin/users/{id}/edit', [UserController::class, 'adminEdit'])->name('users.adminEdit');
+    Route::put('/admin/users/{id}', [UserController::class, 'adminUpdate'])->name('users.adminUpdate');
+    Route::delete('/admin/users/{id}', [UserController::class, 'adminDestroy'])->name('users.adminDestroy');
     Route::get('/admin/users', [UserController::class, 'adminView'])->name('chirps.user');
     Route::post('/admin/logout', [AuthController::class, 'logout'])->name('chirps.adminLogout');
 
