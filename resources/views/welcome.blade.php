@@ -39,12 +39,6 @@
       </div>
     </section>
 
-
-
-
-
-
-
     <!-- Features -->
     <section class="py-12 px-4 max-w-7xl mx-auto bg-white dark:bg-gray-800 text-black dark:text-white">
       <h2 class="text-3xl font-bold mb-12 text-center">Our Services</h2>

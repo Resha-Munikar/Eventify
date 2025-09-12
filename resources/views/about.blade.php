@@ -3,30 +3,36 @@
 @section('title', 'About Us')
 
 @section('content')
-<!-- Hero / About Section -->
-<section class="relative bg-[#d9d4f7] text-white py-30 px-6 overflow-hidden">
-  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-    <div class="animate-fadeIn">
-      <h2 class="text-5xl font-bold mb-6 drop-shadow-md text-black">About Eventify</h2>
-      <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
-        Eventify is your trusted partner in crafting unforgettable experiences. From weddings and corporate gatherings to concerts and festivals, we bring innovation, creativity, and passion to every event.
-      </p>
-      <a href="#team" class="bg-[#8D85EC] dark:bg-[#a78df0] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:opacity-90 transition">Meet our Team</a>
-    </div>
-    <div>
-      <img src="uploads/team.jpg" alt="Event team working" class="rounded-xl shadow-xl hover:scale-105 transition transform animate-float mx-auto md:mx-0" loading="lazy">
-    </div>
-  </div>
-  <!-- Bottom Wave SVG -->
-  <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0">
-    <svg class="w-full h-32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
-      <path fill="#F5F2FF" fill-opacity="1" class="dark:fill-gray-900" d="M0,64L48,80C96,96,192,128,288,160C384,192,480,224,576,213.3C672,203,768,149,864,128C960,107,1056,117,1152,138.7C1248,160,1344,192,1392,208L1440,224L1440,320L0,320Z"></path>
-    </svg>
-  </div>
-</section>
+  <section class="relative w-full bg-[#d9d4f7] dark:bg-gray-800 h-[90vh] overflow-hidden">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-28">
+        <!-- Left Content -->
+        <div class="max-w-lg text-center md:text-left mb-10 md:mb-0 z-10 relative">
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+            About Eventify <br />
+          </h1>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
+              Eventify is your trusted partner in crafting unforgettable experiences from weddins and corporate gatherings to concerts and festivals, we bring innovation, creativity, and passion to every event.       </p>
+          <a href="{{ route('register') }}" class="bg-[#8D85EC] dark:bg-[#a78df0] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:opacity-90 transition">Get Started</a>
+        </div>
+
+        <!-- Right Shape -->
+        <div class="w-full md:w-1/2 flex justify-center items-center relative z-10">
+          <div class="w-120 h-90 overflow-hidden shadow-lg rounded-lg">
+            <img src="uploads/team.jpg" alt="Rectangle Image" class="w-full h-full object-cover" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Wave SVG -->
+       <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0">
+        <svg class="w-full h-32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path fill="#F5F2FF" fill-opacity="1" class="dark:fill-gray-900" d="M0,64L48,80C96,96,192,128,288,160C384,192,480,224,576,213.3C672,203,768,149,864,128C960,107,1056,117,1152,138.7C1248,160,1344,192,1392,208L1440,224L1440,320L0,320Z"></path>
+        </svg>
+      </div>
+    </section>
 
 <!-- Mission Vision Values -->
-<section class="w-full bg-gradient-to-r from-purple-50 to-purple-100 py-20">
+<section class="w-full bg-[#F5F2FF] py-20">
   <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-10 text-center">
     <div class="p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition">
       <div class="text-5xl mb-4 animate-bounce">🎯</div>
@@ -50,7 +56,7 @@
 <section class="bg-gray-100 py-20 px-6">
   <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
     <div>
-      <h2 class="text-4xl font-extrabold mb-6 text-black">Why Choose Eventify?</h2>
+      <h2 class="text-4xl font-bold mb-6 text-black">Why Choose Eventify?</h2>
       <ul class="space-y-4 text-lg text-gray-700">
         <li>✔️ Experienced and creative team of professionals</li>
         <li>✔️ Client-first approach with tailored solutions</li>
