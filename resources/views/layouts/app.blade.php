@@ -37,10 +37,11 @@
             <span class="text-black dark:text-white text-4xl brand-logo">Eventify</span>
             </div>
             <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-8 py-3 shadow-md w-1/2 justify-center">
-                <a href="{{ route('welcome') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('welcome') ? 'active' : '' }}">
-                Home
-                </a>
+               <a href="{{ route('welcome') }}" 
+   class="text-black dark:text-white font-semibold hover:underline mx-4 
+   {{ request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
+   Home
+</a>
 
                 <a href="{{ route('about') }}" 
                 class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">

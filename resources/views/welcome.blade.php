@@ -8,7 +8,7 @@
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-28">
         <!-- Left Content -->
         <div class="max-w-lg text-center md:text-left mb-10 md:mb-0 z-10 relative">
-          <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
             Organize Memorable <br />
             <span class="text-[#8D85EC] dark:text-[#a78df0]">Events with Ease</span>
           </h1>

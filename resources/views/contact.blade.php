@@ -3,65 +3,170 @@
 @section('title', 'Contact Us')
 
 @section('content')
-<!-- Hero Section -->
-<section class="relative bg-gradient-to-r from-[#8D85EC]/90 to-[#d9d4f7]/90 text-white py-20 px-6">
-  <div class="max-w-4xl mx-auto text-center">
-    <h1 class="text-5xl font-bold mb-4">Contact Eventify</h1>
-    <p class="text-lg text-gray-100">We’d love to hear from you! Whether you have a question about our services, pricing, or anything else, our team is ready to help.</p>
-  </div>
-</section>
+<section class="relative w-full bg-[#d9d4f7] dark:bg-gray-800 h-[90vh] overflow-hidden">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-28">
+    <!-- Left Content -->
+    <div class="max-w-lg text-center md:text-left mb-10 md:mb-0 z-10 relative">
+      <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4">
+  Get in Touch <br />
+  <span class="text-[#8D85EC] dark:text-[#a78df0]">We’re Here to Help</span>
+</h1>
+<p class="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6">
+  Have questions or need assistance? Reach out to us, and our team will be happy to support you.
+</p>
+      <a href="{{ route('contact') }}" class="bg-[#8D85EC] dark:bg-[#a78df0] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:opacity-90 transition">Contact Us</a>
+    </div>
 
-<!-- Contact Section -->
-<section class="py-20 px-6 bg-gray-50">
-  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
-    
-    <!-- Contact Form -->
-    <div class="bg-white p-8 rounded-2xl shadow-lg">
-      <h2 class="text-3xl font-semibold text-[#8D85EC] mb-6">Send us a Message</h2>
-      <form action="{{ route('contact') }}" method="POST" class="space-y-5">
-        @csrf
+ <div class="w-full md:w-1/2 flex justify-center items-center relative z-10">
+  <!-- Container with relative positioning -->
+  <div class="relative w-120 h-80"> <!-- Increased size from w-72 h-48 to w-96 h-64 -->
+    <!-- Larger rectangle -->
+    <div class="absolute top-0 left-0 w-120 h-80 rounded-lg overflow-hidden shadow-lg">
+      <img src="uploads/arch.jpg" alt="Arch Image" class="w-full h-full object-cover" />
+    </div>
+    <!-- Larger square overlapping -->
+    <div class="absolute bottom-0 right-0 w-48 h-48 rounded-lg border-4 border-white shadow-lg transform translate-x-4 translate-y-4">
+      <img src="uploads/circle.jpg" alt="Circle Image" class="w-full h-full object-cover" />
+    </div>
+  </div>
+</div>
+
+    <!-- Bottom Wave SVG -->
+       <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0">
+        <svg class="w-full h-32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path fill="#F9FAFB" fill-opacity="1" class="dark:fill-gray-900" d="M0,64L48,80C96,96,192,128,288,160C384,192,480,224,576,213.3C672,203,768,149,864,128C960,107,1056,117,1152,138.7C1248,160,1344,192,1392,208L1440,224L1440,320L0,320Z"></path>
+        </svg>
+      </div>
+</section>
+<!-- Main contact section with a slightly lighter background and subtle shadow -->
+<div class="max-w-7xl mx-auto px-4 py-12 mb-8 bg-[#eae4f9] dark:bg-gray-600 rounded-xl shadow-lg">
+  <!-- Removed transition-transform hover:scale-105 -->
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Left: Contact Form -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4">Send quick message :</h2>
+      <!-- Your form here -->
+      <form class="space-y-4">
+        <!-- Name -->
         <div>
-          <label class="block text-gray-700 font-medium mb-2">Full Name</label>
-          <input type="text" name="name" required
-            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8D85EC]">
+          <label for="name" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Name:</label>
+          <input type="text" id="name" name="name" placeholder="Your Name"
+            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
         </div>
+        <!-- Email -->
         <div>
-          <label class="block text-gray-700 font-medium mb-2">Email Address</label>
-          <input type="email" name="email" required
-            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8D85EC]">
+          <label for="email" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Email:</label>
+          <input type="email" id="email" name="email" placeholder="name@example.com"
+            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
         </div>
+        <!-- Phone -->
         <div>
-          <label class="block text-gray-700 font-medium mb-2">Subject</label>
-          <input type="text" name="subject" required
-            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8D85EC]">
+          <label for="phone" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Phone Number:</label>
+          <input type="tel" id="phone" name="phone" placeholder="(+977) 9841266514"
+            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" />
         </div>
+        <!-- Message -->
         <div>
-          <label class="block text-gray-700 font-medium mb-2">Message</label>
-          <textarea name="message" rows="5" required
-            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8D85EC]"></textarea>
+          <label for="message" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Message:</label>
+          <textarea id="message" name="message" rows="4" placeholder="Your message..."
+            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]"></textarea>
         </div>
-        <button type="submit"
-          class="w-full bg-[#8D85EC] text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-[#7a73d9] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 transform">
-          Send Message
-        </button>
+        <!-- Submit Button -->
+        <div class="mt-4">
+          <button type="submit" class="w-full bg-[#8D85EC] dark:bg-[#a78df0] hover:bg-[#a78df0] text-white font-semibold py-3 px-4 rounded-lg transition duration-300">Submit</button>
+        </div>
       </form>
     </div>
 
-    <!-- Contact Information -->
-    <div class="flex flex-col justify-center space-y-8">
-      <div>
-        <h3 class="text-2xl font-semibold text-[#8D85EC] mb-2">Our Office</h3>
-        <p class="text-gray-700">123 Eventify Street,<br> Kathmandu, Nepal</p>
+    <!-- Right: Contact Details + Map -->
+    <div class="space-y-4">
+      <!-- Contact Details Card -->
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">Contact Details</h3>
+        <!-- Contact info with icons -->
+        <div class="flex items-center mb-2">
+          <svg class="w-5 h-5 mr-2 text-[#8D85EC]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5 14.5 7.62 14.5 9 13.38 11.5 12 11.5z" />
+          </svg>
+          <span>Thamel, Kathmandu, Nepal</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <svg class="w-5 h-5 mr-2 text-[#8D85EC]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M21 8V7l-3 2-2-2-4 4-4-4-2 2-3-2v1l3 2 2-2 4 4 4-4 2 2 3-2z" />
+          </svg>
+          <span>Tel: +977-1-4453000, 4422325</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <svg class="w-5 h-5 mr-2 text-[#8D85EC]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          </svg>
+          <span>Email: info@planepal.com / planet@planepal.com</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <svg class="w-5 h-5 mr-2 text-[#8D85EC]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M21.71 20.29l-3-3c-.39-.39-1.02-.39-1.41 0l-1.3 1.3V17c0-3.86-3.14-7-7-7s-7 3.14-7 7v1.89l-1.3-1.3c-.39-.39-1.02-.39-1.41 0l-3 3c-.39.39-.39 1.02 0 1.41l1.3 1.3V21c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2.29l1.3-1.3c.39-.39.39-1.02 0-1.41z" />
+          </svg>
+          <span>WhatsApp / Viber: 9801044333</span>
+        </div>
       </div>
-      <div>
-        <h3 class="text-2xl font-semibold text-[#8D85EC] mb-2">Call Us</h3>
-        <p class="text-gray-700">+977 9800000000</p>
-      </div>
-      <div>
-        <h3 class="text-2xl font-semibold text-[#8D85EC] mb-2">Email</h3>
-        <p class="text-gray-700">support@eventify.com</p>
-      </div>
+      <!-- Map -->
+      <div class="rounded-lg overflow-hidden shadow-lg">
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7064.147533277557!2d85.30712124163149!3d27.715008604712438!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb18fcb77fd4bd%3A0x58099b1deffed8d4!2sThamel%2C%20Kathmandu%2044600!5e0!3m2!1sen!2snp!4v1757670066744!5m2!1sen!2snp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>      </div>
     </div>
   </div>
-</section>
+</div>
+ <!-- Footer -->
+    <footer class="bg-gray-700 dark:bg-gray-800 text-white py-16 px-4">
+      <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8 text-left">
+        <!-- Logo & About -->
+        <div>
+          <h2 class="text-2xl font-bold mb-4">Eventify</h2>
+          <p class="text-gray-400 mb-4">
+            Eventify is your trusted partner for creating unforgettable weddings, corporate events, and live concerts with personalized planning, catering, and entertainment.
+          </p>
+          <div class="flex gap-4 mt-4">
+            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-facebook-f"></i>Facebook</a>
+            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-instagram"></i>Instagram</a>
+            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-linkedin-in"></i>LinkedIn</a>
+          </div>
+        </div>
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-[#8D85EC]">Home</a></li>
+            <li><a href="#" class="hover:text-[#8D85EC]">Services</a></li>
+            <li><a href="#" class="hover:text-[#8D85EC]">Events</a></li>
+            <li><a href="#" class="hover:text-[#8D85EC]">Contact</a></li>
+          </ul>
+        </div>
+        <!-- Services -->
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Our Services</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-[#8D85EC]">Event Planning</a></li>
+            <li><a href="#" class="hover:text-[#8D85EC]">Catering & Decor</a></li>
+            <li><a href="#" class="hover:text-[#8D85EC]">Entertainment</a></li>
+            <li><a href="#" class="hover:text-[#8D85EC]">Corporate Events</a></li>
+          </ul>
+        </div>
+        <!-- Contact & Newsletter -->
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+          <p class="text-gray-400 mb-2">123 Event Street, Kathmandu, Nepal</p>
+          <p class="text-gray-400 mb-2">Email: info@eventify.com</p>
+          <p class="text-gray-400 mb-4">Phone: +977 9812345678</p>
+          <h3 class="text-xl font-semibold mb-2">Subscribe</h3>
+          <form class="flex flex-col sm:flex-row gap-2">
+            <input type="email" placeholder="Your email" class="px-4 py-2 rounded-md text-gray-900 focus:outline-none flex-1" />
+            <button type="submit" class="bg-[#8D85EC] dark:bg-[#a78df0] text-white px-4 py-2 rounded-md hover:opacity-90 transition">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <!-- Bottom Footer -->
+      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
+        © 2025 Eventify. All rights reserved. Designed with ❤️ by Eventify Team.
+      </div>
+    </footer>
+
 @endsection
