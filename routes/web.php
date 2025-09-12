@@ -161,6 +161,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/welcome',[ChirpController::class, 'welcome'])->name('welcome');
 Route::get('/about',[ChirpController::class, 'about'])->name('about');
+Route::get('/contact',[ChirpController::class, 'contact'])->name('contact');
+
 
 
 Route::middleware(['auth'])->group(function (){
