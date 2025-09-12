@@ -4,8 +4,8 @@
 
 @section('content')
 
-<div class="bg-[#FFF8F0] min-h-screen flex justify-center items-start pt-3">
-  <div class="bg-white shadow-xl rounded-2xl overflow-hidden w-[420px] flex flex-col">
+<div class="bg-[#FFF8F0] dark:bg-gray-800 min-h-screen flex justify-center items-start pt-3">
+  <div class="bg-white dark:bg-gray-700 shadow-xl rounded-2xl overflow-hidden w-[420px] flex flex-col">
     
     <!-- Form -->
     <div class="w-full p-5 flex flex-col justify-center">
@@ -15,25 +15,24 @@
         @csrf
         <!-- Name -->
         <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-900">Full Name</label>
+          <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Full Name</label>
           <input name="name" type="text" id="name" 
-                 class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none" 
-                 placeholder="Your Name" required />
+                 class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none dark:bg-gray-700 dark:text-gray-200"/>
         </div>
 
         <!-- Email -->
         <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-900">Email</label>
+          <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Email</label>
           <input name="email" type="email" id="email" required 
                  placeholder="eventify@gmail.com" 
-                 class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none"/>
+                 class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none dark:bg-gray-700 dark:text-gray-200"/>
         </div>
 
         <!-- Role -->
         <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-900">Role</label>          
+          <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Role</label>          
           <select id="role" name="role" 
-                  class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none">
+                  class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none dark:bg-gray-700 dark:text-gray-200">
             <option value="user">User</option>
             <option value="vendor">Vendor</option>
           </select>
@@ -41,14 +40,14 @@
 
         <!-- Password -->
         <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-900">Password</label>
+          <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Password</label>
           <div class="relative mt-1">
             <input type="password" id="password" name="password" required 
-                   class="w-full px-2 py-2 border rounded-lg pr-10"/>
+                   class="w-full px-2 py-2 border rounded-lg pr-10 dark:bg-gray-700 dark:text-gray-200"/>
           </div>
 
           <!-- Password rules checklist -->
-          <ul class="mt-2 text-xs text-gray-600 space-y-1" id="password-rules">
+          <ul class="mt-2 text-xs text-gray-600 dark:text-gray-400 space-y-1" id="password-rules">
             <li id="rule-length" class="flex items-center"><span class="w-3 h-3 mr-2 border rounded-full"></span> At least 8 characters</li>
             <li id="rule-uppercase" class="flex items-center"><span class="w-3 h-3 mr-2 border rounded-full"></span> At least one uppercase letter</li>
             <li id="rule-number" class="flex items-center"><span class="w-3 h-3 mr-2 border rounded-full"></span> At least one number</li>
@@ -61,23 +60,22 @@
 
         <!-- Confirm Password -->
         <div class="mb-3">
-          <label class="block text-sm font-medium text-gray-900">Confirm Password</label>
+          <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Confirm Password</label>
           <div class="relative mt-1">
             <input type="password" id="password_confirmation" name="password_confirmation" required 
-                   class="w-full px-2 py-2 border rounded-lg pr-10"/>
+                   class="w-full px-2 py-2 border rounded-lg pr-10 dark:bg-gray-700 dark:text-gray-200"/>
           </div>
           <p id="password-match" class="mt-2 text-xs font-medium"></p>
         </div>
 
         <!-- Button -->
         <button type="submit" 
-                class="w-full py-2 rounded-lg font-semibold transition text-white 
-                       bg-[#8d85ec] hover:bg-[#883AFE]">
+                class="w-full py-2 rounded-lg font-semibold transition text-white bg-[#8d85ec] hover:bg-[#883AFE]">
           Sign Up
         </button>
       </form>
 
-      <p class="mt-3 text-sm text-gray-600 text-center">
+      <p class="mt-3 text-sm text-gray-600 dark:text-gray-400 text-center">
         Already have an account? <a href="{{route('login')}}" class="text-[#F76C6C] font-medium hover:underline">Log in</a>
       </p>
     </div>
