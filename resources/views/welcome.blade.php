@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="grid md:grid-cols-2 gap-12 items-center">
     <div>
       <h2 class="text-3xl font-bold mb-4 relative inline-block text-gray-900 dark:text-white">
-        Why Choose Us?
+        What Makes Us Unique?
         <!-- Optional underline -->
         <!-- <span class="absolute left-0 -bottom-1 w-20 h-1 bg-[#8D85EC] rounded-full"></span> -->
       </h2>
