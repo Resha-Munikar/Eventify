@@ -1,14 +1,3 @@
-@if(session('success'))
-    <div class="max-w-4xl mx-auto mt-4 bg-green-100 text-green-800 p-4 rounded-lg">
-        {{ session('success') }}
-    </div>
-@endif
-@if(session('error'))
-    <div class="max-w-4xl mx-auto mt-4 bg-red-100 text-red-800 p-4 rounded-lg">
-        {{ session('error') }}
-    </div>
-@endif
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="">
 <head>
@@ -18,10 +7,7 @@
     @vite('resources/css/app.css') {{-- or your CSS build setup --}}
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
     <style>
-      
-       
-        <style>
-        /* Your custom styles */
+              /* Your custom styles */
         .brand-color { background-color: #8d85ec; }
         .brand-text { color: #8d85ec; }
         .brand-logo { font-family: 'Pacifico', cursive; }
@@ -31,7 +17,8 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
-    </style>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
 
@@ -98,8 +85,26 @@
         </div>
         </header>
     @endif
-    <!-- Main Content -->
-    <main class="flex-1 p-0">
+        <!-- Main Content -->
+        <main class="flex-1 p-0">
+        @if(session('success'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+            class="max-w-4xl mx-auto mt-4 bg-green-100 text-green-800 p-4 rounded-lg relative transition duration-300">
+            {{ session('success') }}
+            <button @click="show = false" 
+                    class="absolute top-2 right-2 text-green-800 font-bold hover:text-green-900">&times;</button>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+            class="max-w-4xl mx-auto mt-4 bg-red-100 text-red-800 p-4 rounded-lg relative transition duration-300">
+            {{ session('error') }}
+            <button @click="show = false" 
+                    class="absolute top-2 right-2 text-red-800 font-bold hover:text-red-900">&times;</button>
+        </div>
+        @endif
+
         @yield('content')
     </main>
 

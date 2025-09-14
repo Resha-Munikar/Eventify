@@ -5,7 +5,8 @@ use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\PostControllercls;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\VendorController;
+use App\Http\Controllers\VendorEventController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -186,6 +187,22 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/logout', [AuthController::class, 'logout'])->name('chirps.adminLogout');
 
 });
+
+Route::middleware(['auth', 'vendor'])->group(function () {
+    Route::get('/vendor/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
+    Route::post('/vendor/logout', [VendorController::class, 'logout'])->name('vendor.vendorLogout');
+
+});
+
+Route::prefix('vendor/events')->middleware(['auth','vendor'])->group(function() {
+    Route::get('/', [VendorEventController::class, 'index'])->name('vendor.events.index');
+    Route::get('/create', [VendorEventController::class, 'create'])->name('vendor.events.create');
+    Route::post('/', [VendorEventController::class, 'store'])->name('vendor.events.store');
+    Route::get('/{event}/edit', [VendorEventController::class, 'edit'])->name('vendor.events.edit');
+    Route::put('/{event}', [VendorEventController::class, 'update'])->name('vendor.events.update');
+    Route::delete('/{event}', [VendorEventController::class, 'destroy'])->name('vendor.events.destroy');
+});
+
 
 
 

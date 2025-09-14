@@ -6,19 +6,22 @@
 @section('content')
 @include('vendor.sidebar')
 
-<div class="w-full mx-auto ml-0 sm:ml-64 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+<div class="ml-0 sm:ml-64 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen overflow-x-hidden">
 
     <!-- Header & Add Event Button -->
-    <div class="mb-6 flex justify-between items-center max-w-2xl mx-auto">
-        <h2 class="text-3xl font-bold text-[#8d85ec]">My Events</h2>
+    <div class="mb-6 mt-6 max-w-4xl mx-auto flex items-center justify-between">
+        <!-- Title on the left -->
+        <h2 class="text-3xl font-bold text-[#8d85ec] truncate">My Events</h2>
+        
+        <!-- Add Event Button on the right -->
         <button id="toggleFormBtn"
-                class="bg-[#8d85ec] hover:bg-[#7a72d6] text-white px-5 py-2 rounded-full shadow-md flex items-center transition transform hover:-translate-y-0.5">
+                class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-5 py-2 rounded-full shadow-md flex items-center transition transform hover:-translate-y-0.5">
             <span id="toggleIcon" class="inline-block mr-2 transition-transform duration-300">+</span>
             <span id="toggleText">Add Event</span>
         </button>
     </div>
 
-    <!-- Add Event Form (Initially Hidden) -->
+    <!-- Add Event Form -->
     <div id="addEventFormWrapper" class="max-w-xl mx-auto overflow-hidden transition-all duration-500" style="height:0">
         <div id="addEventForm" class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-5">
             <h2 class="text-xl font-bold text-[#8d85ec] mb-4 text-center">Add New Event</h2>
@@ -69,10 +72,14 @@
                            class="w-full text-gray-700 dark:text-gray-200 text-sm" accept="image/*" required>
                 </div>
 
-                <div class="text-center">
+                <div class="flex justify-center gap-3">
                     <button type="submit"
-                            class="bg-[#8d85ec] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#7a72d6] shadow-md transition text-sm">
+                            class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-4 py-2 rounded-full font-semibold shadow-md transition text-sm">
                         Add Event
+                    </button>
+                    <button type="button" id="cancelFormBtn"
+                            class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-semibold transition text-sm">
+                        Cancel
                     </button>
                 </div>
             </form>
@@ -80,36 +87,44 @@
     </div>
 
     <!-- Events Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6 max-w-6xl mx-auto">
-        @foreach($events as $event)
-        <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
-            <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}"
-                 class="h-32 w-full object-cover">
-            <div class="p-4 flex flex-col gap-1">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $event->venue }}</p>
-                <p class="text-gray-700 dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
-                <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
-                <p class="text-gray-700 dark:text-gray-200 text-sm">Seats: {{ $event->available_seats }}</p>
-                <p class="text-gray-700 dark:text-gray-200 text-sm">
-                    Date: 
-                    {{ $event->event_date ? \Carbon\Carbon::parse($event->event_date)->format('d M, Y') : 'N/A' }}
-                </p>
+    @if($events->count() > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
+            @foreach($events as $event)
+                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full">
+                    <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}"
+                        class="h-40 w-full object-cover">
 
-                <div class="flex justify-between mt-2">
-                    <a href="{{ route('vendor.events.edit', $event->id) }}"
-                       class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition text-sm">Edit</a>
-                    <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
-                          onsubmit="return confirm('Are you sure?');">
-                        @csrf @method('DELETE')
-                        <button type="submit"
-                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm">Delete</button>
-                    </form>
+                    <div class="p-5 flex flex-col gap-2">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $event->venue }}</p>
+                        <p class="text-gray-700 dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
+                        <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
+                        <p class="text-gray-700 dark:text-gray-200 text-sm">Seats: {{ $event->available_seats }}</p>
+                        <p class="text-gray-700 dark:text-gray-200 text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
+
+                        <div class="flex justify-between mt-3 gap-2">
+                            <a href="{{ route('vendor.events.edit', $event->id) }}"
+                            class="flex-1 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold text-sm py-2 rounded-lg text-center transition">Edit</a>
+
+                            <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
+                                onsubmit="return confirm('Are you sure?');" class="flex-1">
+                                @csrf @method('DELETE')
+                                <button type="submit"
+                                        class="w-full bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-semibold text-sm py-2 rounded-lg transition">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
-        @endforeach
-    </div>
+    @else
+        <div class="text-center mt-20">
+            <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found. Start by adding a new event!</p>
+        </div>
+    @endif
+
 </div>
 
 <script>
@@ -117,6 +132,7 @@ const toggleBtn = document.getElementById('toggleFormBtn');
 const formWrapper = document.getElementById('addEventFormWrapper');
 const toggleIcon = document.getElementById('toggleIcon');
 const toggleText = document.getElementById('toggleText');
+const cancelBtn = document.getElementById('cancelFormBtn');
 
 toggleBtn.addEventListener('click', () => {
     if(formWrapper.style.height === '0px' || formWrapper.style.height === ''){
@@ -128,6 +144,12 @@ toggleBtn.addEventListener('click', () => {
         toggleIcon.style.transform = 'rotate(0deg)';
         toggleText.textContent = 'Add Event';
     }
+});
+
+cancelBtn.addEventListener('click', () => {
+    formWrapper.style.height = '0';
+    toggleIcon.style.transform = 'rotate(0deg)';
+    toggleText.textContent = 'Add Event';
 });
 </script>
 @endsection

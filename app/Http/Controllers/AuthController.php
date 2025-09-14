@@ -47,15 +47,21 @@ class AuthController extends Controller
         if (Auth::attempt($credential)) {
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
+            $user = Auth::user(); // get the authenticated user
+
+            if ($user->role === 'admin') {
                 return redirect()->route('chirps.adminIndex');
+            } elseif ($user->role === 'vendor') {
+            return redirect()->route('vendor.dashboard'); // automatically goes to their own dashboard
             }
+
             return redirect()->route('chirps.index');
         } else {
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
             ])->onlyInput('email');
         }
+
     }
 
     public function logout(Request $request) {
