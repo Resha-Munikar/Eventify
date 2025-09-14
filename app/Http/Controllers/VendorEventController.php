@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Str;
 
 class VendorEventController extends Controller
 {
@@ -14,6 +15,7 @@ class VendorEventController extends Controller
         $events = Event::where('vendor_id', Auth::id())->latest()->paginate(9);
         return view('vendor.events.index', compact('events'));
     }
+
 
     // Show form to create a new event
     public function create()
@@ -34,9 +36,15 @@ class VendorEventController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle image upload
-        $imagePath = $request->file('image')->store('events', 'public');
+       // Generate a unique filename with extension
+$extension = $request->file('image')->getClientOriginalExtension();
+$filename = Str::uuid() . '.' . $extension;
 
+// Save the image to 'public/uploads' directory
+$request->file('image')->move(public_path('uploads'), $filename);
+
+// Store the filename or relative path in the database
+$imagePath = $filename;
         Event::create([
             'vendor_id' => Auth::id(),
             'event_name' => $request->event_name,
@@ -45,7 +53,7 @@ class VendorEventController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'available_seats' => $request->available_seats,
-            'image' => $imagePath,
+           'image' => $imagePath,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ]);
