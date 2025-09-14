@@ -83,30 +83,40 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6 max-w-6xl mx-auto">
         @foreach($events as $event)
         <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
-            <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}"
-                 class="h-32 w-full object-cover">
-            <div class="p-4 flex flex-col gap-1">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $event->venue }}</p>
-                <p class="text-gray-700 dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
-                <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
-                <p class="text-gray-700 dark:text-gray-200 text-sm">Seats: {{ $event->available_seats }}</p>
-                <p class="text-gray-700 dark:text-gray-200 text-sm">
-                    Date: 
-                    {{ $event->event_date ? \Carbon\Carbon::parse($event->event_date)->format('d M, Y') : 'N/A' }}
-                </p>
+          
+          @if ($event->image)
+              {{-- Debug: dump the image path --}}
+              {{-- Uncomment below for debugging; remove in production --}}
+              {{ dd($event->image) }} 
+              
+              {{-- Display image --}}
+              <img src="{{ asset($event->image) }}" alt="{{ $event->event_name }}" class="h-40 w-full object-cover">
+          @endif
+          
+          {{-- Removed misplaced class line --}}
+          
+          <div class="p-4 flex flex-col gap-1">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $event->venue }}</p>
+              <p class="text-gray-700 dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
+              <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
+              <p class="text-gray-700 dark:text-gray-200 text-sm">Seats: {{ $event->available_seats }}</p>
+              <p class="text-gray-700 dark:text-gray-200 text-sm">
+                  Date: 
+                  {{ $event->event_date ? \Carbon\Carbon::parse($event->event_date)->format('d M, Y') : 'N/A' }}
+              </p>
 
-                <div class="flex justify-between mt-2">
-                    <a href="{{ route('vendor.events.edit', $event->id) }}"
-                       class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition text-sm">Edit</a>
-                    <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
-                          onsubmit="return confirm('Are you sure?');">
-                        @csrf @method('DELETE')
-                        <button type="submit"
-                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm">Delete</button>
-                    </form>
-                </div>
-            </div>
+              <div class="flex justify-between mt-2">
+                  <a href="{{ route('vendor.events.edit', $event->id) }}"
+                     class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition text-sm">Edit</a>
+                  <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
+                        onsubmit="return confirm('Are you sure?');">
+                      @csrf @method('DELETE')
+                      <button type="submit"
+                              class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm">Delete</button>
+                  </form>
+              </div>
+          </div>
         </div>
         @endforeach
     </div>

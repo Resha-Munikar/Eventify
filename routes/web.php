@@ -209,4 +209,3 @@ Route::prefix('vendor/events')->middleware(['auth','vendor'])->group(function() 
 
 
 
-
