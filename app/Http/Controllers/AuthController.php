@@ -32,7 +32,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('chirps.index');
+        return redirect('/');
     }
     public function showLoginForm() {
         return view('auth.login');
