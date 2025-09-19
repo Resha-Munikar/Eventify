@@ -330,61 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </section>
 
-
- <!-- Footer -->
-    <footer class="bg-gray-700 dark:bg-gray-800 text-white py-16 px-4">
-      <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8 text-left">
-        <!-- Logo & About -->
-        <div>
-          <h2 class="text-2xl font-bold mb-4">Eventify</h2>
-          <p class="text-gray-400 mb-4">
-            Eventify is your trusted partner for creating unforgettable weddings, corporate events, and live concerts with personalized planning, catering, and entertainment.
-          </p>
-          <div class="flex gap-4 mt-4">
-            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-facebook-f"></i>Facebook</a>
-            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-instagram"></i>Instagram</a>
-            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-linkedin-in"></i>LinkedIn</a>
-          </div>
-        </div>
-        <!-- Quick Links -->
-        <div>
-          <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#8D85EC]">Home</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Services</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Events</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Contact</a></li>
-          </ul>
-        </div>
-        <!-- Services -->
-        <div>
-          <h3 class="text-xl font-semibold mb-4">Our Services</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#8D85EC]">Event Planning</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Catering & Decor</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Entertainment</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Corporate Events</a></li>
-          </ul>
-        </div>
-        <!-- Contact & Newsletter -->
-        <div>
-          <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
-          <p class="text-gray-400 mb-2">123 Event Street, Kathmandu, Nepal</p>
-          <p class="text-gray-400 mb-2">Email: info@eventify.com</p>
-          <p class="text-gray-400 mb-4">Phone: +977 9812345678</p>
-          <h3 class="text-xl font-semibold mb-2">Subscribe</h3>
-          <form class="flex flex-col sm:flex-row gap-2">
-            <input type="email" placeholder="Your email" class="px-4 py-2 rounded-md text-gray-900 focus:outline-none flex-1" />
-            <button type="submit" class="bg-[#8D85EC] dark:bg-[#a78df0] text-white px-4 py-2 rounded-md hover:opacity-90 transition">Subscribe</button>
-          </form>
-        </div>
-      </div>
-      <!-- Bottom Footer -->
-      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
-        © 2025 Eventify. All rights reserved. Designed with ❤️ by Eventify Team.
-      </div>
-    </footer>
-
 <!-- Flowbite JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>

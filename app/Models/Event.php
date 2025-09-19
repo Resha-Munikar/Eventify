@@ -18,6 +18,7 @@ class Event extends Model
         'image',
         'price',
         'available_seats',
+        'category',
     ];
     protected $casts = [
         'event_date' => 'datetime',
