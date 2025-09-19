@@ -71,35 +71,4 @@
         </form>
     </div>
 </div>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
-<script>
-let map, marker;
-function initMap() {
-    const defaultLatLng = { lat: -33.8688, lng: 151.2195 };
-    map = new google.maps.Map(document.getElementById("map"), { center: defaultLatLng, zoom: 13 });
-    marker = new google.maps.Marker({ position: defaultLatLng, map: map, draggable: true });
-
-    const input = document.getElementById("location");
-    const autocomplete = new google.maps.places.Autocomplete(input);
-    autocomplete.bindTo("bounds", map);
-
-    autocomplete.addListener("place_changed", function() {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) return;
-        map.setCenter(place.geometry.location);
-        map.setZoom(15);
-        marker.setPosition(place.geometry.location);
-        document.getElementById('latitude').value = place.geometry.location.lat();
-        document.getElementById('longitude').value = place.geometry.location.lng();
-    });
-
-    marker.addListener('dragend', function() {
-        const pos = marker.getPosition();
-        document.getElementById('latitude').value = pos.lat();
-        document.getElementById('longitude').value = pos.lng();
-    });
-}
-document.addEventListener("DOMContentLoaded", initMap);
-</script>
 @endsection

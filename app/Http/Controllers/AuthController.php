@@ -32,8 +32,12 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect()
+       ->route('login.form')  
+       ->with('success', 'Welcome, ' . $user->name . '! Your account has been created.');
+  
     }
+
     public function showLoginForm() {
         return view('auth.login');
     }

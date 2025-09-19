@@ -9,7 +9,7 @@
 <div class="ml-0 sm:ml-64 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen overflow-x-hidden">
 
     <!-- Header & Add Event Button -->
-    <div class="mb-6 mt-6 max-w-4xl mx-auto flex items-center justify-between">
+    <div class="mb-6 mt-6 max-w-4xl mx-auto flex justify-between">
         <!-- Title on the left -->
         <h2 class="text-3xl font-bold text-[#8d85ec] truncate">My Events</h2>
         
@@ -72,13 +72,13 @@
                            class="w-full text-gray-700 dark:text-gray-200 text-sm" accept="image/*" required>
                 </div>
 
-                <div class="flex justify-center gap-3">
+                <div class="flex justify-center gap-12 mt-8">
                     <button type="submit"
-                            class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-4 py-2 rounded-full font-semibold shadow-md transition text-sm">
+                            class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-4 py-2 rounded-full font-semibold shadow-md transition text-sm w-40">
                         Add Event
                     </button>
                     <button type="button" id="cancelFormBtn"
-                            class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-semibold transition text-sm">
+                            class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-semibold transition text-sm w-40">
                         Cancel
                     </button>
                 </div>

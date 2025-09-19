@@ -68,18 +68,17 @@
             </div>
 
             <!-- Buttons -->
-            <div class="flex items-center justify-between">
+           <div class="flex justify-center gap-12 mt-8">
                 <button type="submit"
-                    class="bg-[#8D85EC] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#7a73d9] transition">
-                    Update
+                    class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-4 py-2 rounded-full font-semibold shadow-md transition text-sm w-40 text-center">
+                    Update Event
                 </button>
-                <a href="{{ route('vendor.events.index') }}"
-                   class="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition">
-                   Cancel
-                </a>
-                
-            </div>
 
+                <a href="{{ route('vendor.events.index') }}"
+                    class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-semibold transition text-sm w-40 text-center inline-flex items-center justify-center">
+                    Cancel
+                </a>
+            </div>
         </form>
     </div>
 </div>
