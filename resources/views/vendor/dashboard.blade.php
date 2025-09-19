@@ -3,6 +3,7 @@
 @section('title', 'Vendor Dashboard')
 @php
     $noNavbar = true;
+    $showFooter = false;
 @endphp
 @include('vendor.sidebar')
 @section('content')

@@ -40,6 +40,11 @@
                     <input type="date" name="event_date" value="{{ old('event_date') }}"
                            class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
                 </div>
+                  <div>
+                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Category</label>
+                    <input type="text" name="category" value="{{ old('category') }}"
+                           class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
+                </div>
 
                 <div>
                     <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Venue / Location</label>
@@ -96,6 +101,7 @@
 
                     <div class="p-5 flex flex-col gap-2">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $event->category}}</p>
                         <p class="text-gray-600 dark:text-gray-300 text-sm truncate">{{ $event->venue }}</p>
                         <p class="text-gray-700 dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
                         <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>

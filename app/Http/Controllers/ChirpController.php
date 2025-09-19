@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Chirp;
 use App\Models\User;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,5 +84,14 @@ class ChirpController extends Controller
     public function contact(){
         return view('contact');
     }
+     public function events(){
+        $events = Event::all();
+      return view('events', compact('events'));
+    }
+    public function show($id)
+{
+    $event = Event::findOrFail($id);
+    return view('eventdetails', compact('event'));
+}
 
 }
