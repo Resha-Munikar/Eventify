@@ -88,10 +88,5 @@ class ChirpController extends Controller
         $events = Event::all();
       return view('events', compact('events'));
     }
-    public function show($id)
-{
-    $event = Event::findOrFail($id);
-    return view('eventdetails', compact('event'));
-}
-
+    
 }
