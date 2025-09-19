@@ -47,7 +47,7 @@
                 </a>
 
                 <a href="{{ route('events') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('event') ? 'active' : '' }}">
+                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('events') ? 'active' : '' }}">
                 Events
                 </a>
                 <a href="#" class="text-black  dark:text-white font-semibold hover:underline mx-4">Venues</a>
