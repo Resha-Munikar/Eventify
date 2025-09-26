@@ -29,6 +29,7 @@ class VendorEventController extends Controller
         $request->validate([
             'event_name' => 'required|string|max:255',
             'event_date' => 'required|date',
+            'category' => 'nullable|string|max:255',
             'venue' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
@@ -50,6 +51,7 @@ $imagePath = $filename;
             'event_name' => $request->event_name,
             'event_date' => $request->event_date,
             'venue' => $request->venue,
+            'category' => $request->category,
             'description' => $request->description,
             'price' => $request->price,
             'available_seats' => $request->available_seats,
@@ -82,6 +84,7 @@ $imagePath = $filename;
         $request->validate([
             'event_name' => 'required|string|max:255',
             'event_date' => 'required|date',
+            'category' => 'nullable|string|max:255',
             'venue' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
@@ -97,6 +100,7 @@ $imagePath = $filename;
         $event->update([
             'event_name' => $request->event_name,
             'event_date' => $request->event_date,
+            'category' => $request->category,
             'venue' => $request->venue,
             'description' => $request->description,
             'price' => $request->price,

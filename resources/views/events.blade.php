@@ -33,20 +33,49 @@
       </div>
     </div>
     
-    <!-- Categories Filter -->
-    <div class="mb-4">
-      <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('categoriesFilter')">
-        <span class="font-semibold text-gray-700 dark:text-gray-200">Categories</span>
-        <svg id="icon-categoriesFilter" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      <div id="categoriesFilter" class="mt-2 hidden">
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Concert</button>
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Shows</button>
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Theatre</button>
-      </div>
-    </div>
+   <!-- Categories Filter -->
+<div class="mb-4">
+  <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('categoriesFilter')">
+    <span class="font-semibold text-gray-700 dark:text-gray-200">Categories</span>
+    <svg id="icon-categoriesFilter" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+  <div id="categoriesFilter" class="mt-2 hidden">
+    @php
+      $activeCategory = request('category');
+    @endphp
+
+    <a href="{{ route('events', ['category' => 'Concert']) }}"
+       class="block w-full text-sm mb-2 {{ $activeCategory == 'Concert' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+      Concert
+    </a>
+    <a href="{{ route('events', ['category' => 'Art']) }}"
+       class="block w-full text-sm mb-2 {{ $activeCategory == 'Art' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+      Art
+    </a>
+    <a href="{{ route('events', ['category' => 'Food and Drink']) }}"
+       class="block w-full text-sm mb-2 {{ $activeCategory == 'Food and Drink' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+      Food and Drink
+    </a>
+    <a href="{{ route('events', ['category' => 'Technology']) }}"
+       class="block w-full text-sm mb-2 {{ $activeCategory == 'Technology' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+      Technology
+    </a>
+    <a href="{{ route('events', ['category' => 'Sports']) }}"
+       class="block w-full text-sm mb-2 {{ $activeCategory == 'Sports' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+      Sports
+    </a>
+    <a href="{{ route('events', ['category' => 'Wellness']) }}"
+       class="block w-full text-sm mb-2 {{ $activeCategory == 'Wellness' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+     Wellness
+    </a>
+    <a href="{{ route('events') }}"
+       class="block w-full text-sm mb-2 {{ !$activeCategory ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
+      All
+    </a>
+  </div>
+</div>
     
     <!-- More Filters -->
     <div class="mb-4">
@@ -74,7 +103,7 @@
     <!-- Your existing Events Listing code -->
     <h2 class="text-3xl font-bold mb-4 mt-8 text-gray-900 dark:text-white">Upcoming Events</h2>
     @if($events->count() > 0)
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-5">
         @foreach($events as $event)
             <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full bg-white dark:bg-gray-700">
                 <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="h-60 w-full object-cover" />
