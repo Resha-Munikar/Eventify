@@ -84,9 +84,22 @@ class ChirpController extends Controller
     public function contact(){
         return view('contact');
     }
-     public function events(){
+    //  public function events(){
+    //     $events = Event::all();
+    //   return view('events', compact('events'));
+    // }
+    public function events(Request $request){
+    // Fetch the query parameter 'category' from URL
+    $category = $request->query('category');
+
+    // If category filter is present, filter events
+    if ($category && $category != '') {
+        $events = Event::where('category', $category)->get();
+    } else {
         $events = Event::all();
-      return view('events', compact('events'));
     }
+
+    return view('events', compact('events', 'category'));
+}
     
 }
