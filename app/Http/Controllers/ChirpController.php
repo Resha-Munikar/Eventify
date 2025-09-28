@@ -84,10 +84,7 @@ class ChirpController extends Controller
     public function contact(){
         return view('contact');
     }
-    //  public function events(){
-    //     $events = Event::all();
-    //   return view('events', compact('events'));
-    // }
+    
     public function events(Request $request){
     // Fetch the query parameter 'category' from URL
     $category = $request->query('category');
