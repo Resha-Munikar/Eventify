@@ -163,6 +163,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/welcome',[ChirpController::class, 'welcome'])->name('welcome');
 Route::get('/about',[ChirpController::class, 'about'])->name('about');
 Route::get('/contact',[ChirpController::class, 'contact'])->name('contact');
+Route::post('/contact', [ChirpController::class, 'storeContact'])->name('contact.store');
 Route::get('/events',[ChirpController::class, 'events'])->name('events');
 // Route::resource('events', ChirpController::class);
 // Route::get('/events/{id}', [ChirpController::class, 'show'])->name('events.show');

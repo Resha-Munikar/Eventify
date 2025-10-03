@@ -46,7 +46,8 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 class="text-2xl font-semibold mb-4">Send quick message :</h2>
       <!-- Your form here -->
-      <form class="space-y-4">
+      <form action="{{ route('contact.store') }}" method="POST" class="space-y-4">
+        @csrf
         <!-- Name -->
         <div>
           <label for="name" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Name:</label>

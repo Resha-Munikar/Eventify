@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chirp;
+use App\Models\Contact;
 use App\Models\User;
 use App\Models\Event;
 use Illuminate\Http\Request;
@@ -80,10 +81,6 @@ class ChirpController extends Controller
     public function about(){
         return view('about');
     }
-
-    public function contact(){
-        return view('contact');
-    }
     
     public function events(Request $request){
     // Fetch the query parameter 'category' from URL
@@ -98,5 +95,27 @@ class ChirpController extends Controller
 
     return view('events', compact('events', 'category'));
 }
-    
+      // Show contact form
+    public function contact()
+    {
+        return view('contact'); // your contact form view
+    }
+
+    // Store contact form data
+    public function storeContact(Request $request)
+    {
+        // Validate input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'message' => 'required|string',
+        ]);
+
+        // Save to database
+        Contact::create($validated);
+
+        // Redirect back with success message
+        return redirect()->route('contact')->with('success', 'Your message has been sent!');
+    }
 }
