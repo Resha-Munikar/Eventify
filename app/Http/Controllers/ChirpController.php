@@ -116,6 +116,6 @@ class ChirpController extends Controller
         Contact::create($validated);
 
         // Redirect back with success message
-        return redirect()->route('contact')->with('success', 'Your message has been sent!');
+        return redirect()->route('contact')->with('success', 'Message successful !');
     }
 }

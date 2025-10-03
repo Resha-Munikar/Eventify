@@ -46,37 +46,38 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 class="text-2xl font-semibold mb-4">Send quick message :</h2>
       <!-- Your form here -->
-      <form action="{{ route('contact.store') }}" method="POST" class="space-y-4">
-        @csrf
-        <!-- Name -->
-        <div>
-          <label for="name" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Name:</label>
-          <input type="text" id="name" name="name" placeholder="Your Name"
-            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
-        </div>
-        <!-- Email -->
-        <div>
-          <label for="email" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Email:</label>
-          <input type="email" id="email" name="email" placeholder="name@example.com"
-            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
-        </div>
-        <!-- Phone -->
-        <div>
-          <label for="phone" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Phone Number:</label>
-          <input type="tel" id="phone" name="phone" placeholder="(+977) 9841266514"
-            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" />
-        </div>
-        <!-- Message -->
-        <div>
-          <label for="message" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Message:</label>
-          <textarea id="message" name="message" rows="4" placeholder="Your message..."
-            class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]"></textarea>
-        </div>
-        <!-- Submit Button -->
-        <div class="mt-4">
-          <button type="submit" class="w-full bg-[#8D85EC] dark:bg-[#a78df0] hover:bg-[#a78df0] text-white font-semibold py-3 px-4 rounded-lg transition duration-300">Submit</button>
-        </div>
-      </form>
+     <form action="{{ route('contact.store') }}" method="POST" class="space-y-4">
+  <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+  <!-- Name -->
+  <div>
+    <label for="name" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Name:</label>
+    <input type="text" id="name" name="name" placeholder="Your Name"
+      class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
+  </div>
+  <!-- Email -->
+  <div>
+    <label for="email" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Email:</label>
+    <input type="email" id="email" name="email" placeholder="name@example.com"
+      class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
+  </div>
+  <!-- Phone -->
+  <div>
+    <label for="phone" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Phone Number:</label>
+    <input type="tel" id="phone" name="phone" placeholder="(+977) 9841266514"
+      class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" />
+  </div>
+  <!-- Message -->
+  <div>
+    <label for="message" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Message:</label>
+    <textarea id="message" name="message" rows="4" placeholder="Your message..."
+      class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]"></textarea>
+  </div>
+  <!-- Submit Button -->
+  <div class="mt-4">
+    <button type="submit" class="w-full bg-[#8D85EC] dark:bg-[#a78df0] hover:bg-[#a78df0] text-white font-semibold py-3 px-4 rounded-lg transition duration-300">Submit</button>
+  </div>
+</form>
     </div>
 
     <!-- Right: Contact Details + Map -->
