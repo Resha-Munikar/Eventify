@@ -36,12 +36,11 @@
                         class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
                 </div>
 
-                <!-- Location with Map -->
                 <div>
                     <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Location</label>
-                    <input id="venue-location" type="text" name="location" value="{{ old('location') }}"
-                        class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" placeholder="Search or click on map..." required>
-                    <div id="map" class="mt-3 rounded-lg border border-gray-300 dark:border-gray-700" style="height:250px;"></div>
+                    <input type="text" name="location" value="{{ old('location') }}"
+                        class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm"
+                        placeholder="Enter venue location" required>
                 </div>
 
                 <div>
@@ -78,18 +77,25 @@
     <!-- Venues Grid -->
     @if($venues->count() > 0)
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
-            @foreach($venues as $venue)
+            @foreach($venues->sortByDesc('id') as $venue) <!-- Sort newest first -->
                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full">
-                    <img src="{{ asset('uploads/' . $venue->image) }}" alt="{{ $venue->venue_name }}" class="h-40 w-full object-cover">
+                    
+                    <!-- Bigger Image -->
+                    <div class="w-full h-64 overflow-hidden">
+                        <img src="{{ asset('uploads/' . $venue->image) }}" 
+                            alt="{{ $venue->venue_name }}" 
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    </div>
 
                     <div class="p-5 flex flex-col gap-2">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $venue->venue_name }}</h3>
                         <p class="text-gray-900 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $venue->description }}</p>
                         <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Location: {{ $venue->location }}</p>
                         <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: Rs {{ number_format($venue->price_per_person, 2) }} / person</p>
+
                         <div class="flex justify-between mt-3 gap-2">
                             <a href="{{ route('vendor.venues.edit', $venue->id) }}"
-                               class="flex-1 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold text-sm py-2 rounded-lg text-center transition">Edit</a>
+                            class="flex-1 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold text-sm py-2 rounded-lg text-center transition">Edit</a>
 
                             <form action="{{ route('vendor.venues.destroy', $venue->id) }}" method="POST"
                                 onsubmit="return confirm('Are you sure?');" class="flex-1">
@@ -109,42 +115,10 @@
             <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No venues found. Start by adding a new venue!</p>
         </div>
     @endif
-
 </div>
 
-<!-- Map Script -->
+<!-- Form Toggle Script -->
 <script>
-function initMap() {
-    const defaultLocation = { lat: 27.7172, lng: 85.3240 }; // Kathmandu
-    const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 13,
-        center: defaultLocation,
-    });
-    const marker = new google.maps.Marker({
-        position: defaultLocation,
-        map: map,
-        draggable: true,
-    });
-
-    const input = document.getElementById("venue-location");
-    const searchBox = new google.maps.places.SearchBox(input);
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-    searchBox.addListener("places_changed", () => {
-        const places = searchBox.getPlaces();
-        if (places.length === 0) return;
-        const place = places[0];
-        if (!place.geometry || !place.geometry.location) return;
-        map.setCenter(place.geometry.location);
-        marker.setPosition(place.geometry.location);
-    });
-
-    marker.addListener("dragend", function() {
-        const position = marker.getPosition();
-        input.value = position.lat().toFixed(6) + ", " + position.lng().toFixed(6);
-    });
-}
-
 const toggleBtn = document.getElementById('toggleFormBtn');
 const formWrapper = document.getElementById('addVenueFormWrapper');
 const toggleIcon = document.getElementById('toggleIcon');
@@ -168,10 +142,5 @@ cancelBtn.addEventListener('click', () => {
     toggleIcon.style.transform = 'rotate(0deg)';
     toggleText.textContent = 'Add Venue';
 });
-</script>
-
-<!-- Load Google Maps API -->
-<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap">
 </script>
 @endsection

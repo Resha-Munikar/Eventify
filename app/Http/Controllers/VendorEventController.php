@@ -92,11 +92,22 @@ $imagePath = $filename;
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Handle image upload
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('events', 'public');
-            $event->image = $imagePath;
+            // Delete old image if exists
+            if ($event->image && file_exists(public_path('uploads/' . $event->image))) {
+                unlink(public_path('uploads/' . $event->image));
+            }
+
+            // Save new image
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filename = \Str::uuid() . '.' . $extension;
+            $request->file('image')->move(public_path('uploads'), $filename);
+
+            $event->image = $filename;
         }
 
+        // Update other event details
         $event->update([
             'event_name' => $request->event_name,
             'event_date' => $request->event_date,
@@ -107,10 +118,9 @@ $imagePath = $filename;
             'available_seats' => $request->available_seats,
         ]);
 
-        $event->save();
-
         return redirect()->route('vendor.events.index')->with('success', 'Event updated successfully!');
     }
+
 
     // Delete an event
     public function destroy(Event $event)

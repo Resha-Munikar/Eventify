@@ -10,9 +10,13 @@ class VendorVenueController extends Controller
     // Show all venues for the logged-in vendor
     public function index()
     {
-        $venues = Venue::where('vendor_id', auth()->id())->get();
+        $venues = Venue::where('vendor_id', auth()->id())
+                    ->orderBy('id', 'desc') // newest first
+                    ->get();
+
         return view('vendor.venues.index', compact('venues'));
     }
+
 
     // Store new venue
     public function store(Request $request)

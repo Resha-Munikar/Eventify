@@ -43,10 +43,20 @@
                     <input type="date" name="event_date" value="{{ old('event_date') }}"
                            class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
                 </div>
-                  <div>
+
+                <!-- Updated Category Dropdown -->
+                <div>
                     <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Category</label>
-                    <input type="text" name="category" value="{{ old('category') }}"
-                           class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
+                    <select name="category"
+                            class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Concert" {{ old('category') == 'Concert' ? 'selected' : '' }}>Concert</option>
+                        <option value="Art" {{ old('category') == 'Exhibition' ? 'selected' : '' }}>Exhibition</option>
+                        <option value="Food & Drink" {{ old('category') == 'Food & Drink' ? 'selected' : '' }}>Food & Drink</option>
+                        <option value="Technology" {{ old('category') == 'Technology' ? 'selected' : '' }}>Technology</option>
+                        <option value="Sports" {{ old('category') == 'Sports' ? 'selected' : '' }}>Sports</option>
+                        <option value="Wellness" {{ old('category') == 'Workshop' ? 'selected' : '' }}>Workshop</option>
+                    </select>
                 </div>
 
                 <div>
@@ -99,13 +109,16 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
             @foreach($events as $event)
                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full">
-                    <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}"
-                        class="h-40 w-full object-cover">
+                    <div class="w-full h-64 overflow-hidden rounded-t-2xl">
+                        <img src="{{ asset('uploads/' . $event->image) }}" 
+                            alt="{{ $event->event_name }}" 
+                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                    </div>
 
                     <div class="p-5 flex flex-col gap-2">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
                         <p class="text-gray-700 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Category: {{ $event->category}}</p>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Category: {{ $event->category }}</p>
                         <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Location: {{ $event->venue }}</p>
                         <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: Rs {{ number_format($event->price, 2) }}</p>
                         <p class="text-gray-700 dark:text-gray-200 text-sm">Seats: {{ $event->available_seats }}</p>

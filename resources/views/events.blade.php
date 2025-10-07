@@ -52,7 +52,7 @@
     </a>
     <a href="{{ route('events', ['category' => 'Art']) }}"
        class="block w-full text-sm mb-2 {{ $activeCategory == 'Art' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
-      Art
+      Exhibition
     </a>
     <a href="{{ route('events', ['category' => 'Food and Drink']) }}"
        class="block w-full text-sm mb-2 {{ $activeCategory == 'Food and Drink' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
@@ -68,7 +68,7 @@
     </a>
     <a href="{{ route('events', ['category' => 'Wellness']) }}"
        class="block w-full text-sm mb-2 {{ $activeCategory == 'Wellness' ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
-     Wellness
+     Workshop
     </a>
     <a href="{{ route('events') }}"
        class="block w-full text-sm mb-2 {{ !$activeCategory ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">
@@ -103,7 +103,7 @@
     <!-- Your existing Events Listing code -->
     <h2 class="text-3xl font-bold mb-4 mt-8 text-gray-900 dark:text-white">Upcoming Events</h2>
     @if($events->count() > 0)
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-8">
         @foreach($events as $event)
             <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full bg-white dark:bg-gray-700">
                 <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="h-60 w-full object-cover" />
