@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorEventController;
+use App\Http\Controllers\VendorVenueController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -196,6 +197,15 @@ Route::middleware(['auth', 'vendor'])->group(function () {
     Route::get('/vendor/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
     Route::post('/vendor/logout', [VendorController::class, 'logout'])->name('vendor.vendorLogout');
 
+});
+
+Route::prefix('vendor/venues')->middleware(['auth','vendor'])->group(function() {
+    Route::get('/', [VendorVenueController::class, 'index'])->name('vendor.venues.index');
+    Route::get('/create', [VendorVenueController::class, 'create'])->name('vendor.venues.create');
+    Route::post('/', [VendorVenueController::class, 'store'])->name('vendor.venues.store');
+    Route::get('/{venue}/edit', [VendorVenueController::class, 'edit'])->name('vendor.venues.edit');
+    Route::put('/{venue}', [VendorVenueController::class, 'update'])->name('vendor.venues.update');
+    Route::delete('/{venue}', [VendorVenueController::class, 'destroy'])->name('vendor.venues.destroy');
 });
 
 Route::prefix('vendor/events')->middleware(['auth','vendor'])->group(function() {

@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'Edit Event')
-@php $noNavbar = true; @endphp
-
+@php 
+    $noNavbar = true; 
+    $noFooter = true; 
+@endphp
 @include('vendor.sidebar')
 
 @section('content')
@@ -26,8 +28,9 @@
             <!-- Event Date -->
             <div>
                 <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Event Date</label>
-                <input type="date" name="event_date" value="{{ old('event_date', $event->event_date) }}"
-                       class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
+                <input type="date" name="event_date" 
+                    value="{{ old('event_date', $event->event_date ? $event->event_date->format('Y-m-d') : '') }}"
+                    class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
             </div>
 
             <!-- Venue / Location -->

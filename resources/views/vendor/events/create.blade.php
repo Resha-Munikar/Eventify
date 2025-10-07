@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'Add Event')
-@php $noNavbar = true; @endphp
-
+@php 
+    $noNavbar = true; 
+    $noFooter = true; 
+@endphp
 @include('vendor.sidebar')
 
 @section('content')

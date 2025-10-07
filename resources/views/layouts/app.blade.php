@@ -110,7 +110,8 @@
 
         @yield('content')
     </main>
-    @if(!isset($showFooter) || $showFooter)
+    @if (!isset($noFooter) || !$noFooter)
+    
       <!-- Footer -->
     <footer class="bg-gray-700 dark:bg-gray-800 text-white py-16 px-4">
       <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8 text-left">
