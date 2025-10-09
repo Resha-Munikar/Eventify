@@ -128,7 +128,7 @@
     </div>
     @else
     <div class="text-center mt-20">
-        <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found. Start by adding a new event!</p>
+        <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found.</p>
     </div>
     @endif
   </div>

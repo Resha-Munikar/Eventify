@@ -117,7 +117,7 @@
 
                     <div class="p-5 flex flex-col gap-2">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
-                        <p class="text-gray-700 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
+                        <p class="text-gray-900 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
                         <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Category: {{ $event->category }}</p>
                         <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Location: {{ $event->venue }}</p>
                         <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: Rs {{ number_format($event->price, 2) }}</p>
