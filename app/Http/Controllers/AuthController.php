@@ -59,7 +59,7 @@ class AuthController extends Controller
             return redirect()->route('vendor.dashboard'); // automatically goes to their own dashboard
             }
 
-            return redirect()->route('chirps.index');
+            return redirect()->route('welcome');
         } else {
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',

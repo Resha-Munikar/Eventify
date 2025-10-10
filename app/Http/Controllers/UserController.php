@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 use App\Models\User;
 
@@ -53,6 +55,68 @@ class UserController extends Controller
 
         return redirect()->route('chirps.user')
                         ->with('success', 'User deleted successfully.');
+    }
+
+    // Show profile page
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('profile', compact('user'));
+    }
+
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+
+        // Validate inputs
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            // Delete old photo if exists
+            if ($user->profile_photo && file_exists(public_path('uploads/profile_photos/' . $user->profile_photo))) {
+                unlink(public_path('uploads/profile_photos/' . $user->profile_photo));
+            }
+
+            $file = $request->file('profile_photo');
+            $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profile_photos'), $filename);
+            $user->profile_photo = $filename;
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        return redirect()->route('profile')->with('success', 'Profile updated successfully!');
+    }
+
+
+    // Show bookings
+    public function bookings() {
+        $user = Auth::user();
+        $eventBookings = Booking::where('user_id', $user->id)->with('event')->get();
+        $venueBookings = VenueBooking::where('user_id', $user->id)->with('venue')->get();
+
+        return view('profile-bookings', compact('eventBookings', 'venueBookings'));
+    }
+
+    public function deletePhoto()
+    {
+        $user = Auth::user();
+
+        if ($user->profile_photo && file_exists(public_path('uploads/profile_photos/' . $user->profile_photo))) {
+            unlink(public_path('uploads/profile_photos/' . $user->profile_photo));
+        }
+
+        $user->profile_photo = null;
+        $user->save();
+
+        return redirect()->route('profile')->with('success', 'Profile photo deleted successfully!');
     }
 
 }

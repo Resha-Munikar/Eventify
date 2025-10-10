@@ -118,4 +118,25 @@ class ChirpController extends Controller
         // Redirect back with success message
         return redirect()->route('contact')->with('success', 'Message successful !');
     }
+
+    public function book(Request $request, $eventId)
+    {
+        $request->validate([
+            'tickets' => 'required|integer|min:1',
+        ]);
+
+        $event = Event::findOrFail($eventId); // Make sure you have Event model
+
+        if ($request->tickets > $event->available_seats) {
+            return back()->with('error', 'Not enough seats available.');
+        }
+
+        $event->available_seats -= $request->tickets;
+        $event->save();
+
+        // Optionally, save booking to a separate Booking table
+
+        return back()->with('success', 'Booking confirmed!');
+    }
+
 }

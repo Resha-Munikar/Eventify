@@ -98,38 +98,75 @@
     </div>
   </div>
 
-  <!-- Events Listing -->
-  <div class="flex-1">
-    <!-- Your existing Events Listing code -->
+  <!-- Events Listing with Alpine.js Modal -->
+  <div x-data="{ openBookingId: null }" class="flex-1">
     <h2 class="text-3xl font-bold mb-4 mt-8 text-gray-900 dark:text-white">Upcoming Events</h2>
+
     @if($events->count() > 0)
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-8">
         @foreach($events as $event)
-            <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full bg-white dark:bg-gray-700">
-                <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="h-60 w-full object-cover" />
+          <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full bg-white dark:bg-gray-700">
+              <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="h-60 w-full object-cover" />
 
-                <div class="p-5 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
-                    <h3 class="text-lg font-bold truncate">{{ $event->event_name }}</h3>
-                    <p class="text-sm truncate">{{ $event->venue }}</p>
-                    <p class="text-sm line-clamp-2">{{ $event->description }}</p>
-                    <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
-                    <p class="text-sm">Seats: {{ $event->available_seats }}</p>
-                    <p class="text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
+              <div class="p-5 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
+                  <h3 class="text-lg font-bold truncate">{{ $event->event_name }}</h3>
+                  <p class="text-sm truncate">{{ $event->venue }}</p>
+                  <p class="text-sm line-clamp-2">{{ $event->description }}</p>
+                  <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
+                  <p class="text-sm">Seats: {{ $event->available_seats }}</p>
+                  <p class="text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
 
-                    <div class="flex justify-center mt-4">
-                        <a href="{{ route('login') }}"
-                           class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2 px-4 rounded-lg transition">
-                            Book Now
-                        </a>
-                    </div>
-                </div>
-            </div>
+                  <div class="flex justify-center mt-4">
+                  @guest
+                      <a href="{{ route('login') }}"
+                        class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2 px-4 rounded-lg transition">
+                          Book Now
+                      </a>
+                  @endguest
+
+                  @auth
+                      <button @click="openBookingId = {{ $event->id }}"
+                              class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2 px-4 rounded-lg transition">
+                          Book Now
+                      </button>
+
+                      <!-- Booking Modal -->
+                      <div x-show="openBookingId === {{ $event->id }}" 
+                           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                          <div @click.away="openBookingId = null" class="bg-white dark:bg-gray-800 rounded-xl p-6 w-96 shadow-xl">
+                              <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Book Event: {{ $event->event_name }}</h2>
+                              
+                              <form action="{{ route('events.book', $event->id) }}" method="POST">
+                                  @csrf
+                                  <div class="mb-4">
+                                      <label class="block text-gray-700 dark:text-gray-200 mb-1">Number of Tickets</label>
+                                      <input type="number" name="tickets" min="1" max="{{ $event->available_seats }}" 
+                                            class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-900 dark:text-gray-200">
+                                  </div>
+
+                                  <div class="flex justify-end gap-2">
+                                      <button type="button" @click="openBookingId = null" 
+                                              class="px-4 py-2 rounded bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600 transition">
+                                          Cancel
+                                      </button>
+                                      <button type="submit" 
+                                              class="px-4 py-2 rounded bg-[#8D85EC] hover:bg-[#7b76e4] text-white transition">
+                                          Confirm
+                                      </button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  @endauth
+                  </div>
+              </div>
+          </div>
         @endforeach
-    </div>
+      </div>
     @else
-    <div class="text-center mt-20">
-        <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found.</p>
-    </div>
+      <div class="text-center mt-20">
+          <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found.</p>
+      </div>
     @endif
   </div>
 </div>

@@ -179,6 +179,8 @@ Route::middleware(['auth'])->group(function (){
     Route::put('/chirps/{id}', [ChirpController::class, 'update'])->name('chirps.update');
 
     Route::delete('/chirps/{id}', [ChirpController::class, 'destroy'])->name('chirps.destroy');
+    Route::post('/events/{event}/book', [ChirpController::class, 'book'])->name('events.book');
+
 });
 
 
@@ -190,6 +192,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/users/{id}', [UserController::class, 'adminDestroy'])->name('users.adminDestroy');
     Route::get('/admin/users', [UserController::class, 'adminView'])->name('chirps.user');
     Route::post('/admin/logout', [AuthController::class, 'logout'])->name('chirps.adminLogout');
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile/bookings', [UserController::class, 'bookings'])->name('profile.bookings');
 
 });
 
@@ -215,6 +220,14 @@ Route::prefix('vendor/events')->middleware(['auth','vendor'])->group(function() 
     Route::get('/{event}/edit', [VendorEventController::class, 'edit'])->name('vendor.events.edit');
     Route::put('/{event}', [VendorEventController::class, 'update'])->name('vendor.events.update');
     Route::delete('/{event}', [VendorEventController::class, 'destroy'])->name('vendor.events.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::delete('/profile/photo', [UserController::class, 'deletePhoto'])->name('profile.photo.delete');
+
 });
 
 

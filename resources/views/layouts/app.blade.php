@@ -57,33 +57,70 @@
                 </a>
             </nav>
 
+            <!-- Navbar Right Section -->
+            <div class="flex items-center space-x-4 relative">
+                @guest
+                    <!-- When user is NOT logged in -->
+                    <a href="{{ route('login') }}" class="bg-white dark:bg-gray-700 text-[#8D85EC] dark:text-white font-semibold px-5 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"> Login </a> 
+                    <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white dark:bg-gray-700 font-semibold px-5 py-2 rounded-full hover:bg-[#6f69d9] transition"> Sign Up </a>
+                @endguest
 
+                @auth
+                <div x-data="{ open: false }" class="relative">
+                    <!-- Profile button -->
+                    <button @click="open = !open" class="flex items-center focus:outline-none">
+                        <img src="{{ Auth::user()->profile_image ?? asset('uploads/avatar.jpg') }}"
+                            alt="Profile"
+                            class="w-8 h-8 rounded-full border-2 border-purple-500 hover:border-purple-700 transition">
+                    </button>
 
-            <!-- Buttons -->
-            <div class="hidden md:flex items-center space-x-4">
-            <a href="{{ route('login') }}" 
-                class="bg-white dark:bg-gray-700 text-[#8D85EC] dark:text-white font-semibold 
-                px-5 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition">
-                Login
-                </a>
+                    <!-- Dropdown -->
+                    <div x-show="open" @click.away="open = false" 
+                        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl py-2 z-50 transition duration-200"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 transform scale-95"
+                        x-transition:enter-end="opacity-100 transform scale-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 transform scale-100"
+                        x-transition:leave-end="opacity-0 transform scale-95">
 
-                <a href="{{ route('register') }}" 
-                class="bg-[#7b76e4] text-white dark:bg-gray-700 font-semibold 
-                px-5 py-2 rounded-full hover:bg-[#6f69d9] transition">
-                Sign Up
-                </a>
+                        <!-- Profile link -->
+                        <a href="{{ route('profile') }}"
+                          class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-purple-700 rounded-lg transition">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm-6 8a6 6 0 1112 0H4z"/>
+                            </svg>
+                            Profile
+                        </a>
 
-               <!-- Theme toggle button -->
-            <button id="theme-toggle" class="p-2 rounded-full bg-white dark:bg-gray-700 focus:outline-none" aria-label="Toggle theme">
-                <!-- Moon icon -->
-                <svg id="icon-moon" class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-                </svg>
-                <!-- Sun icon -->
-                <svg id="icon-sun" class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
-                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1z"/>
-                </svg>
-            </button>
+                        <!-- Logout button -->
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                            @csrf
+                        </form>
+
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="flex items-center w-full px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-700 rounded-lg transition">
+                            <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 10a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm9-4a1 1 0 00-1-1H4a1 1 0 100 2h7a1 1 0 001-1zm0 8a1 1 0 00-1-1H4a1 1 0 100 2h7a1 1 0 001-1z"/>
+                            </svg>
+                            Logout
+                        </a>
+
+                    </div>
+                </div>
+                @endauth
+
+                <!-- Theme toggle button -->
+                <button id="theme-toggle" class="p-2 rounded-full bg-white dark:bg-gray-700 focus:outline-none" aria-label="Toggle theme">
+                    <!-- Moon icon -->
+                    <svg id="icon-moon" class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                    <!-- Sun icon -->
+                    <svg id="icon-sun" class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1z"/>
+                    </svg>
+                </button>
             </div>
         </div>
         </header>
