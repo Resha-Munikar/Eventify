@@ -82,16 +82,33 @@ class ChirpController extends Controller
         return view('about');
     }
     
-    public function events(Request $request){
+//     public function events(Request $request){
+//     // Fetch the query parameter 'category' from URL
+//     $category = $request->query('category');
+
+//     // If category filter is present, filter events
+//     if ($category && $category != '') {
+//         $events = Event::where('category', $category)->get();
+//     } else {
+//         $events = Event::all();
+//     }
+
+//     return view('events', compact('events', 'category'));
+// }
+public function events(Request $request){
     // Fetch the query parameter 'category' from URL
     $category = $request->query('category');
 
-    // If category filter is present, filter events
+    // Start building the query
+    $query = Event::query();
+
+    // Filter by category if provided
     if ($category && $category != '') {
-        $events = Event::where('category', $category)->get();
-    } else {
-        $events = Event::all();
+        $query->where('category', $category);
     }
+
+    // Order by latest date first
+    $events = $query->orderBy('event_date', 'asc')->get();
 
     return view('events', compact('events', 'category'));
 }
