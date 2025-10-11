@@ -28,7 +28,7 @@
 
             <!-- My Venues -->
             <li>
-                <a href="#" 
+                <a href="{{ route('vendor.venues.index') }}" 
                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
                           hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
                     <svg class="w-5 h-5 text-[#8d85ec] transition duration-75" fill="currentColor" viewBox="0 0 24 24">
