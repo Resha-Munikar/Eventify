@@ -82,18 +82,61 @@ class ChirpController extends Controller
         return view('about');
     }
     
-    public function events(Request $request){
-    // Fetch the query parameter 'category' from URL
-    $category = $request->query('category');
+//     public function events(Request $request){
+//     // Fetch the query parameter 'category' from URL
+//     $category = $request->query('category');
 
-    // If category filter is present, filter events
+//     // If category filter is present, filter events
+//     if ($category && $category != '') {
+//         $events = Event::where('category', $category)->get();
+//     } else {
+//         $events = Event::all();
+//     }
+
+//     return view('events', compact('events', 'category'));
+// }
+public function events(Request $request){
+    // Fetch query parameters
+    $category = $request->query('category');
+    $venue = $request->query('venue');
+    $startDate = $request->query('start_date');
+    $endDate = $request->query('end_date');
+    $minPrice = $request->query('min_price');
+    $maxPrice = $request->query('max_price');
+
+    // Start building the query
+    $query = Event::query();
+
+    // Filter by category if provided
     if ($category && $category != '') {
-        $events = Event::where('category', $category)->get();
-    } else {
-        $events = Event::all();
+        $query->where('category', $category);
     }
 
-    return view('events', compact('events', 'category'));
+    // Filter by venue if provided
+    if ($venue && $venue != '') {
+        $query->where('venue', $venue);
+    }
+
+    // Filter by date range if provided
+    if ($startDate && $startDate != '') {
+        $query->where('event_date', '>=', $startDate);
+    }
+    if ($endDate && $endDate != '') {
+        $query->where('event_date', '<=', $endDate);
+    }
+
+    // Filter by price range if provided
+    if ($minPrice && $minPrice != '') {
+        $query->where('price', '>=', $minPrice);
+    }
+    if ($maxPrice && $maxPrice != '') {
+        $query->where('price', '<=', $maxPrice);
+    }
+
+    // Order by event_date descending (latest first)
+    $events = $query->orderBy('event_date', 'desc')->get();
+
+    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
 }
       // Show contact form
     public function contact()
