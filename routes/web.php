@@ -8,6 +8,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorEventController;
 use App\Http\Controllers\VendorVenueController;
+use App\Http\Controllers\PaymentController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -229,6 +231,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile/photo', [UserController::class, 'deletePhoto'])->name('profile.photo.delete');
 
 });
+
+// Initiate payment
+Route::post('/esewa/payment', [PaymentController::class, 'initiate'])->name('esewa.payment');
+
+// Handle payment verification
+Route::post('/esewa/verify', [PaymentController::class, 'verify'])->name('esewa.verify');
+
+Route::post('/esewa/success', [PaymentController::class, 'success'])->name('esewa.success');
+Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
+Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
+Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
+
+
 
 
 
