@@ -6,6 +6,7 @@ use App\Models\Chirp;
 use App\Models\Contact;
 use App\Models\User;
 use App\Models\Event;
+use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -161,4 +162,63 @@ public function events(Request $request){
         // Redirect back with success message
         return redirect()->route('contact')->with('success', 'Message successful !');
     }
+
+    public function book(Request $request, $eventId)
+    {
+        $request->validate([
+            'tickets' => 'required|integer|min:1',
+        ]);
+
+        $event = Event::findOrFail($eventId); // Make sure you have Event model
+
+        if ($request->tickets > $event->available_seats) {
+            return back()->with('error', 'Not enough seats available.');
+        }
+
+        $event->available_seats -= $request->tickets;
+        $event->save();
+
+        // Optionally, save booking to a separate Booking table
+
+        return back()->with('success', 'Booking confirmed!');
+    }
+    public function venues(Request $request)
+{
+    // Fetch query parameters
+    $venueName = $request->query('venue_name');
+    $startDate = $request->query('start_date');
+    $endDate = $request->query('end_date');
+    $minPrice = $request->query('min_price');
+    $maxPrice = $request->query('max_price');
+
+    // Start building the query
+    $query = Venue::query();
+
+    // Filter by venue name if provided
+    if ($venueName && $venueName != '') {
+        $query->where('venue_name', 'like', '%' . $venueName . '%');
+    }
+
+    // Filter by date range if applicable
+    if ($startDate && $startDate != '') {
+        $query->where('available_from', '>=', $startDate);
+    }
+    if ($endDate && $endDate != '') {
+        $query->where('available_to', '<=', $endDate);
+    }
+
+    // Filter by price if applicable
+    if ($minPrice && $minPrice != '') {
+        $query->where('base_price', '>=', $minPrice);
+    }
+    if ($maxPrice && $maxPrice != '') {
+        $query->where('base_price', '<=', $maxPrice);
+    }
+
+    // Add ordering by 'available_from' in descending order
+   $venues = $query->orderBy('available_from', 'desc')->get();
+
+    return view('venues', compact('venues','venueName', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
+}
+
 }
