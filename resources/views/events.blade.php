@@ -132,8 +132,8 @@
 
               <div class="p-5 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
                   <h3 class="text-lg font-bold truncate">{{ $event->event_name }}</h3>
-                  <p class="text-sm truncate">{{ $event->venue }}</p>
-                  <p class="text-sm line-clamp-2">{{ $event->description }}</p>
+                  <p class="text-gray-900 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
+                  <p class="text-sm truncate">Location: {{ $event->venue }}</p>
                   <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
                   <p class="text-sm">Seats: {{ $event->available_seats }}</p>
                   <p class="text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
