@@ -37,6 +37,8 @@ class VendorVenueController extends Controller
             'has_catering' => 'nullable',
             'catering_price_per_person' => 'nullable|numeric',
             'catering_menu' => 'nullable|string',
+            'available_from' => 'required|date',
+            'available_to' => 'required|date|after_or_equal:available_from',
         ]);
 
         $imageName = time() . '.' . $request->image->extension();
@@ -47,6 +49,8 @@ class VendorVenueController extends Controller
         $venue->location = $request->location;
         $venue->description = $request->description;
         $venue->price_type = $request->price_type;
+        $venue->available_from = $request->input('available_from');
+        $venue->available_to = $request->input('available_to');
 
         if ($request->price_type === 'package') {
             $venue->package_price = $request->package_price ?? 0;
@@ -92,6 +96,8 @@ class VendorVenueController extends Controller
             'has_catering' => 'nullable',
             'catering_price_per_person' => 'nullable|numeric',
             'catering_menu' => 'nullable|string',
+             'available_from' => 'required|date',
+            'available_to' => 'required|date|after_or_equal:available_from',
         ]);
 
         if ($request->hasFile('image')) {
@@ -107,6 +113,8 @@ class VendorVenueController extends Controller
         $venue->location = $request->location;
         $venue->description = $request->description;
         $venue->price_type = $request->price_type;
+        $venue->available_from = $request->input('available_from');
+        $venue->available_to = $request->input('available_to');
 
         if ($request->price_type === 'package') {
             $venue->package_price = $request->package_price ?? 0;
