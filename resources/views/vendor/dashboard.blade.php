@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('title', 'Vendor Dashboard')
-@php
-    $noNavbar = true;
-    $showFooter = false;
+@php 
+    $noNavbar = true; 
+    $noFooter = true; 
 @endphp
 @include('vendor.sidebar')
 @section('content')

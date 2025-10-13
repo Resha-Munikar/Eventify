@@ -27,6 +27,12 @@
         <div class="w-full p-5 flex flex-col justify-center">
             <h2 class="text-3xl font-bold text-[#8d85ec] mb-4 text-center">Login</h2>
             <form action="{{ route('login') }}" method="POST" class="space-y-2">
+                @if(session('status'))
+                    <div class="bg-green-100 text-green-800 p-3 rounded mb-4 text-center">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
                 @csrf
                 <!-- Email -->
                 <div class="mb-3">
