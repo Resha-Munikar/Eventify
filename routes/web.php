@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorEventController;
+use App\Http\Controllers\VendorVenueController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorForgotPasswordController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -178,6 +183,8 @@ Route::middleware(['auth'])->group(function (){
     Route::put('/chirps/{id}', [ChirpController::class, 'update'])->name('chirps.update');
 
     Route::delete('/chirps/{id}', [ChirpController::class, 'destroy'])->name('chirps.destroy');
+    Route::post('/events/{event}/book', [ChirpController::class, 'book'])->name('events.book');
+
 });
 
 
@@ -189,6 +196,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/users/{id}', [UserController::class, 'adminDestroy'])->name('users.adminDestroy');
     Route::get('/admin/users', [UserController::class, 'adminView'])->name('chirps.user');
     Route::post('/admin/logout', [AuthController::class, 'logout'])->name('chirps.adminLogout');
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile/bookings', [UserController::class, 'bookings'])->name('profile.bookings');
 
 });
 
@@ -196,6 +206,15 @@ Route::middleware(['auth', 'vendor'])->group(function () {
     Route::get('/vendor/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
     Route::post('/vendor/logout', [VendorController::class, 'logout'])->name('vendor.vendorLogout');
 
+});
+
+Route::prefix('vendor/venues')->middleware(['auth','vendor'])->group(function() {
+    Route::get('/', [VendorVenueController::class, 'index'])->name('vendor.venues.index');
+    Route::get('/create', [VendorVenueController::class, 'create'])->name('vendor.venues.create');
+    Route::post('/', [VendorVenueController::class, 'store'])->name('vendor.venues.store');
+    Route::get('/{venue}/edit', [VendorVenueController::class, 'edit'])->name('vendor.venues.edit');
+    Route::put('/{venue}', [VendorVenueController::class, 'update'])->name('vendor.venues.update');
+    Route::delete('/{venue}', [VendorVenueController::class, 'destroy'])->name('vendor.venues.destroy');
 });
 
 Route::prefix('vendor/events')->middleware(['auth','vendor'])->group(function() {
@@ -206,6 +225,51 @@ Route::prefix('vendor/events')->middleware(['auth','vendor'])->group(function() 
     Route::put('/{event}', [VendorEventController::class, 'update'])->name('vendor.events.update');
     Route::delete('/{event}', [VendorEventController::class, 'destroy'])->name('vendor.events.destroy');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::delete('/profile/photo', [UserController::class, 'deletePhoto'])->name('profile.photo.delete');
+
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/vendor/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/vendor/profile/update', [ProfileController::class, 'update'])->name('profile.updates');
+
+});
+
+// Forgot Password
+Route::get('/vendor/forgot-password', [VendorForgotPasswordController::class, 'showForgotForm'])
+    ->name('vendor.password.request');
+Route::post('/vendor/forgot-password', [VendorForgotPasswordController::class, 'sendResetLink'])
+    ->name('vendor.password.email');
+
+// Reset Password
+Route::get('/vendor/reset-password/{token}', [VendorForgotPasswordController::class, 'showResetForm'])
+    ->name('vendor.password.reset');
+Route::post('/vendor/reset-password', [VendorForgotPasswordController::class, 'reset'])
+    ->name('vendor.password.update');
+// Change password while logged in
+Route::post('/vendor/change-password', [ProfileController::class, 'updatePassword'])
+    ->name('vendor.password.change');
+Route::post('/vendor/password/check', [ProfileController::class, 'checkCurrentPassword'])
+     ->name('vendor.password.check');
+
+
+
+// Route::post('/esewa/payment', [PaymentController::class, 'initiate'])->name('esewa.payment');
+
+// Route::post('/esewa/verify', [PaymentController::class, 'verify'])->name('esewa.verify');
+
+// Route::post('/esewa/success', [PaymentController::class, 'success'])->name('esewa.success');
+// Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
+// Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
+// Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
+
+
 
 
 
