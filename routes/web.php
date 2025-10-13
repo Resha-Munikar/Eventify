@@ -9,6 +9,8 @@ use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorEventController;
 use App\Http\Controllers\VendorVenueController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VendorForgotPasswordController;
 
 
 Route::get('/', function () {
@@ -232,16 +234,40 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-// Initiate payment
-Route::post('/esewa/payment', [PaymentController::class, 'initiate'])->name('esewa.payment');
 
-// Handle payment verification
-Route::post('/esewa/verify', [PaymentController::class, 'verify'])->name('esewa.verify');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/vendor/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/vendor/profile/update', [ProfileController::class, 'update'])->name('profile.updates');
 
-Route::post('/esewa/success', [PaymentController::class, 'success'])->name('esewa.success');
-Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
-Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
-Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
+});
+
+// Forgot Password
+Route::get('/vendor/forgot-password', [VendorForgotPasswordController::class, 'showForgotForm'])
+    ->name('vendor.password.request');
+Route::post('/vendor/forgot-password', [VendorForgotPasswordController::class, 'sendResetLink'])
+    ->name('vendor.password.email');
+
+// Reset Password
+Route::get('/vendor/reset-password/{token}', [VendorForgotPasswordController::class, 'showResetForm'])
+    ->name('vendor.password.reset');
+Route::post('/vendor/reset-password', [VendorForgotPasswordController::class, 'reset'])
+    ->name('vendor.password.update');
+// Change password while logged in
+Route::post('/vendor/change-password', [ProfileController::class, 'updatePassword'])
+    ->name('vendor.password.change');
+Route::post('/vendor/password/check', [ProfileController::class, 'checkCurrentPassword'])
+     ->name('vendor.password.check');
+
+
+
+// Route::post('/esewa/payment', [PaymentController::class, 'initiate'])->name('esewa.payment');
+
+// Route::post('/esewa/verify', [PaymentController::class, 'verify'])->name('esewa.verify');
+
+// Route::post('/esewa/success', [PaymentController::class, 'success'])->name('esewa.success');
+// Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
+// Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
+// Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
 
 
 
