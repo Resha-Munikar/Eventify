@@ -23,6 +23,8 @@ class Venue extends Model
         'catering_menu',
         'vendor_id',
         'user_id',
+        'available_from',
+        'available_to',
     ];
 
     public function vendor()
