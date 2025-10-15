@@ -69,79 +69,36 @@
     <!-- Scrollable container -->
     <div id="upcoming-container" class="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-4">
       
-      <!-- Card 1 -->
-      <div class="flex-shrink-0 w-[calc(33.333%-16px)] bg-[#E6E4FF] dark:bg-gray-700 border border-[#8d85ec] rounded-lg shadow-sm snap-start transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:border-[#746fd6]">
-        <a href="#">
-          <img class="rounded-t-lg w-full h-48 object-cover" src="uploads/upevent.jpg" alt="Gala Dinner" />
-        </a>
-        <div class="p-5">
-          <a href="#"><h5 class="mb-2 text-2xl font-bold tracking-tight text-black dark:text-white">Gala Dinner</h5></a>
-          <p class="mb-3 font-normal text-black dark:text-gray-300">An elegant evening with fine dining, entertainment, and networking opportunities.</p>
-          <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#8d85ec] rounded-lg hover:bg-[#746fd6] transition">
-            Read more
-            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-            </svg>
-          </a>
+      @if(isset($upcomingEvents) && $upcomingEvents->count() > 0)
+        @foreach($upcomingEvents as $event)
+          <!-- Dynamic Card -->
+          <div class="flex-shrink-0 w-[calc(33.333%-16px)] bg-[#E6E4FF] dark:bg-gray-700 border border-[#8d85ec] rounded-lg shadow-sm snap-start transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:border-[#746fd6]">
+            <a href="{{ route('events', $event->id) }}">
+              <img class="rounded-t-lg w-full h-48 object-cover" src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" />
+            </a>
+            <div class="p-5">
+              <a href="{{ route('events', $event->id) }}">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-black dark:text-white">{{ $event->event_name }}</h5>
+              </a>
+              <p class="mb-3 font-normal text-black dark:text-gray-300">{{ $event->description }}</p>
+              <p class="text-gray-600 dark:text-gray-300 text-sm">Category: {{ $event->category }}</p>
+              <p class="text-gray-600 dark:text-gray-300 text-sm">Location: {{ $event->venue }}</p>
+              <p class="text-gray-700 dark:text-gray-200 text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
+            </div>
+          </div>
+        @endforeach
+      @else
+        <div class="flex-shrink-0 w-[calc(33.333%-16px)] flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-800 rounded-lg">
+          <p class="text-gray-700 dark:text-gray-200">No upcoming events found.</p>
         </div>
-      </div>
-      
-      <!-- Card 2 -->
-      <div class="flex-shrink-0 w-[calc(33.333%-16px)] bg-[#E6E4FF] dark:bg-gray-700 border border-[#8d85ec] rounded-lg shadow-sm snap-start transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:border-[#746fd6]">
-        <a href="#">
-          <img class="rounded-t-lg w-full h-48 object-cover" src="uploads/upevent2.jpg" alt="Wedding" />
-        </a>
-        <div class="p-5">
-          <a href="#"><h5 class="mb-2 text-2xl font-bold tracking-tight text-black dark:text-white">Wedding</h5></a>
-          <p class="mb-3 font-normal text-black dark:text-gray-300">Join us in celebrating love and togetherness at a beautiful wedding ceremony and reception.</p>
-          <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#8d85ec] rounded-lg hover:bg-[#746fd6] transition">
-            Read more
-            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-      
-      <!-- Card 3 -->
-      <div class="flex-shrink-0 w-[calc(33.333%-16px)] bg-[#E6E4FF] dark:bg-gray-700 border border-[#8d85ec] rounded-lg shadow-sm snap-start transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:border-[#746fd6]">
-        <a href="#">
-          <img class="rounded-t-lg w-full h-48 object-cover" src="uploads/birthday.jpg" alt="Birthday Party" />
-        </a>
-        <div class="p-5">
-          <a href="#"><h5 class="mb-2 text-2xl font-bold tracking-tight text-black dark:text-white">Birthday Party</h5></a>
-          <p class="mb-3 font-normal text-black dark:text-gray-300">Celebrate a special birthday with fun, laughter, and unforgettable memories with friends and family.</p>
-          <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#8d85ec] rounded-lg hover:bg-[#746fd6] transition">
-            Read more
-            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-      
-      <!-- Card 4 -->
-      <div class="flex-shrink-0 w-[calc(33.333%-16px)] bg-[#E6E4FF] dark:bg-gray-700 border border-[#8d85ec] rounded-lg shadow-sm snap-start transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:border-[#746fd6]">
-        <a href="#">
-          <img class="rounded-t-lg w-full h-48 object-cover" src="uploads/concert.jpg" alt="Concert" />
-        </a>
-        <div class="p-5">
-          <a href="#"><h5 class="mb-2 text-2xl font-bold tracking-tight text-black dark:text-white">Concert</h5></a>
-          <p class="mb-3 font-normal text-black dark:text-gray-300">Experience live music like never before with amazing performances from top artists.</p>
-          <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#8d85ec] rounded-lg hover:bg-[#746fd6] transition">
-            Read more
-            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-            </svg>
-          </a>
-        </div>
-      </div>
+      @endif
+
     </div>
-        <!-- Navigation arrows -->
-        <button id="up-left-arrow" class="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-8 bg-white dark:bg-gray-700 text-[#8d85ec] rounded-full shadow-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition">&lt;</button>
-        <button id="up-right-arrow" class="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-8 bg-white dark:bg-gray-700 text-[#8d85ec] rounded-full shadow-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition">&gt;</button>
-      </div>
-    </section>
+    <!-- Navigation arrows -->
+    <button id="up-left-arrow" class="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-8 bg-white dark:bg-gray-700 text-[#8d85ec] rounded-full shadow-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition">&lt;</button>
+    <button id="up-right-arrow" class="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-8 bg-white dark:bg-gray-700 text-[#8d85ec] rounded-full shadow-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition">&gt;</button>
+  </div>
+</section>
 <!-- Scrollbar hide CSS -->
 <style>
 .scrollbar-hide::-webkit-scrollbar { display: none; }
