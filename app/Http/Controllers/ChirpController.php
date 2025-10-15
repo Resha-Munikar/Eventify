@@ -220,5 +220,8 @@ public function events(Request $request){
 
     return view('venues', compact('venues','venueName', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
 }
+public function getUpcomingEvents($limit = 5){
+    return Event::orderBy('event_date', 'asc')->take($limit)->get();
+}
 
 }
