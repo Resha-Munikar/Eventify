@@ -126,7 +126,7 @@
                     class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC]">
                 <p id="forgot-feedback" class="text-xs mt-1"></p>
                 <div class="flex justify-end gap-2">
-                    <button type="button" @click="openForgot = false" class="px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg">Cancel</button>
+                    <button type="button" @click="openForgot = false" class="px-4 py-2 bg-[#8D85EC] hover:bg-[#7b76e4] text-white rounded-lg">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-[#8D85EC] hover:bg-[#7b76e4] text-white rounded-lg">Send Link</button>
                 </div>
             </form>
