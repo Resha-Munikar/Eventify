@@ -84,6 +84,12 @@
               <p class="text-gray-600 dark:text-gray-300 text-sm">Category: {{ $event->category }}</p>
               <p class="text-gray-600 dark:text-gray-300 text-sm">Location: {{ $event->venue }}</p>
               <p class="text-gray-700 dark:text-gray-200 text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
+               <a href="events" class="inline-flex items-center px-3 py-2 mt-2 text-sm font-medium text-center text-white bg-[#8d85ec] rounded-lg hover:bg-[#746fd6] transition">
+            Read more
+            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+          </a>
             </div>
           </div>
         @endforeach
@@ -92,7 +98,7 @@
           <p class="text-gray-700 dark:text-gray-200">No upcoming events found.</p>
         </div>
       @endif
-
+         
     </div>
     <!-- Navigation arrows -->
     <button id="up-left-arrow" class="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-8 bg-white dark:bg-gray-700 text-[#8d85ec] rounded-full shadow-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition">&lt;</button>
