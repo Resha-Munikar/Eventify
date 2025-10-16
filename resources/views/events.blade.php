@@ -126,7 +126,9 @@
     @endif
 
     <!-- Booking Modal -->
-    <div x-show="openBookingId !== null" x-transition.opacity class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+   <div x-show="openBookingId !== null" x-transition.opacity 
+     class="fixed inset-0 flex items-center justify-center z-50" 
+     style="background-color: rgba(0, 0, 0, 0.6) !important;">
       <div @click.away="openBookingId = null; selectedEvent = null" class="bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 w-96 shadow-2xl transform transition-all duration-300 scale-100 border border-gray-200 dark:border-gray-700">
         <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-700 pb-2 text-center">
           Book Event: <span x-text="selectedEvent ? selectedEvent.event_name : ''"></span>
