@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->integer('tickets')->default(1);
             $table->decimal('amount', 10, 2);
-            $table->string('payment_method');
+            $table->string('payment_id')->unique();
             $table->timestamps();
         });
 

@@ -8,9 +8,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorEventController;
 use App\Http\Controllers\VendorVenueController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorForgotPasswordController;
+use App\Http\Controllers\KhaltiController;
 
 
 Route::get('/', function () {
@@ -258,16 +258,16 @@ Route::post('/vendor/change-password', [ProfileController::class, 'updatePasswor
 Route::post('/vendor/password/check', [ProfileController::class, 'checkCurrentPassword'])
      ->name('vendor.password.check');
 
-
-
-// Route::post('/esewa/payment', [PaymentController::class, 'initiate'])->name('esewa.payment');
-
+// Route::post('/esewa/initiate', [PaymentController::class, 'initiate'])->name('esewa.initiate');
 // Route::post('/esewa/verify', [PaymentController::class, 'verify'])->name('esewa.verify');
+
 
 // Route::post('/esewa/success', [PaymentController::class, 'success'])->name('esewa.success');
 // Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
-// Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
+// // Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
 // Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
+
+Route::post('/khalti/verify', [KhaltiController::class, 'verify'])->name('khalti.verify');
 
 
 

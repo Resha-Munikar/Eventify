@@ -48,25 +48,7 @@
                     <textarea name="description" rows="3"
                         class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>{{ old('description') }}</textarea>
                 </div>
-                  <!-- Available From -->
-    <label for="available_from" class="block mb-1 font-medium text-gray-700">Available From:</label>
-    <input
-        type="date"
-        id="available_from"
-        name="available_from"
-        class="w-full mb-4 p-2 border border-gray-300 rounded"
-        value="{{ old('available_from') }}"
-    >
-
-    <!-- Available To -->
-    <label for="available_to" class="block mb-1 font-medium text-gray-700">Available To:</label>
-    <input
-        type="date"
-        id="available_to"
-        name="available_to"
-        class="w-full mb-4 p-2 border border-gray-300 rounded"
-        value="{{ old('available_to') }}"
-    >
+    
                  <div>
                     <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Pricing Type</label>
                     <select name="price_type" id="priceType" 
@@ -160,10 +142,6 @@
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $venue->venue_name }}</h3>
                     <p class="text-gray-900 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $venue->description }}</p>
                     <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Location: {{ $venue->location }}</p>
-                        <!-- Display Available Dates -->
-    <p class="text-sm text-gray-600 dark:text-gray-300">
-        Available: {{ \Carbon\Carbon::parse($venue->available_from)->format('d M Y') }} - {{ \Carbon\Carbon::parse($venue->available_to)->format('d M Y') }}
-    </p>
     
 
                     @if($venue->price_type === 'package')
