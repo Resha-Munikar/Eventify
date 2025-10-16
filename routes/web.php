@@ -273,9 +273,15 @@ Route::post('/vendor/password/check', [ProfileController::class, 'checkCurrentPa
 // Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
 // // Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
 // Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
+Route::get('/payment', function () {
+    return view('payment'); // corresponds to resources/views/payment.blade.php
+});
+Route::post('/khalti/verify', [KhaltiController::class, 'verify'])
+    ->name('khalti.verify')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
 
-Route::post('/khalti/verify', [KhaltiController::class, 'verify'])->name('khalti.verify');
-
+Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/venues/book', [VenueBookingController::class, 'store'])->name('venues.book');
