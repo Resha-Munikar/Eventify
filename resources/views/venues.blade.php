@@ -104,10 +104,7 @@
             <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $venue->venue_name }}</h3>
             <p class="text-gray-900 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $venue->description }}</p>
             <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Location: {{ $venue->location }}</p>
-              <!-- Display Available Dates -->
-    <p class="text-sm text-gray-600 dark:text-gray-300">
-        Available: {{ \Carbon\Carbon::parse($venue->available_from)->format('d M Y') }} - {{ \Carbon\Carbon::parse($venue->available_to)->format('d M Y') }}
-    </p>
+     
             @if($venue->price_type === 'package')
               <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-700 dark:text-gray-200">

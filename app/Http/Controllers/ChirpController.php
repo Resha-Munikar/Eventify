@@ -215,7 +215,7 @@ public function events(Request $request){
         $query->where('base_price', '<=', $maxPrice);
     }
 
-    // Add ordering by 'available_from' in descending order
+//     // Add ordering by 'available_from' in descending order
    $venues = $query->orderBy('created_at', 'desc')->get();
 
     return view('venues', compact('venues','venueName', 'startDate', 'endDate', 'minPrice', 'maxPrice'));

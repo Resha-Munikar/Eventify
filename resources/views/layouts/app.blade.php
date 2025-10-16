@@ -16,6 +16,7 @@
         /* Hide scrollbar for all modern browsers */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        [x-cloak] { display: none !important; }
     </style>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -249,7 +250,8 @@
                 updateIcons();
             });
         });
-    </script>
+</script>
+
 </body>
 </html>
 
