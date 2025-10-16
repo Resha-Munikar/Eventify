@@ -11,6 +11,7 @@ use App\Http\Controllers\VendorVenueController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorForgotPasswordController;
 use App\Http\Controllers\KhaltiController;
+use App\Http\Controllers\VenueBookingController;
 
 
 Route::get('/', function () {
@@ -275,6 +276,11 @@ Route::post('/vendor/password/check', [ProfileController::class, 'checkCurrentPa
 
 Route::post('/khalti/verify', [KhaltiController::class, 'verify'])->name('khalti.verify');
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/venues/book', [VenueBookingController::class, 'store'])->name('venues.book');
+    Route::get('/venues/{venue}/booked-dates', [VenueBookingController::class, 'getBookedDates']);
+});
 
 
 
