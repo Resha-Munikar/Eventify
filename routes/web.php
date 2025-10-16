@@ -155,7 +155,7 @@ Route::fallback(function () {
 //     Route::put('/posts/{id}', 'update')->name('posts.update');
 //     Route::delete('/posts/{id}', 'destroy')->name('posts.destroy');
 // });
-
+Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register.form');
@@ -166,6 +166,12 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/welcome',[ChirpController::class, 'welcome'])->name('welcome');
+// Route for homepage to show upcoming events
+Route::get('/', function () {
+    $controller = new \App\Http\Controllers\ChirpController();
+    $upcomingEvents = $controller->getUpcomingEvents(10); // pass limit as needed
+    return view('welcome', compact('upcomingEvents'));
+});
 Route::get('/about',[ChirpController::class, 'about'])->name('about');
 Route::get('/contact',[ChirpController::class, 'contact'])->name('contact');
 Route::post('/contact', [ChirpController::class, 'storeContact'])->name('contact.store');
