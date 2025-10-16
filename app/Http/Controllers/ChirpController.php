@@ -182,46 +182,71 @@ public function events(Request $request){
 
         return back()->with('success', 'Booking confirmed!');
     }
-    public function venues(Request $request)
+//     public function venues(Request $request)
+// {
+//     // Fetch query parameters
+//     $venueName = $request->query('venue_name');
+//     $startDate = $request->query('start_date');
+//     $endDate = $request->query('end_date');
+//     $minPrice = $request->query('min_price');
+//     $maxPrice = $request->query('max_price');
+
+//     // Start building the query
+//     $query = Venue::query();
+
+//     // Filter by venue name if provided
+//     if ($venueName && $venueName != '') {
+//         $query->where('venue_name', 'like', '%' . $venueName . '%');
+//     }
+
+//     // Filter by date range if applicable
+//     if ($startDate && $startDate != '') {
+//         $query->where('available_from', '>=', $startDate);
+//     }
+//     if ($endDate && $endDate != '') {
+//         $query->where('available_to', '<=', $endDate);
+//     }
+
+//     // Filter by price if applicable
+//     if ($minPrice && $minPrice != '') {
+//         $query->where('base_price', '>=', $minPrice);
+//     }
+//     if ($maxPrice && $maxPrice != '') {
+//         $query->where('base_price', '<=', $maxPrice);
+//     }
+
+// //     // Add ordering by 'available_from' in descending order
+//    $venues = $query->orderBy('created_at', 'desc')->get();
+
+//     return view('venues', compact('venues','venueName', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
+// }
+public function getUpcomingEvents($limit = 5){
+    return Event::orderBy('event_date', 'asc')->take($limit)->get();
+}
+public function venues(Request $request)
 {
     // Fetch query parameters
-    $venueName = $request->query('venue_name');
-    $startDate = $request->query('start_date');
-    $endDate = $request->query('end_date');
-    $minPrice = $request->query('min_price');
-    $maxPrice = $request->query('max_price');
+    $searchTerm = $request->query('query'); // Assuming 'query' is the search input name
 
     // Start building the query
     $query = Venue::query();
 
-    // Filter by venue name if provided
-    if ($venueName && $venueName != '') {
-        $query->where('venue_name', 'like', '%' . $venueName . '%');
+    // If a search term is provided, filter by venue_name
+    if ($searchTerm && $searchTerm != '') {
+        $query->where('venue_name', 'like', '%' . $searchTerm . '%');
     }
 
-    // Filter by date range if applicable
-    if ($startDate && $startDate != '') {
-        $query->where('available_from', '>=', $startDate);
-    }
-    if ($endDate && $endDate != '') {
-        $query->where('available_to', '<=', $endDate);
+    // You can keep other filters if needed, or remove them for simplicity
+
+    // Fetch venues ordered by creation date
+    $venues = $query->orderBy('created_at', 'desc')->get();
+
+    // Check if the request expects JSON (AJAX) or a full page load
+    if ($request->ajax() || $request->wantsJson()) {
+        return response()->json($venues);
     }
 
-    // Filter by price if applicable
-    if ($minPrice && $minPrice != '') {
-        $query->where('base_price', '>=', $minPrice);
-    }
-    if ($maxPrice && $maxPrice != '') {
-        $query->where('base_price', '<=', $maxPrice);
-    }
-
-//     // Add ordering by 'available_from' in descending order
-   $venues = $query->orderBy('created_at', 'desc')->get();
-
-    return view('venues', compact('venues','venueName', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
+    // Otherwise, return the view with venues
+    return view('venues', compact('venues'));
 }
-public function getUpcomingEvents($limit = 5){
-    return Event::orderBy('event_date', 'asc')->take($limit)->get();
-}
-
 }
