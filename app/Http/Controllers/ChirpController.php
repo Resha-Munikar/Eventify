@@ -184,28 +184,23 @@ public function events(Request $request){
     }
     public function venues(Request $request)
 {
-    // Fetch query parameters
-    $searchTerm = $request->query('query'); // Assuming 'query' is the search input name
+    $searchTerm = $request->query('query'); // Search term
 
-    // Start building the query
     $query = Venue::query();
 
-    // If a search term is provided, filter by venue_name
     if ($searchTerm && $searchTerm != '') {
         $query->where('venue_name', 'like', '%' . $searchTerm . '%');
     }
 
-    // You can keep other filters if needed, or remove them for simplicity
-
-    // Fetch venues ordered by creation date
     $venues = $query->orderBy('created_at', 'desc')->get();
 
-    // Check if the request expects JSON (AJAX) or a full page load
+    // Debug: Check how many venues
+    \Log::info('Fetched Venues Count: ' . $venues->count());
+
     if ($request->ajax() || $request->wantsJson()) {
         return response()->json($venues);
     }
 
-    // Otherwise, return the view with venues
     return view('venues', compact('venues'));
 }
 public function getUpcomingEvents($limit = 5){
