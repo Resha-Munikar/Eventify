@@ -52,8 +52,7 @@
   @if($venues->count() > 0)
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       @foreach($venues as $venue)
-        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full h-120">
-          
+<div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full h-140 overflow-hidden">          
           <!-- Image Section -->
           <div class="w-full h-60 overflow-hidden">
             <img src="{{ asset('uploads/' . $venue->image) }}" 
@@ -123,7 +122,7 @@
   @endif
 
   <!-- Booking Modal -->
-    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"  style="background-color: rgba(0, 0, 0, 0.6) !important;">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 relative">
       <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white" id="venueNameTitle">Book Venue</h2>
       <form id="bookingForm" action="{{ route('venues.book') }}" method="POST">

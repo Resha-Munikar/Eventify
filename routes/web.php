@@ -291,7 +291,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/venues/{venue}/booked-dates', [VenueBookingController::class, 'getBookedDates']);
     Route::post('/venues/{id}/mark-as-paid', [VenueBookingController::class, 'markAsPaid'])->name('venue_bookings.markAsPaid');
 });
-
+Route::get('/vendor/reports/booking/pdf', [VenueBookingController::class, 'downloadBookingPdf'])->name('vendor.reports.booking.pdf');
 
 
 
