@@ -121,35 +121,21 @@ class UserController extends Controller
     }
     
 
-public function showReport(Request $request)
+
+public function showReport()
 {
-    // Start a query on VenueBooking with related user and venue info
-    $query = VenueBooking::with(['user', 'venue']);
+    // Get the current logged-in user
+    $user = Auth::user();
 
-    // Filter bookings for the logged-in user
-    $query->where('user_id', Auth::user()->id);
+    // Fetch venue bookings related to the logged-in user with related user and venue info
+    $venueBookings = VenueBooking::with(['user', 'venue'])
+        ->where('user_id', $user->id)
+        ->get();
 
-    // Apply date filters if provided
-    if ($request->filled('from_date')) {
-        $query->where('event_date', '>=', $request->input('from_date'));
-    }
-    if ($request->filled('to_date')) {
-        $query->where('event_date', '<=', $request->input('to_date'));
-    }
-
-    // Apply status filter if provided
-    if ($request->filled('status') && $request->input('status') !== '') {
-        $query->where('status', $request->input('status'));
-    }
-
-    // Fetch filtered bookings
-    $venueBookings = $query->get();
-
-    // Pass the bookings to the view along with the request data for preserving filter inputs
-    return view('userbooking', [
-        'venueBookings' => $venueBookings,
-        'request' => $request
-    ]);
+    // Pass the bookings to the view
+    return view('userbooking', compact('venueBookings'));
 }
+
+ 
 
 }
