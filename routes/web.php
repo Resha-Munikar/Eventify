@@ -206,6 +206,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::get('/profile/bookings', [UserController::class, 'bookings'])->name('profile.bookings');
+    Route::get('/admin/reports/booking', [VenueBookingController::class, 'showReport'])->name('admin.reports.adminbooking');
 
 });
 

@@ -144,4 +144,31 @@ public function downloadBookingPdf(Request $request)
     // Return PDF download
     return $pdf->download('booking_report.pdf');
 }
+public function showReport(Request $request)
+{
+    // Start a query on VenueBooking with related user and venue info
+    $query = VenueBooking::with(['user', 'venue']);
+
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->where('event_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->where('event_date', '<=', $request->input('to_date'));
+    }
+
+    // Apply status filter if provided
+    if ($request->filled('status') && $request->input('status') !== '') {
+        $query->where('status', $request->input('status'));
+    }
+
+    // Fetch filtered bookings
+    $venueBookings = $query->get();
+
+    // Pass the bookings to the view along with the request data for preserving filter inputs
+    return view('admin.reports.adminbooking', [
+        'venueBookings' => $venueBookings,
+        'request' => $request
+    ]);
+} 
 }
