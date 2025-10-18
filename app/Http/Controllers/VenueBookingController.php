@@ -67,4 +67,28 @@ public function getBookedDates(Venue $venue)
 
     return redirect()->back()->with('success', 'Venue booked successfully! A confirmation email has been sent.');
 }
+public function markAsPaid($id)
+{
+    $booking = VenueBooking::findOrFail($id);
+    $booking->status = 'paid';
+    $booking->save();
+
+    return redirect()->back()->with('success', 'Booking marked as paid.');
+}
+ public function showVenues()
+{
+    // Fetch all venue bookings with related user and venue info
+    $venueBookings = VenueBooking::with(['user', 'venue'])->get();
+
+    // Pass the bookings to the view
+    return view('chirps.venuebooking', compact('venueBookings'));
+}
+public function bookingReport()
+{
+    // Fetch all venue bookings with related user and venue info
+    $venueBookings = VenueBooking::with(['user', 'venue'])->get();
+
+    // Pass the bookings to the view
+    return view('vendor.reports.booking', compact('venueBookings'));
+}
 }

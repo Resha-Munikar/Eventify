@@ -123,7 +123,7 @@
   @endif
 
   <!-- Booking Modal -->
-  <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 relative">
       <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white" id="venueNameTitle">Book Venue</h2>
       <form id="bookingForm" action="{{ route('venues.book') }}" method="POST">

@@ -75,7 +75,7 @@
 
             <!-- My Venue Booking -->
             <li>
-                <a href="#" 
+                <a href="{{ route('chirps.venuebooking') }}" 
                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
                           hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
                     <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <a href="{{ route('vendor.reports.booking') }}" class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                             Booking Report
                         </a>
                     </li>
