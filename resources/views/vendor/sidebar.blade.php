@@ -53,7 +53,7 @@
             <li>
                 <a href="{{ route('vendor.venues.index') }}" 
                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                          hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
+                          {{ request()->routeIs('vendor.venues.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                     <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M3 21V3h18v18H3zm2-16v14h14V5H5zm2 2h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
                     </svg>
@@ -65,7 +65,7 @@
             <li>
                 <a href="#" 
                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                          hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
+                          {{ request()->routeIs('vendor.eventbooking.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
                     <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M9 2h6v2h3a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h3V2zm2 2v2h2V4h-2zm-2 6h8v2H9v-2zm0 4h8v2H9v-2z"/>
                     </svg>
@@ -77,7 +77,7 @@
             <li>
                 <a href="{{ route('chirps.venuebooking') }}" 
                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                          hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
+                          {{ request()->routeIs('chirps.venuebooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
                     <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M2 7v10h20V7H2zm2 2h16v6H4v-6z"/>
                     </svg>
@@ -85,36 +85,37 @@
                 </a>
             </li>
 
-        <!-- Reports Dropdown -->
-<li x-data="{ open: @json(request()->routeIs('vendor.reports.*')) }" class="relative">
-    <button @click="open = !open"
-            class="flex items-center w-full p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                   {{ request()->routeIs('vendor.reports.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
-        <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
-        </svg>
-        <span class="ms-3 flex-1 text-left whitespace-nowrap">Reports</span>
-        <svg class="w-4 h-4 ms-auto transition-transform duration-200" :class="{'rotate-90': open}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-    </button>
+            <!-- Reports Dropdown -->
+            <li class="relative">
+                <button @click="open = !open"
+                        class="flex items-center w-full p-2 rounded-lg group transition-colors duration-200 ease-in-out text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 {{ request()->routeIs('vendor.reports.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : '' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+                    </svg>
+                    <span class="ms-3 flex-1 text-left whitespace-nowrap">Reports</span>
+                    <svg class="w-4 h-4 ms-auto transition-transform duration-200" :class="{'rotate-90': open}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
 
-    <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
-        <li>
-            <a href="#" class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                Event Report
-            </a>
-        </li>
-        <!-- Wrap in <li> -->
-        <li>
-            <a href="{{ route('vendor.reports.booking') }}" 
-   class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700
-   {{ request()->routeIs('vendor.reports.booking') ? 'bg-gray-200 font-semibold' : '' }}">
-    Venue Booking Report
-</a>
-        </li>
-    </ul>
-</li>
+                <!-- submenu -->
+                <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
+                    <li>
+                        <a href="#"
+                           class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 {{ request()->routeIs('vendor.reports.event') ? 'bg-gray-200 font-semibold' : '' }}">
+                            Event Report
+                        </a>
+                    </li>
+                    <li>
+                       <a href="{{ route('vendor.reports.booking') }}"
+       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+              {{ request()->routeIs('vendor.reports.booking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+        Venue Booking Report
+    </a>
+                    </li>
+                </ul>
+            </li>  
+
             <!-- Logout -->
             <li>
                 <form action="{{ route('vendor.vendorLogout') }}" method="POST">
