@@ -180,6 +180,7 @@ Route::get('/events',[ChirpController::class, 'events'])->name('events');
 // Route::resource('events', ChirpController::class);
 // Route::get('/events/{id}', [ChirpController::class, 'show'])->name('events.show');
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
+Route::get('/userbookings', [UserController::class, 'showReport'])->name('userbooking');
 
 
 Route::middleware(['auth'])->group(function (){

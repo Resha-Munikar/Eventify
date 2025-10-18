@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\VenueBooking;
 
 use App\Models\User;
 
@@ -118,5 +119,37 @@ class UserController extends Controller
 
         return redirect()->route('profile')->with('success', 'Profile photo deleted successfully!');
     }
+    
+
+public function showReport(Request $request)
+{
+    // Start a query on VenueBooking with related user and venue info
+    $query = VenueBooking::with(['user', 'venue']);
+
+    // Filter bookings for the logged-in user
+    $query->where('user_id', Auth::user()->id);
+
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->where('event_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->where('event_date', '<=', $request->input('to_date'));
+    }
+
+    // Apply status filter if provided
+    if ($request->filled('status') && $request->input('status') !== '') {
+        $query->where('status', $request->input('status'));
+    }
+
+    // Fetch filtered bookings
+    $venueBookings = $query->get();
+
+    // Pass the bookings to the view along with the request data for preserving filter inputs
+    return view('userbooking', [
+        'venueBookings' => $venueBookings,
+        'request' => $request
+    ]);
+}
 
 }
