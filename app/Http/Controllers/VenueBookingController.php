@@ -78,16 +78,26 @@ public function markAsPaid($id)
 }
  public function showVenues()
 {
-    // Fetch all venue bookings with related user and venue info
-    $venueBookings = VenueBooking::with(['user', 'venue'])->get();
+    // Fetch all venue bookings related to logged-in vendor
+    $vendorId = auth()->user()->id;
+
+    $venueBookings = VenueBooking::with(['user', 'venue'])
+        ->whereHas('venue', function ($query) use ($vendorId) {
+            $query->where('vendor_id', $vendorId);
+        })
+        ->get();
 
     // Pass the bookings to the view
     return view('chirps.venuebooking', compact('venueBookings'));
 }
 public function bookingReport(Request $request)
 {
-    // Start a query on VenueBooking with related user and venue info
-    $query = VenueBooking::with(['user', 'venue']);
+    $vendorId = auth()->user()->id;
+    // Start query with the vendor filter
+    $query = VenueBooking::with(['user', 'venue'])
+        ->whereHas('venue', function ($q) use ($vendorId) {
+            $q->where('vendor_id', $vendorId);
+        });
 
     // Apply date filters if provided
     if ($request->filled('from_date')) {
