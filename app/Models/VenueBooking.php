@@ -15,6 +15,7 @@ class VenueBooking extends Model
         'event_date',
         'guests',
         'total_price',
+        'status',
 
     ];
 

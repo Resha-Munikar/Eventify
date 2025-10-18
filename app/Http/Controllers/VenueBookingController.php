@@ -8,6 +8,7 @@ use Illuminate\Database\QueryException;
 use Carbon\Carbon;
 use App\Mail\BookingConfirmation;
 use Illuminate\Support\Facades\Mail;   
+use PDF;
 
 class VenueBookingController extends Controller
 {
@@ -66,5 +67,81 @@ public function getBookedDates(Venue $venue)
     }
 
     return redirect()->back()->with('success', 'Venue booked successfully! A confirmation email has been sent.');
+}
+public function markAsPaid($id)
+{
+    $booking = VenueBooking::findOrFail($id);
+    $booking->status = 'paid';
+    $booking->save();
+
+    return redirect()->back()->with('success', 'Booking marked as paid.');
+}
+ public function showVenues()
+{
+    // Fetch all venue bookings related to logged-in vendor
+    $vendorId = auth()->user()->id;
+
+    $venueBookings = VenueBooking::with(['user', 'venue'])
+        ->whereHas('venue', function ($query) use ($vendorId) {
+            $query->where('vendor_id', $vendorId);
+        })
+        ->get();
+
+    // Pass the bookings to the view
+    return view('chirps.venuebooking', compact('venueBookings'));
+}
+public function bookingReport(Request $request)
+{
+    $vendorId = auth()->user()->id;
+    // Start query with the vendor filter
+    $query = VenueBooking::with(['user', 'venue'])
+        ->whereHas('venue', function ($q) use ($vendorId) {
+            $q->where('vendor_id', $vendorId);
+        });
+
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->where('event_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->where('event_date', '<=', $request->input('to_date'));
+    }
+
+    // Apply status filter if provided
+    if ($request->filled('status') && $request->input('status') !== '') {
+        $query->where('status', $request->input('status'));
+    }
+
+    // Fetch filtered bookings
+    $venueBookings = $query->get();
+
+    // Pass the bookings to the view along with the request data for preserving filter inputs
+    return view('vendor.reports.booking', [
+        'venueBookings' => $venueBookings,
+        'request' => $request
+    ]);
+}
+public function downloadBookingPdf(Request $request)
+{
+    // Fetch the same data with filters applied
+    $query = VenueBooking::with(['user', 'venue']);
+
+    if ($request->filled('from_date')) {
+        $query->where('event_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->where('event_date', '<=', $request->input('to_date'));
+    }
+    if ($request->filled('status') && $request->input('status') !== '') {
+        $query->where('status', $request->input('status'));
+    }
+
+    $venueBookings = $query->get();
+
+    // Generate PDF using a Blade view
+    $pdf = PDF::loadView('vendor.reports.booking_pdf', compact('venueBookings'));
+
+    // Return PDF download
+    return $pdf->download('booking_report.pdf');
 }
 }

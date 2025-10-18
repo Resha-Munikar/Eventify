@@ -212,6 +212,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware(['auth', 'vendor'])->group(function () {
     Route::get('/vendor/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
     Route::post('/vendor/logout', [VendorController::class, 'logout'])->name('vendor.vendorLogout');
+    Route::get('vendor/venuebooking', [VenueBookingController::class, 'showVenues'])->name('chirps.venuebooking');
+    Route::get('/vendor/reports/booking', [VenueBookingController::class, 'bookingReport'])->name('vendor.reports.booking');
+
 
 });
 
@@ -286,7 +289,9 @@ Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->
 Route::middleware(['auth'])->group(function () {
     Route::post('/venues/book', [VenueBookingController::class, 'store'])->name('venues.book');
     Route::get('/venues/{venue}/booked-dates', [VenueBookingController::class, 'getBookedDates']);
+    Route::post('/venues/{id}/mark-as-paid', [VenueBookingController::class, 'markAsPaid'])->name('venue_bookings.markAsPaid');
 });
+Route::get('/vendor/reports/booking/pdf', [VenueBookingController::class, 'downloadBookingPdf'])->name('vendor.reports.booking.pdf');
 
 
 
