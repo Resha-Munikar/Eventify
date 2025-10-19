@@ -96,7 +96,7 @@
                   <p class="text-sm truncate">{{ $event->venue }}</p>
                   <p class="text-sm line-clamp-2">{{ $event->description }}</p>
                   <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
-                  <p class="text-sm">Seats: {{ $event->available_seats }}</p>
+                  <p class="text-sm">Seats: <span id="seats-{{ $event->id }}">{{ $event->available_seats }}</span></p>
                   <p class="text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
 
                   <div class="flex justify-center mt-4">
@@ -109,7 +109,7 @@
 
                   @auth
                   <button 
-                    @click="openBookingId = {{ $event->id }}; selectedEvent = {{ $event->toJson() }}"
+                    @click="openBookingId = {{ $event->id }}; selectedEvent = {{ $event->toJson() }}; showPaymentForm = false"
                     class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2 px-4 rounded-lg transition">
                     Book Now
                   </button>
@@ -125,105 +125,172 @@
       </div>
     @endif
 
-    <!-- Booking Modal -->
-   <div x-show="openBookingId !== null" x-transition.opacity 
+<!-- Booking Modal -->
+<div x-show="openBookingId !== null" x-transition.opacity 
      class="fixed inset-0 flex items-center justify-center z-50" 
-     style="background-color: rgba(0, 0, 0, 0.6) !important;">
-      <div @click.away="openBookingId = null; selectedEvent = null" class="bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 w-96 shadow-2xl transform transition-all duration-300 scale-100 border border-gray-200 dark:border-gray-700">
-        <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-700 pb-2 text-center">
-          Book Event: <span x-text="selectedEvent ? selectedEvent.event_name : ''"></span>
-        </h2>
+     style="background-color: rgba(0, 0, 0, 0.6);">
+  <div @click.away="openBookingId = null; selectedEvent = null" class="bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 w-96 shadow-2xl transform transition-all duration-300 scale-100 border border-gray-200 dark:border-gray-700">
+    
+    <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-700 pb-2 text-center">
+      Book Event: <span x-text="selectedEvent ? selectedEvent.event_name : ''"></span>
+    </h2>
 
-        <div x-data="{ tickets: 1 }">
-          <label class="block text-gray-700 dark:text-gray-200 mb-1 font-semibold">Number of Tickets</label>
-          <input type="number" x-model="tickets" min="1" :max="selectedEvent ? selectedEvent.available_seats : 1"
-            class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC] focus:outline-none mb-4">
+    <div x-data="{ tickets: 1, showKhaltiPopup: false, phone: '', mpin: '', paymentError: '' }">
 
-          <div class="bg-white dark:bg-gray-800 p-3 rounded-lg mb-4 text-center shadow-sm border border-gray-200 dark:border-gray-700">
-            <p class="text-gray-800 dark:text-gray-200 text-sm">
-              Price per ticket: $<span x-text="selectedEvent ? Number(selectedEvent.price).toFixed(2) : '0.00'"></span>
-            </p>
-            <p class="text-gray-800 dark:text-gray-200 text-sm mt-1">
-              Total amount: 
-              <span class="font-bold text-[#8D85EC] text-lg">$<span x-text="selectedEvent ? (tickets * Number(selectedEvent.price)).toFixed(2) : '0.00'"></span></span>
-            </p>
+      <!-- Tickets and Price Info -->
+      <label class="block text-gray-700 dark:text-gray-200 mb-1 font-semibold">Number of Tickets</label>
+      <input type="number" x-model="tickets" min="1" :max="selectedEvent ? selectedEvent.available_seats : 1"
+        class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC] focus:outline-none mb-4">
+
+      <div class="bg-white dark:bg-gray-800 p-3 rounded-lg mb-4 shadow-sm border border-gray-200 dark:border-gray-700">
+        <p class="text-gray-800 dark:text-gray-200 text-sm">
+          Price per ticket: $<span x-text="selectedEvent ? Number(selectedEvent.price).toFixed(2) : '0.00'"></span>
+        </p>
+        <p class="text-gray-800 dark:text-gray-200 text-sm mt-1">
+          Total amount: 
+          <span class="font-bold text-[#8D85EC] text-lg">$<span x-text="selectedEvent ? (tickets * Number(selectedEvent.price)).toFixed(2) : '0.00'"></span></span>
+        </p>
+      </div>
+
+      <!-- Pay with Khalti Button -->
+      <div class="flex justify-end gap-2">
+        <button type="button" @click="openBookingId = null; selectedEvent = null" 
+          class="px-4 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600 transition">
+          Cancel
+        </button>
+
+        <button
+          @click="showKhaltiPopup = true"
+          class="px-4 py-2 rounded-lg text-white font-semibold transition transform hover:scale-105 active:scale-95"
+          style="background: linear-gradient(90deg, #8D85EC 0%, #A28DEC 100%); box-shadow: 0 4px 15px rgba(141, 133, 236, 0.4);">
+          Pay with Khalti
+        </button>
+      </div>
+
+      <!-- Simulated Khalti Popup -->
+      <div x-show="showKhaltiPopup" x-transition.opacity
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden flex flex-col md:flex-row">
+
+          <!-- Left Section: Payment Summary -->
+          <div class="w-full md:w-2/3 bg-[#FAF9FC] dark:bg-gray-800 p-6 relative flex flex-col gap-6">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Payment Details</h2>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">Complete your payment within <strong>30 minutes</strong></p>
+
+            <!-- User Info -->
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+              <p class="text-gray-800 dark:text-gray-200 font-semibold">Billed To:</p>
+              <p class="text-gray-900 dark:text-white">{{ Auth::user()->name }}</p>
+              <p class="text-gray-600 dark:text-gray-300">{{ Auth::user()->email }}</p>
+            </div>
+
+            <!-- Amount Summary -->
+            <div class="mt-4 bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-md">
+              <h3 class="font-semibold text-gray-900 dark:text-gray-200 mb-3">Amount Summary</h3>
+              <div class="flex justify-between mb-2 text-gray-700 dark:text-gray-300">
+                <span>Event Price</span>
+                <span>Rs <span x-text="selectedEvent ? (tickets * Number(selectedEvent.price)).toFixed(2) : '0.00'"></span></span>
+              </div>
+              <div class="flex justify-between mb-2 text-gray-700 dark:text-gray-300">
+                <span>Service Charge</span>
+                <span>Rs 5.65</span>
+              </div>
+              <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
+              <div class="flex justify-between font-bold text-gray-900 dark:text-white text-lg">
+                <span>Total Payable</span>
+                <span>Rs <span x-text="selectedEvent ? (tickets * Number(selectedEvent.price) + 5.65).toFixed(2) : '0.00'"></span></span>
+              </div>
+            </div>
+
+            <!-- Khalti Branding -->
+            <div class="absolute bottom-0 left-0 w-full bg-[#7B2CBF] text-white text-xs font-semibold py-2 text-center rounded-b-2xl">
+              PAYMENT POWERED BY <span class="ml-1 font-bold">KHALTI</span>
+            </div>
           </div>
 
-          <div class="flex justify-end gap-2">
-            <button type="button" @click="openBookingId = null; selectedEvent = null" 
-              class="px-4 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600 transition">
-              Cancel
+          <!-- Right Section: Khalti Wallet -->
+          <div class="w-full md:w-1/3 bg-white dark:bg-gray-900 p-6 flex flex-col justify-start gap-4 relative rounded-r-2xl shadow-inner">
+
+            <!-- Close Button -->
+            <button @click="showKhaltiPopup=false; paymentError='';" 
+                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              ✕
             </button>
 
-            <!-- Khalti Payment Button -->
-            <button 
-              class="px-4 py-2 rounded-lg bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold transition"
-              @click="payWithKhalti(selectedEvent, tickets)">
-              Pay with Khalti
-            </button>
+            <!-- Khalti Logo -->
+            <div class="flex items-center justify-center mb-4">
+              <img src="uploads/khalti.png" alt="Khalti Logo" class="h-8">
+            </div>
 
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white text-center">Pay via Khalti Wallet</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm text-center">Enter your Khalti ID and MPIN</p>
+
+            <!-- Khalti ID -->
+            <input type="text" x-model="phone" placeholder="Mobile Number"
+              class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#8D3DAF] focus:border-[#8D3DAF] outline-none text-gray-900 dark:text-gray-200">
+
+            <!-- MPIN -->
+            <input type="password" x-model="mpin" placeholder="Khalti Password/MPIN"
+              class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#8D3DAF] focus:border-[#8D3DAF] outline-none text-gray-900 dark:text-gray-200">
+            <p class="text-red-500 text-xs mt-1" x-text="paymentError"></p>
+
+            <!-- Submit Button -->
+            <button @click="
+                paymentError='';
+                let allowedPhones = ['9800000000','9800000001','9800000002','9800000003','9800000004','9800000005'];
+                if(allowedPhones.includes(phone) && mpin==='1234'){
+                    alert('✅ Payment Successful!');
+                    let eventToSave = {...selectedEvent};
+                    selectedEvent.available_seats -= tickets;
+                    showKhaltiPopup = false;
+                    openBookingId = null;
+                    selectedEvent = null;
+                    saveBooking(eventToSave, tickets);
+                } else { paymentError='❌ Invalid Khalti ID or MPIN'; }"
+              class="mt-3 w-full py-3 rounded-lg text-white font-semibold transition transform hover:scale-[1.02] active:scale-95 focus:outline-none"
+              style="background: linear-gradient(90deg,#8D3DAF 0%,#6E29B0 100%); box-shadow:0 2px 6px rgba(141,61,175,0.4);">
+              Submit
+            </button>
           </div>
+
         </div>
+      </div>
       </div>
     </div>
 
 </div>
 
-<!-- Khalti JS Integration -->
-<script src="https://khalti.com/static/khalti-checkout.js"></script>
 <script>
-  function payWithKhalti(selectedEvent, tickets) {
-    if (!selectedEvent) {
-        alert('Event not selected!');
-        return;
-    }
-
-    const totalAmount = tickets * Number(selectedEvent.price) * 100; // in paisa
-
-    let config = {
-        "publicKey": "{{ env('KHALTI_PUBLIC_KEY') }}",
-        "productIdentity": selectedEvent.id.toString(),
-        "productName": selectedEvent.event_name,
-        "productUrl": window.location.href,
-        "eventHandler": {
-            onSuccess (payload) {
-                fetch("{{ route('khalti.verify') }}", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                  },
-                  body: JSON.stringify({
-                    payload: payload,
-                    tickets: tickets
-                  })
-                }).then(res => res.json())
-                  .then(data => {
-                    if(data.success) {
-                      alert('Payment Successful!');
-                      window.location.reload();
-                    } else {
-                      alert('Payment verification failed.');
-                    }
-                  });
-            },
-            onError (err) {
-                console.log(err);
-                alert('Payment failed.');
-            },
-            onClose () {
-                console.log('widget is closing');
+function saveBooking(event, tickets) {
+    fetch("{{ route('khalti.saveBooking') }}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+      },
+      body: JSON.stringify({
+        event_id: event.id,
+        tickets: tickets,
+        total_amount: tickets * event.price
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            // Find the DOM element displaying seats for this event and update it
+            const seatEl = document.getElementById(`seats-${event.id}`);
+            if(seatEl){
+                let newSeats = event.available_seats - tickets;
+                seatEl.textContent = newSeats;
             }
-        },
-        "paymentPreference": ["KHALTI","EBANKING","MOBILEBANKING","CONNECT_IPS","SCT"],
-    };
-
-    let checkout = new KhaltiCheckout(config);
-    checkout.show({amount: totalAmount});
+        }
+    })
+    .catch(() => {
+      console.error("Booking not saved to server.");
+    });
 }
 
-
-    function toggleSection(id) {
+  function toggleSection(id) {
     const section = document.getElementById(id);
     const icon = document.getElementById('icon-' + id);
     if (section.classList.contains('hidden')) {

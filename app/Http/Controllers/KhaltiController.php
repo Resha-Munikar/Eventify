@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Booking;
 use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\TicketMail;
+use Illuminate\Support\Facades\Mail;
+
 
 class KhaltiController extends Controller
 {
@@ -65,18 +68,51 @@ class KhaltiController extends Controller
 
     // Payment verified, save booking
     $booking = Booking::create([
-        'user_id' => Auth::id(),
-        'event_id' => $event->id,
+        'user_id' => auth()->id(),
+        'event_id' => $request->event_id,
         'tickets' => $request->tickets,
-        'amount' => $amount / 100, // convert paisa to currency
-        'payment_status' => 'paid',
-        'payment_method' => 'Khalti',
+        'amount' => $request->amount,
+        'payment_id' => $verified_payment_id, // from Khalti API response
     ]);
 
     // Reduce available seats
     $event->available_seats -= $request->tickets;
     $event->save();
 
-    return response()->json(['success' => true, 'message' => 'Payment verified and booking successful']);
+// Send ticket email
+$user = auth()->user();
+Mail::to($user->email)->send(new TicketMail($user, $event, $request->tickets));
+
+return response()->json(['success' => true, 'message' => 'Payment verified, booking successful, and ticket emailed']);
 }
+public function saveBooking(Request $request)
+{
+    $request->validate([
+        'event_id' => 'required|exists:events,id',
+        'tickets' => 'required|integer|min:1',
+        'total_amount' => 'required|numeric|min:0',
+    ]);
+
+    $booking = new \App\Models\Booking();
+    $booking->user_id = auth()->id();
+    $booking->event_id = $request->event_id;
+    $booking->tickets = $request->tickets;
+    $booking->amount = $request->total_amount;
+    $booking->payment_id = 'manual'; // placeholder
+    $booking->save();
+
+    // Reduce available seats
+    $event = \App\Models\Event::find($request->event_id);
+    if ($event) {
+        $event->available_seats -= $request->tickets;
+        $event->save();
+    }
+
+    // Send ticket email
+    $user = auth()->user();
+    Mail::to($user->email)->send(new TicketMail($user, $event, $request->tickets));
+
+    return response()->json(['success' => true, 'message' => 'Booking saved successfully and ticket emailed']);
+}
+
 }

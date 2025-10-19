@@ -2,7 +2,6 @@
 
 @section('title', 'Venues')
 @php 
-$noNavbar = true;
 $noFooter = true; 
 @endphp
 
