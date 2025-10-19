@@ -76,8 +76,8 @@
             </div>
             <div>
                 <p><span class="highlight">Tickets:</span> {{ $tickets }}</p>
-                <p><span class="highlight">Price per ticket:</span> Rs{{ number_format($event->price, 2) }}</p>
-                <p><span class="highlight">Total:</span> ${{ number_format($event->price * $tickets, 2) }}</p>
+                <p><span class="highlight">Price per ticket:</span> Rs {{ number_format($event->price, 2) }}</p>
+                <p><span class="highlight">Total:</span> Rs {{ number_format($event->price * $tickets, 2) }}</p>
             </div>
         </div>
 
