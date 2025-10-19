@@ -123,7 +123,37 @@ public function bookingReport(Request $request)
 }
 public function downloadBookingPdf(Request $request)
 {
-    // Fetch the same data with filters applied
+    // Assuming you get the vendor ID from the authenticated user
+  
+    $vendorId = auth()->user()->id;
+
+    // Build the query with filters
+    $query = VenueBooking::with(['user', 'venue'])
+        ->whereHas('venue', function ($q) use ($vendorId) {
+            $q->where('vendor_id', $vendorId);
+        });
+    if ($request->filled('from_date')) {
+        $query->where('event_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->where('event_date', '<=', $request->input('to_date'));
+    }
+    if ($request->filled('status') && $request->input('status') !== '') {
+        $query->where('status', $request->input('status'));
+    }
+
+    // Fetch only vendor-specific bookings
+    $venueBookings = $query->get();
+
+    // Generate PDF from the vendor-specific bookings
+    $pdf = PDF::loadView('vendor.reports.booking_pdf', compact('venueBookings'));
+
+    // Return the PDF download
+    return $pdf->download('booking_report.pdf');
+}
+public function downloadAdminBookingPdf(Request $request)
+{
+    // Fetch the same data with filters applied, possibly with additional admin-specific filters
     $query = VenueBooking::with(['user', 'venue']);
 
     if ($request->filled('from_date')) {
@@ -136,13 +166,15 @@ public function downloadBookingPdf(Request $request)
         $query->where('status', $request->input('status'));
     }
 
+    // You might want to add admin-specific filters here if needed
+    // e.g., filtering only bookings for certain admin scope
+
     $venueBookings = $query->get();
 
-    // Generate PDF using a Blade view
-    $pdf = PDF::loadView('vendor.reports.booking_pdf', compact('venueBookings'));
+    // Generate PDF using a Blade view specific for admin
+    $pdf = PDF::loadView('admin.reports.booking_pdf', compact('VenueBookings'));
 
-    // Return PDF download
-    return $pdf->download('booking_report.pdf');
+    return $pdf->download('admin_booking_report.pdf');
 }
 public function showReport(Request $request)
 {
