@@ -238,7 +238,7 @@
             <button @click="
                 paymentError='';
                 let allowedPhones = ['9800000000','9800000001','9800000002','9800000003','9800000004','9800000005'];
-                if(allowedPhones.includes(phone) && mpin==='1234'){
+                if(allowedPhones.includes(phone) && mpin==='1111'){
                     alert('✅ Payment Successful!');
                     let eventToSave = {...selectedEvent};
                     selectedEvent.available_seats -= tickets;
