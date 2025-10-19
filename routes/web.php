@@ -181,6 +181,7 @@ Route::get('/events',[ChirpController::class, 'events'])->name('events');
 // Route::get('/events/{id}', [ChirpController::class, 'show'])->name('events.show');
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 Route::get('/userbooking', [UserController::class, 'showReport'])->name('userbooking');
+Route::get('/usereventbook', [UserController::class, 'showUserEvent'])->name('usereventbook');
 
 
 Route::middleware(['auth'])->group(function (){
@@ -208,14 +209,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::get('/profile/bookings', [UserController::class, 'bookings'])->name('profile.bookings');
     Route::get('/admin/reports/booking', [VenueBookingController::class, 'showReport'])->name('admin.reports.adminbooking');
+    Route::get('/admin/reports/admineventbooking', [UserController::class, 'showAllEvents'])->name('admin.reports.admineventbooking');
+
 
 });
 
 Route::middleware(['auth', 'vendor'])->group(function () {
     Route::get('/vendor/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
     Route::post('/vendor/logout', [VendorController::class, 'logout'])->name('vendor.vendorLogout');
-    Route::get('vendor/venuebooking', [VenueBookingController::class, 'showVenues'])->name('chirps.venuebooking');
+    Route::get('vendor/venuebooking', [VenueBookingController::class, 'showVenues'])->name('vendor.venuebooking');
+    Route::get('vendor/eventbooking', [VendorEventController::class, 'showEvents'])->name('vendor.eventbooking');
     Route::get('/vendor/reports/booking', [VenueBookingController::class, 'bookingReport'])->name('vendor.reports.booking');
+    Route::get('/vendor/reports/eventbooking', [VendorEventController::class, 'EventbookingReport'])->name('vendor.reports.eventbooking');
 
 
 });
@@ -291,7 +296,8 @@ Route::get('/admin/reports/adminbooking/pdf', [VenueBookingController::class, 'd
 Route::post('/khalti/save-booking', [App\Http\Controllers\KhaltiController::class, 'saveBooking'])->name('khalti.saveBooking');
 Route::delete('/venue-bookings/{id}/cancel', [VenueBookingController::class, 'cancel'])->name('venueBooking.cancel');
 
-// For admin reports
+Route::get('/vendor/reports/eventbooking/pdf', [VendorEventController::class, 'downloadPdf'])->name('vendor.reports.eventbooking.pdf');
+Route::get('/admin/reports/admineventbooking/pdf', [UserController::class, 'downloadAdminPdf'])->name('admin.reports.admineventbooking.pdf');
 
 
 

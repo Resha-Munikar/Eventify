@@ -33,7 +33,7 @@
     </style>
 </head>
 <body>
-    <h2>Booking Report</h2>
+    <h2> Venue Booking Report</h2>
       <!-- Table Container -->
         <div class="overflow-x-auto bg-white rounded-lg shadow-md p-4">
             <table class="w-full text-sm border border-black border-collapse">

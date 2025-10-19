@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
  use Illuminate\Support\Str;
-
+use PDF;
 class VendorEventController extends Controller
 {
     // Display all events for the logged-in vendor
@@ -133,4 +133,48 @@ $imagePath = $filename;
 
         return redirect()->route('vendor.events.index')->with('success', 'Event deleted successfully!');
     }
+    public function showEvents()
+{
+    // Fetch all event bookings related to logged-in vendor
+    $vendorId = auth()->user()->id;
+
+    $eventBookings = Booking::with(['user', 'event'])
+        ->whereHas('event', function ($query) use ($vendorId) {
+            $query->where('vendor_id', $vendorId);
+        })
+        ->get();
+
+    // Pass the bookings to the view
+    return view('vendor.eventbooking', compact('eventBookings'));
+}
+    public function downloadPdf()
+{
+     $vendorId = auth()->user()->id;
+
+    $eventBookings = Booking::with(['user', 'event'])
+        ->whereHas('event', function ($query) use ($vendorId) {
+            $query->where('vendor_id', $vendorId);
+        })
+        ->get();
+
+    // Generate PDF using a Blade view
+    $pdf = PDF::loadView('vendor.reports.eventbooking_pdf', compact('eventBookings'));
+
+    return $pdf->download('event_bookings.pdf');
+}
+
+    public function EventbookingReport()
+{
+    // Fetch all event bookings related to logged-in vendor
+    $vendorId = auth()->user()->id;
+
+    $eventBookings = Booking::with(['user', 'event'])
+        ->whereHas('event', function ($query) use ($vendorId) {
+            $query->where('vendor_id', $vendorId);
+        })
+        ->get();
+
+    // Pass the bookings to the view
+    return view('vendor.reports.eventbooking', compact('eventBookings'));
+}
 }
