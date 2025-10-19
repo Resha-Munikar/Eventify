@@ -17,7 +17,7 @@ $noFooter = true;
         <!-- Wrap filter and table in a single card container -->
         <div class="bg-white rounded-lg shadow-md p-4 mb-6">
             <!-- Filter Section -->
-            <form method="GET" action="{{ route('vendor.reports.booking') }}" class="flex flex-wrap items-end gap-4">
+            <form method="GET" action="{{ route('admin.reports.adminbooking') }}" class="flex flex-wrap items-end gap-4">
                 <!-- From Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700">From</label>
@@ -54,7 +54,7 @@ $noFooter = true;
                         Filter
                     </button>
                     <!-- Reset Button -->
-    <a href="{{ route('vendor.reports.booking') }}" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-sm font-medium">
+    <a href="{{ route('admin.reports.adminbooking') }}" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-sm font-medium">
         Reset
     </a>
                 </div>
