@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChirpController;
-use App\Http\Controllers\PostControllercls;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
@@ -294,11 +294,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/venues/{id}/mark-as-paid', [VenueBookingController::class, 'markAsPaid'])->name('venue_bookings.markAsPaid');
 });
 Route::get('/vendor/reports/booking/pdf', [VenueBookingController::class, 'downloadBookingPdf'])->name('vendor.reports.booking.pdf');
+Route::get('/admin/reports/adminbooking/pdf', [VenueBookingController::class, 'downloadAdminBookingPdf'])->name('admin.reports.adminbooking.pdf');
+
+// For admin reports
 
 
 
 
-
-
-
-
+?>

@@ -17,7 +17,7 @@ $noFooter = true;
         <!-- Wrap filter and table in a single card container -->
         <div class="bg-white rounded-lg shadow-md p-4 mb-6">
             <!-- Filter Section -->
-            <form method="GET" action="{{ route('vendor.reports.booking') }}" class="flex flex-wrap items-end gap-4">
+            <form method="GET" action="{{ route('admin.reports.adminbooking') }}" class="flex flex-wrap items-end gap-4">
                 <!-- From Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700">From</label>
@@ -54,7 +54,7 @@ $noFooter = true;
                         Filter
                     </button>
                     <!-- Reset Button -->
-    <a href="{{ route('vendor.reports.booking') }}" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-sm font-medium">
+    <a href="{{ route('admin.reports.adminbooking') }}" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded text-sm font-medium">
         Reset
     </a>
                 </div>
@@ -70,7 +70,7 @@ $noFooter = true;
                         <th class="border border-black px-6 py-4 text-left font-semibold">User</th>
                         <th class="border border-black px-6 py-4 text-left font-semibold">Venue</th>
                         <th class="border border-black px-6 py-4 text-left font-semibold">Booking Date</th>
-                        <th class="border border-black px-6 py-4 text-left font-semibold">Guests</th>
+                    
                         <th class="border border-black px-6 py-4 text-left font-semibold">Status</th>
                         <th class="border border-black px-6 py-4 text-left font-semibold">Total Price (Rs)</th>
                     </tr>
@@ -88,7 +88,7 @@ $noFooter = true;
                         <td class="border border-black px-6 py-4 text-sm">{{ $booking->user->name}}</td>
                         <td class="border border-black px-6 py-4 text-sm">{{ $booking->venue->venue_name }}</td>
                         <td class="border border-black px-6 py-4 text-sm">{{ \Carbon\Carbon::parse($booking->event_date)->format('Y-m-d') }}</td>
-                        <td class="border border-black px-6 py-4 text-sm">{{ $booking->guests }}</td>
+                   
                         <td class="border border-black px-6 py-4 text-sm">
                             @if($booking->status === 'paid')
                             <span class="bg-green-200 text-green-800 px-3 py-1 rounded-md text-xs font-semibold">Paid</span>
@@ -115,7 +115,7 @@ $noFooter = true;
 
         <!-- Download Button -->
         <div class="mt-4 flex justify-end">
-<a href="{{ route('vendor.reports.booking.pdf', request()->query()) }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white px-4 py-2 text-sm rounded-md transition duration-200">
+<a href="{{ route('admin.reports.adminbooking.pdf', request()->query()) }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white px-4 py-2 text-sm rounded-md transition duration-200">
     Download PDF Report
 </a>       
  </div>
