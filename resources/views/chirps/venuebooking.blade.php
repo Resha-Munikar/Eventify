@@ -21,7 +21,6 @@ $noFooter = true;
                     <th class="px-6 py-4 text-left text-sm font-semibold">User</th>
                     <th class="px-6 py-4 text-left text-sm font-semibold">Venue</th>
                     <th class="px-6 py-4 text-left text-sm font-semibold">Booking Date</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold">Guests</th>
                     <th class="px-6 py-4 text-left text-sm font-semibold">Total Price (Rs)</th>
                     <th class="px-6 py-4 text-left text-sm font-semibold">Status</th>
                     <th class="px-6 py-4 text-center text-sm font-semibold">Actions</th>
@@ -34,7 +33,7 @@ $noFooter = true;
                     <td class="px-6 py-4 text-sm">{{ $booking->user->name }}</td>
                     <td class="px-6 py-4 text-sm">{{ $booking->venue->venue_name }}</td>
                     <td class="px-6 py-4 text-sm">{{ \Carbon\Carbon::parse($booking->event_date)->format('Y-m-d') }}</td>
-                    <td class="px-6 py-4 text-sm">{{ $booking->guests }}</td>
+                
                     <td class="px-6 py-4 text-sm">{{ number_format($booking->total_price, 2) }}</td>
                     <td class="px-6 py-4 text-sm">
                         @if($booking->status === 'paid')
