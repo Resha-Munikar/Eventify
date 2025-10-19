@@ -172,7 +172,7 @@ public function downloadAdminBookingPdf(Request $request)
     $venueBookings = $query->get();
 
     // Generate PDF using a Blade view specific for admin
-    $pdf = PDF::loadView('admin.reports.booking_pdf', compact('VenueBookings'));
+    $pdf = PDF::loadView('admin.reports.booking_pdf', compact('venueBookings'));
 
     return $pdf->download('admin_booking_report.pdf');
 }
