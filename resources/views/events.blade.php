@@ -180,8 +180,13 @@
             <!-- User Info -->
             <div class="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
               <p class="text-gray-800 dark:text-gray-200 font-semibold">Billed To:</p>
-              <p class="text-gray-900 dark:text-white">{{ Auth::user()->name }}</p>
-              <p class="text-gray-600 dark:text-gray-300">{{ Auth::user()->email }}</p>
+              @auth
+                <p class="text-gray-900 dark:text-white">{{ Auth::user()->name }}</p>
+                <p class="text-gray-600 dark:text-gray-300">{{ Auth::user()->email }}</p>
+              @else
+                <p class="text-gray-900 dark:text-white">Guest</p>
+                <p class="text-gray-600 dark:text-gray-300">Please log in to continue</p>
+              @endauth
             </div>
 
             <!-- Amount Summary -->
