@@ -124,7 +124,6 @@
           <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found.</p>
       </div>
     @endif
-
 <!-- Booking Modal -->
 <div 
     x-show="openBookingId !== null" 
@@ -271,7 +270,6 @@
         <!-- End of modal content -->
     </div>
 </div>
-
 <script>
 function saveBooking(event, tickets) {
     fetch("{{ route('khalti.saveBooking') }}", {
