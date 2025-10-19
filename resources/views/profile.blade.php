@@ -53,9 +53,12 @@
 
     <!-- Bookings Section -->
     <div class="mt-8 text-center">
-        <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">My Bookings</h3>
-        <a href="{{ route('profile.bookings') }}" class="text-[#8D85EC] hover:underline">View all my event and venue bookings</a>
+    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">My Bookings</h3>
+    <div class="flex justify-center space-x-4">
+        <a href="#" class="text-white px-4 py-2 rounded bg-[#8D85EC] hover:bg-[#7b76e4]">View My Events</a>
+        <a href="{{ route('userbooking') }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white px-4 py-2 rounded ">View My Venue Bookings</a>
     </div>
+</div>
 </div>
 
 <!-- Profile Photo Preview Script -->

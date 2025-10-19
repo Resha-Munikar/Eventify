@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\VenueBooking;
 
 use App\Models\User;
 
@@ -118,5 +119,23 @@ class UserController extends Controller
 
         return redirect()->route('profile')->with('success', 'Profile photo deleted successfully!');
     }
+    
+
+
+public function showReport()
+{
+    // Get the current logged-in user
+    $user = Auth::user();
+
+    // Fetch venue bookings related to the logged-in user with related user and venue info
+    $venueBookings = VenueBooking::with(['user', 'venue'])
+        ->where('user_id', $user->id)
+        ->get();
+
+    // Pass the bookings to the view
+    return view('userbooking', compact('venueBookings'));
+}
+
+ 
 
 }
