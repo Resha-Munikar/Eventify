@@ -288,6 +288,7 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/vendor/reports/booking/pdf', [VenueBookingController::class, 'downloadBookingPdf'])->name('vendor.reports.booking.pdf');
 Route::post('/khalti/save-booking', [App\Http\Controllers\KhaltiController::class, 'saveBooking'])->name('khalti.saveBooking');
+Route::delete('/venue-bookings/{id}/cancel', [VenueBookingController::class, 'cancel'])->name('venueBooking.cancel');
 
 
 
