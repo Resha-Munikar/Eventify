@@ -270,14 +270,7 @@ Route::post('/vendor/change-password', [ProfileController::class, 'updatePasswor
 Route::post('/vendor/password/check', [ProfileController::class, 'checkCurrentPassword'])
      ->name('vendor.password.check');
 
-// Route::post('/esewa/initiate', [PaymentController::class, 'initiate'])->name('esewa.initiate');
-// Route::post('/esewa/verify', [PaymentController::class, 'verify'])->name('esewa.verify');
 
-
-// Route::post('/esewa/success', [PaymentController::class, 'success'])->name('esewa.success');
-// Route::post('/esewa/failure', [PaymentController::class, 'failure'])->name('esewa.failure');
-// // Route::get('/events', [PaymentController::class, 'showEvents'])->name('events');
-// Route::post('/esewa/generate-signature', [PaymentController::class, 'generateSignatureAjax'])->name('esewa.generate-signature');
 Route::get('/payment', function () {
     return view('payment'); // corresponds to resources/views/payment.blade.php
 });
@@ -295,6 +288,8 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/vendor/reports/booking/pdf', [VenueBookingController::class, 'downloadBookingPdf'])->name('vendor.reports.booking.pdf');
 Route::get('/admin/reports/adminbooking/pdf', [VenueBookingController::class, 'downloadAdminBookingPdf'])->name('admin.reports.adminbooking.pdf');
+Route::post('/khalti/save-booking', [App\Http\Controllers\KhaltiController::class, 'saveBooking'])->name('khalti.saveBooking');
+Route::delete('/venue-bookings/{id}/cancel', [VenueBookingController::class, 'cancel'])->name('venueBooking.cancel');
 
 // For admin reports
 

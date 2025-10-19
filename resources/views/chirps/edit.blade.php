@@ -2,7 +2,8 @@
 
 @section('title', 'Edit User')
 @php
-    $noNavbar = true;$showFooter = false;
+    $noNavbar = true;
+    $noFooter = true;
 @endphp
 @include('admin.sidebar')
 

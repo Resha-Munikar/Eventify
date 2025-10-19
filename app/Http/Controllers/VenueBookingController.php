@@ -203,4 +203,18 @@ public function showReport(Request $request)
         'request' => $request
     ]);
 } 
+public function cancel($id)
+{
+    $booking = VenueBooking::findOrFail($id);
+
+    // Optional: prevent deleting paid bookings
+    if($booking->status === 'paid') {
+        return redirect()->back()->with('error', 'Paid bookings cannot be cancelled.');
+    }
+
+    $booking->delete(); // this removes the booking from the DB
+
+    return redirect()->back()->with('success', 'Booking cancelled successfully.');
+}
+
 }
