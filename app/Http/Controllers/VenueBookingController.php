@@ -88,7 +88,7 @@ public function markAsPaid($id)
         ->get();
 
     // Pass the bookings to the view
-    return view('chirps.venuebooking', compact('venueBookings'));
+    return view('vendor.venuebooking', compact('venueBookings'));
 }
 public function bookingReport(Request $request)
 {

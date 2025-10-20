@@ -78,9 +78,11 @@
 
                 <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
                     <li>
-                        <a href="#" class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                            Event Report
-                        </a>
+                                    <a href="{{ route('admin.reports.admineventbooking') }}"
+       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+              {{ request()->routeIs('admin.reports.admineventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+        Event Booking Report
+    </a>
                     </li>
                     <li>
                            <a href="{{ route('admin.reports.adminbooking') }}"

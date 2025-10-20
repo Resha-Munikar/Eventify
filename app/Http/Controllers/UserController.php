@@ -5,8 +5,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\VenueBooking;
+use App\Models\Booking;
 
 use App\Models\User;
+use PDF;
 
 class UserController extends Controller
 {
@@ -136,6 +138,57 @@ public function showReport()
     return view('userbooking', compact('venueBookings'));
 }
 
- 
+ public function showUserEvent()
+{
+   $user = Auth::user();
+
+     $eventBookings = Booking::with(['user', 'event'])
+        ->where('user_id', $user->id)
+        ->get();
+
+    // Pass the bookings to the view
+    return view('usereventbook', compact('eventBookings'));
+}
+ public function downloadAdminPdf(Request $request)
+{
+    // Build the query
+    $query = Booking::with(['user', 'event']);
+
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->whereDate('booking_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->whereDate('booking_date', '<=', $request->input('to_date'));
+    }
+
+    // Fetch filtered bookings
+    $eventBookings = $query->get();
+
+    // Generate PDF
+    $pdf = PDF::loadView('admin.reports.eventbooking_pdf', compact('eventBookings'));
+
+    return $pdf->download('admin_event_bookings.pdf');
+}
+ public function showAllEvents(Request $request)
+{
+    // Build the query
+    $query = Booking::with(['user', 'event']);
+
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->whereDate('booking_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->whereDate('booking_date', '<=', $request->input('to_date'));
+    }
+
+    // Fetch filtered bookings
+    $eventBookings = $query->get();
+
+    // Pass data to the view
+    return view('admin.reports.admineventbooking', compact('eventBookings'));
+}
+
 
 }

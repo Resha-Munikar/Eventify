@@ -63,21 +63,21 @@
 
             <!-- My Event Booking -->
             <li>
-                <a href="#" 
-                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                          {{ request()->routeIs('vendor.eventbooking.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
-                    <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 2h6v2h3a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h3V2zm2 2v2h2V4h-2zm-2 6h8v2H9v-2zm0 4h8v2H9v-2z"/>
-                    </svg>
-                    <span class="ms-3 flex-1 whitespace-nowrap">My Event Booking</span>
-                </a>
-            </li>
+    <a href="{{ route('vendor.eventbooking') }}"
+       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+              {{ request()->routeIs('vendor.eventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
+        <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 2h6v2h3a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h3V2zm2 2v2h2V4h-2zm-2 6h8v2H9v-2zm0 4h8v2H9v-2z"/>
+        </svg>
+        <span class="ms-3 flex-1 whitespace-nowrap">My Event Booking</span>
+    </a>
+</li>
 
             <!-- My Venue Booking -->
             <li>
-                <a href="{{ route('chirps.venuebooking') }}" 
+                <a href="{{ route('vendor.venuebooking') }}" 
                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                          {{ request()->routeIs('chirps.venuebooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
+                          {{ request()->routeIs('vendor.venuebooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
                     <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M2 7v10h20V7H2zm2 2h16v6H4v-6z"/>
                     </svg>
@@ -86,7 +86,7 @@
             </li>
 
             <!-- Reports Dropdown -->
-            <li class="relative">
+           <li class="relative">
                 <button @click="open = !open"
                         class="flex items-center w-full p-2 rounded-lg group transition-colors duration-200 ease-in-out text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 {{ request()->routeIs('vendor.reports.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : '' }}">
                     <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
@@ -101,10 +101,11 @@
                 <!-- submenu -->
                 <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
                     <li>
-                        <a href="#"
-                           class="flex items-center p-2 rounded-lg text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 {{ request()->routeIs('vendor.reports.event') ? 'bg-gray-200 font-semibold' : '' }}">
-                            Event Report
-                        </a>
+                             <a href="{{ route('vendor.reports.eventbooking') }}"
+       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+              {{ request()->routeIs('vendor.reports.eventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+        Event Booking Report
+    </a>
                     </li>
                     <li>
                        <a href="{{ route('vendor.reports.booking') }}"
