@@ -60,5 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Chirp::class);
     }
+    public function scopeRoles($query, array $roles)
+{
+    return $query->whereIn('role', $roles);
+}
 
 }
