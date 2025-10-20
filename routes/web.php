@@ -295,6 +295,8 @@ Route::get('/vendor/reports/booking/pdf', [VenueBookingController::class, 'downl
 Route::get('/admin/reports/adminbooking/pdf', [VenueBookingController::class, 'downloadAdminBookingPdf'])->name('admin.reports.adminbooking.pdf');
 Route::post('/khalti/save-booking', [App\Http\Controllers\KhaltiController::class, 'saveBooking'])->name('khalti.saveBooking');
 Route::delete('/venue-bookings/{id}/cancel', [VenueBookingController::class, 'cancel'])->name('venueBooking.cancel');
+Route::post('/chatbot/message', [App\Http\Controllers\ChatbotController::class, 'respond'])
+    ->name('chatbot.message');
 
 Route::get('/vendor/reports/eventbooking/pdf', [VendorEventController::class, 'downloadPdf'])->name('vendor.reports.eventbooking.pdf');
 Route::get('/admin/reports/admineventbooking/pdf', [UserController::class, 'downloadAdminPdf'])->name('admin.reports.admineventbooking.pdf');

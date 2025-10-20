@@ -117,7 +117,7 @@ $noFooter = true;
         <div class="mt-4 flex justify-end">
 <a href="{{ route('admin.reports.adminbooking.pdf', request()->query()) }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white px-4 py-2 text-sm rounded-md transition duration-200">
     Download PDF Report
-</a>      
+</a>
  </div>
     </div>
 </div>

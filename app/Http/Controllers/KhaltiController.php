@@ -98,6 +98,7 @@ public function saveBooking(Request $request)
     $booking->event_id = $request->event_id;
     $booking->tickets = $request->tickets;
     $booking->amount = $request->total_amount;
+    $booking->booking_date = now(); // <-- today's date
     $booking->payment_id = 'manual'; // placeholder
     $booking->save();
 
