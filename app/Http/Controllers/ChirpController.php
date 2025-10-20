@@ -135,7 +135,7 @@ public function events(Request $request){
     }
 
     // Order by event_date descending (latest first)
-    $events = $query->orderBy('event_date', 'desc')->get();
+    $events = $query->orderBy('created_at', 'desc')->get();
 
     return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
 }

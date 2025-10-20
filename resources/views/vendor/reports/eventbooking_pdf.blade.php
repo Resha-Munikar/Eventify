@@ -42,6 +42,7 @@
                         <th class="px-6 py-4">Booking ID</th>
                         <th class="px-6 py-4">User</th>
                         <th class="px-6 py-4">Event</th>
+                         <th class="px-6 py-4">Booking Date</th>
                         <th class="px-6 py-4">Tickets</th>
                         <th class="px-6 py-4">Amount (Rs)</th>
                     </tr>
@@ -52,19 +53,20 @@
                         <td class="px-6 py-4 border border-gray-300">{{ $booking->id }}</td>
                         <td class="px-6 py-4 border border-gray-300">{{ $booking->user->name }}</td>
                         <td class="px-6 py-4 border border-gray-300">{{ $booking->event->event_name }}</td>
+                         <td class="px-6 py-4 border border-gray-300">{{ $booking->booking_date }}</td>
                         <td class="px-6 py-4 border border-gray-300">{{ $booking->tickets }}</td>
                         <td class="px-6 py-4 border border-gray-300">{{ number_format($booking->amount, 2) }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No event bookings found.</td>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No event bookings found.</td>
                     </tr>
                     @endforelse
                 </tbody>
                 <!-- Footer row for total amount -->
                 <tfoot>
                     <tr>
-                        <td colspan="4" class="px-6 py-4 font-semibold text-right">Total Amount:</td>
+                        <td colspan="5" class="px-6 py-4 font-semibold text-right">Total Amount:</td>
                         <td class="px-6 py-4 font-semibold text-green-600">{{ number_format($eventBookings->sum('amount'), 2) }}</td>
                     </tr>
                 </tfoot>

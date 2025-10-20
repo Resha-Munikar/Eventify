@@ -20,6 +20,7 @@ $noFooter = true;
                         <th class="px-6 py-4">Booking ID</th>
                         <th class="px-6 py-4">User</th>
                         <th class="px-6 py-4">Event</th>
+                           <th class="px-6 py-4">Booking Date</th>
                         <th class="px-6 py-4">Tickets</th>
                         <th class="px-6 py-4">Amount (Rs)</th>
                     </tr>
@@ -30,12 +31,13 @@ $noFooter = true;
                         <td class="px-6 py-4">{{ $booking->id }}</td>
                         <td class="px-6 py-4">{{ $booking->user->name }}</td>
                         <td class="px-6 py-4">{{ $booking->event->event_name }}</td>
+                         <td class="px-6 py-4 ">{{ $booking->booking_date }}</td>
                         <td class="px-6 py-4">{{ $booking->tickets }}</td>
                         <td class="px-6 py-4">{{ number_format($booking->amount, 2) }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-4 text-center text-gray-500">No event bookings found.</td>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No event bookings found.</td>
                     </tr>
                     @endforelse
                 </tbody>

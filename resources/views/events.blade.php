@@ -272,45 +272,36 @@
 </div>
 <script>
 function saveBooking(event, tickets) {
-    fetch("{{ route('khalti.saveBooking') }}", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-      },
-      body: JSON.stringify({
-        event_id: event.id,
-        tickets: tickets,
-        total_amount: tickets * event.price
-      })
+  fetch("{{ route('khalti.saveBooking') }}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "X-CSRF-TOKEN": "{{ csrf_token() }}"
+    },
+    body: JSON.stringify({
+      event_id: event.id,
+      tickets: tickets,
+      total_amount: tickets * event.price
     })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success){
-            // Find the DOM element displaying seats for this event and update it
-            const seatEl = document.getElementById(`seats-${event.id}`);
-            if(seatEl){
-                let newSeats = event.available_seats - tickets;
-                seatEl.textContent = newSeats;
-            }
-        }
-    })
-    .catch(() => {
-      console.error("Booking not saved to server.");
-    });
-}
-
-  function toggleSection(id) {
-    const section = document.getElementById(id);
-    const icon = document.getElementById('icon-' + id);
-    if (section.classList.contains('hidden')) {
-      section.classList.remove('hidden');
-      if (icon) icon.classList.add('rotate-180');
+  })
+  .then(async response => {
+    const data = await response.json();
+    if (response.ok && data.success) {
+      // Update seats dynamically
+      const seatEl = document.getElementById(`seats-${event.id}`);
+      if (seatEl) seatEl.textContent = event.available_seats - tickets;
+      alert("🎟️ Booking saved successfully and ticket emailed!");
     } else {
-      section.classList.add('hidden');
-      if (icon) icon.classList.remove('rotate-180');
+      console.error("Error saving booking:", data);
+      alert("❌ Failed to save booking. Check console for details.");
     }
-  }
+  })
+  .catch(err => {
+    console.error("Fetch error:", err);
+    alert("⚠️ Network or server error.");
+  });
+}
 </script>
 
 @endsection

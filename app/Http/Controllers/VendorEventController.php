@@ -147,34 +147,60 @@ $imagePath = $filename;
     // Pass the bookings to the view
     return view('vendor.eventbooking', compact('eventBookings'));
 }
-    public function downloadPdf()
+ public function downloadPdf(Request $request)
 {
-     $vendorId = auth()->user()->id;
+    $vendorId = auth()->user()->id;
 
-    $eventBookings = Booking::with(['user', 'event'])
+    // Build the query with filters
+    $query = Booking::with(['user', 'event'])
         ->whereHas('event', function ($query) use ($vendorId) {
             $query->where('vendor_id', $vendorId);
-        })
-        ->get();
+        });
+ 
+    if ($request->filled('from_date')) {
+        $query->whereDate('booking_date', '>=', $request->input('from_date'));
+    }
 
-    // Generate PDF using a Blade view
+    if ($request->filled('to_date')) {
+        $query->whereDate('booking_date', '<=', $request->input('to_date'));
+    }
+    
+    // Fetch the filtered bookings
+    $eventBookings = $query->get();
+
+    // Generate PDF without passing filter variables
     $pdf = PDF::loadView('vendor.reports.eventbooking_pdf', compact('eventBookings'));
 
     return $pdf->download('event_bookings.pdf');
 }
 
-    public function EventbookingReport()
+  public function EventbookingReport(Request $request)
 {
-    // Fetch all event bookings related to logged-in vendor
+    // Fetch logged-in vendor ID
     $vendorId = auth()->user()->id;
 
-    $eventBookings = Booking::with(['user', 'event'])
+    // Build the base query
+    $query = Booking::with(['user', 'event'])
         ->whereHas('event', function ($query) use ($vendorId) {
             $query->where('vendor_id', $vendorId);
-        })
-        ->get();
+        });
 
-    // Pass the bookings to the view
-    return view('vendor.reports.eventbooking', compact('eventBookings'));
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->whereDate('booking_date', '>=', $request->input('from_date'));
+    }
+
+    if ($request->filled('to_date')) {
+        $query->whereDate('booking_date', '<=', $request->input('to_date'));
+    }
+
+    // Get the filtered bookings
+    $eventBookings = $query->get();
+
+    // Pass the bookings and request data to the view (optional: to keep filter inputs)
+    return view('vendor.reports.eventbooking', compact('eventBookings'))->with([
+        'from_date' => $request->input('from_date'),
+        'to_date' => $request->input('to_date')
+    ]);
 }
 }

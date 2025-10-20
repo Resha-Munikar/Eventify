@@ -149,22 +149,44 @@ public function showReport()
     // Pass the bookings to the view
     return view('usereventbook', compact('eventBookings'));
 }
- public function downloadAdminPdf()
+ public function downloadAdminPdf(Request $request)
 {
-     $query = Booking::with(['user', 'event']);
-     $eventBookings = $query->get();
+    // Build the query
+    $query = Booking::with(['user', 'event']);
 
-    // Generate PDF using a Blade view
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->whereDate('booking_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->whereDate('booking_date', '<=', $request->input('to_date'));
+    }
+
+    // Fetch filtered bookings
+    $eventBookings = $query->get();
+
+    // Generate PDF
     $pdf = PDF::loadView('admin.reports.eventbooking_pdf', compact('eventBookings'));
 
     return $pdf->download('admin_event_bookings.pdf');
 }
- public function showAllEvents()
+ public function showAllEvents(Request $request)
 {
+    // Build the query
     $query = Booking::with(['user', 'event']);
-     $eventBookings = $query->get();
 
-    // Pass the bookings to the view
+    // Apply date filters if provided
+    if ($request->filled('from_date')) {
+        $query->whereDate('booking_date', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->whereDate('booking_date', '<=', $request->input('to_date'));
+    }
+
+    // Fetch filtered bookings
+    $eventBookings = $query->get();
+
+    // Pass data to the view
     return view('admin.reports.admineventbooking', compact('eventBookings'));
 }
 
