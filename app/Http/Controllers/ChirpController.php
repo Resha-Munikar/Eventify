@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ChirpController extends Controller
 {
@@ -140,28 +141,169 @@ public function events(Request $request){
     return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
 }
       // Show contact form
+    
     public function contact()
-    {
-        return view('contact'); // your contact form view
+{
+  $vendors = User::where('role', 'vendor')->get();
+ $events = Event::all(); // Fetch all events
+$venues = Venue::all(); // Fetch all venues
+ return view('contact', compact('vendors', 'events', 'venues'));
+}
+// public function storeContact(Request $request)
+// {
+//     // Validate input
+//     $validated = $request->validate([
+//         'name' => 'required|string|max:255',
+//         'email' => 'required|email|max:255',
+//         'phone' => 'nullable|string|max:20',
+//         'message' => 'required|string',
+//         'type' => 'required|string|in:general,vendor,event',
+//         'vendor_id' => 'nullable|exists:users,id',
+//     ]);
+
+//     // Handle vendor_id validation
+//     if ($validated['type'] === 'vendor' && empty($validated['vendor_id'])) {
+//         return redirect()->back()->withErrors(['vendor_id' => 'Please select a vendor.'])->withInput();
+//     }
+
+//     // Save contact info in database
+//     Contact::create($validated);
+
+//     // Determine email recipient based on inquiry type
+//     if ($validated['type'] === 'general') {
+//         $recipientEmail = 'mah.bristiofficial@gmail.com'; // Your admin/support email
+//     } 
+//       elseif ($validated['type'] === 'vendor') {
+//     // Find user with id equal to vendor_id and role 'vendor'
+//     $vendorUser = User::where('id', $validated['vendor_id'])
+//                       ->where('role', 'vendor') // adjust role as needed
+//                       ->first();
+
+//     $recipientEmail = $vendorUser ? $vendorUser->email : 'support@yourdomain.com';
+// }  elseif ($validated['type'] === 'event') {
+//     // Fetch the event and get the related vendor's email
+//     $event = Event::find($request->input('event_id'));
+//     if ($event && $event->vendor_id) {
+//         $vendor = User::where('id', $event->vendor_id)->where('role', 'vendor')->first();
+//         $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
+//     } else {
+//         $recipientEmail = 'support@yourdomain.com'; // fallback if no vendor linked
+//     }
+// } elseif ($validated['type'] === 'venue') {
+//     // Fetch the venue and get the related vendor's email
+//     $venue = Venue::find($request->input('venue_id'));
+//     if ($venue && $venue->vendor_id) {
+//         $vendor = User::where('id', $venue->vendor_id)->where('role', 'vendor')->first();
+//         $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
+//     } else {
+//         $recipientEmail = 'support@yourdomain.com'; // fallback if no vendor linked
+//     }
+// } else {
+//     $recipientEmail = 'support@yourdomain.com';
+// }
+
+//     // Prepare email data
+//     $emailData = [
+//         'name' => $validated['name'],
+//         'email' => $validated['email'],
+//         'phone' => $validated['phone'],
+//         'bodymessage' => $validated['message'],
+//         'type' => $validated['type'],
+//     ];
+
+//     // Send email
+//     Mail::send('emails.contact', $emailData, function ($message) use ($recipientEmail, $validated) {
+//         $message->to($recipientEmail)
+//                 ->subject('New Contact Inquiry');
+//         $message->replyTo($validated['email'], $validated['name']);
+//     });
+
+//     $message = 'Message sent successfully!';
+// return redirect()->route('contact')->with('success', $message);
+// }
+public function storeContact(Request $request)
+{
+    // Validate input
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'phone' => 'nullable|string|max:20',
+        'message' => 'required|string',
+        'type' => 'required|string|in:general,vendor,event,venue',
+        'vendor_id' => 'nullable|exists:users,id',
+        'event_id' => 'nullable|exists:events,id',
+        'venue_id' => 'nullable|exists:venues,id',
+    ]);
+
+    // Handle vendor_id validation
+    if ($validated['type'] === 'vendor' && empty($validated['vendor_id'])) {
+        return redirect()->back()->withErrors(['vendor_id' => 'Please select a vendor.'])->withInput();
     }
 
-    // Store contact form data
-    public function storeContact(Request $request)
-    {
-        // Validate input
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'message' => 'required|string',
-        ]);
+    // Save contact info in database
+    Contact::create($validated);
 
-        // Save to database
-        Contact::create($validated);
-
-        // Redirect back with success message
-        return redirect()->route('contact')->with('success', 'Message successful !');
+    // Determine email recipient based on inquiry type
+    if ($validated['type'] === 'general') {
+        $recipientEmail = 'mah.bristiofficial@gmail.com'; // Your admin/support email
+    } elseif ($validated['type'] === 'vendor') {
+        // Find user with id equal to vendor_id and role 'vendor'
+        $vendorUser = User::where('id', $validated['vendor_id'])->where('role', 'vendor')->first();
+        $recipientEmail = $vendorUser ? $vendorUser->email : 'support@yourdomain.com';
+        \Log::info('Vendor type: Vendor, Email: ' . $recipientEmail);
+    } elseif ($validated['type'] === 'event') {
+        // Fetch the event and get the related vendor's email
+        $event = Event::find($request->input('event_id'));
+        if ($event && $event->vendor_id) {
+            $vendor = User::where('id', $event->vendor_id)->where('role', 'vendor')->first();
+            $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
+            \Log::info('Event type: Event, Vendor email: ' . $recipientEmail);
+        } else {
+            $recipientEmail = 'support@yourdomain.com'; // fallback if no vendor linked
+            \Log::info('Event type: Event, No vendor linked');
+        }
+    } elseif ($validated['type'] === 'venue') {
+        // Fetch the venue and get the related vendor's email
+        $venue = Venue::find($request->input('venue_id'));
+        \Log::info('Venue ID: ' . ($request->input('venue_id') ?? 'null'));
+        if ($venue && $venue->vendor_id) {
+            $vendor = User::where('id', $venue->vendor_id)->where('role', 'vendor')->first();
+            $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
+            \Log::info('Venue type: Venue, Vendor email: ' . $recipientEmail);
+        } else {
+            $recipientEmail = 'support@yourdomain.com'; // fallback if no vendor linked
+            \Log::info('Venue type: Venue, No vendor linked');
+        }
+    } else {
+        $recipientEmail = 'support@yourdomain.com';
+        \Log::info('Default fallback email');
     }
+
+    // Prepare email data
+    $emailData = [
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'phone' => $validated['phone'],
+        'bodymessage' => $validated['message'],
+        'type' => $validated['type'],
+    ];
+
+    // Send email with error handling
+    try {
+        \Log::info('Attempting to send email to: ' . $recipientEmail);
+        Mail::send('emails.contact', $emailData, function ($message) use ($recipientEmail, $validated) {
+            $message->to($recipientEmail)
+                ->subject('New Contact Inquiry');
+            $message->replyTo($validated['email'], $validated['name']);
+        });
+        \Log::info('Email sent successfully to: ' . $recipientEmail);
+    } catch (\Exception $e) {
+        \Log::error('Mail send error: ' . $e->getMessage());
+    }
+
+    $message = 'Message sent successfully!';
+    return redirect()->route('contact')->with('success', $message);
+}
 
     public function book(Request $request, $eventId)
     {
