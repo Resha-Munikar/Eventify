@@ -1,3 +1,15 @@
+#Screenshot 
+landing page :
+<picture>
+<img width="562" height="1600" alt="image" src="https://github.com/user-attachments/assets/acac651c-b403-445f-b1bb-12666305504b" />
+</picture>
+About Us:
+<img width="616" height="1600" alt="image" src="https://github.com/user-attachments/assets/64fc2fc1-2032-469a-826b-c7523bf8cd1f" />
+Events:
+<img width="1401" height="1600" alt="image" src="https://github.com/user-attachments/assets/7139ace3-c03e-4f08-9cde-898beb65189a" />
+
+
+
 # Project setup
 1. clone the repository:
 ```
