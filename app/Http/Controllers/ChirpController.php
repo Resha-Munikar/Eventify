@@ -259,7 +259,7 @@ public function storeContact(Request $request)
             $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
             \Log::info('Event type: Event, Vendor email: ' . $recipientEmail);
         } else {
-            $recipientEmail = 'support@yourdomain.com'; // fallback if no vendor linked
+            $recipientEmail = 'mah.bristiofficial@gmail.com'; // fallback if no vendor linked
             \Log::info('Event type: Event, No vendor linked');
         }
     } elseif ($validated['type'] === 'venue') {
@@ -271,7 +271,7 @@ public function storeContact(Request $request)
             $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
             \Log::info('Venue type: Venue, Vendor email: ' . $recipientEmail);
         } else {
-            $recipientEmail = 'support@yourdomain.com'; // fallback if no vendor linked
+            $recipientEmail = 'mah.bristiofficial@gmail.com'; // fallback if no vendor linked
             \Log::info('Venue type: Venue, No vendor linked');
         }
     } else {
