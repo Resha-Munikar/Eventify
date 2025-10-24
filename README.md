@@ -1,10 +1,12 @@
-#Screenshot 
-landing page :
-<img width="200" height="100" alt="image" src="https://github.com/user-attachments/assets/acac651c-b403-445f-b1bb-12666305504b" />
-About Us:
-<img width="200" height="100" alt="image" src="https://github.com/user-attachments/assets/64fc2fc1-2032-469a-826b-c7523bf8cd1f" />
-Events:
-<img width="200" height="100" alt="image" src="https://github.com/user-attachments/assets/7139ace3-c03e-4f08-9cde-898beb65189a" />
+<h2>Screenshots</h2>
+<div style="display: flex; gap: 10px;">
+  <img src="https://github.com/user-attachments/assets/acac651c-b403-445f-b1bb-12666305504b" alt="Landing" style="height: 100px;"/>
+  <img src="https://github.com/user-attachments/assets/64fc2fc1-2032-469a-826b-c7523bf8cd1f" alt="About Us" style="height: 100px;"/>
+</div>
+
+<div style="display: flex; gap: 10px; margin-top: 20px;">
+  <img src="https://github.com/user-attachments/assets/7139ace3-c03e-4f08-9cde-898beb65189a" alt="Events" style="height: 100px;"/>
+</div>
 
 
 
