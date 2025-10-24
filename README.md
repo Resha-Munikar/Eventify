@@ -1,7 +1,6 @@
 <h2>Screenshots</h2>
 <div style="display: flex; gap: 10px;">
  <img width="562" height="1600" alt="image" src="https://github.com/user-attachments/assets/5bd60caa-31ca-4387-8510-29877091722e" />
-<img width="616" height="1600" alt="image" src="https://github.com/user-attachments/assets/08ecae52-1e00-452b-955a-06dc18639ef3" />
 
 </div>
 
