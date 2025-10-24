@@ -95,7 +95,7 @@
                   <h3 class="text-lg font-bold truncate">{{ $event->event_name }}</h3>
                   <p class="text-sm truncate">{{ $event->venue }}</p>
                   <p class="text-sm line-clamp-2">{{ $event->description }}</p>
-                  <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: ${{ number_format($event->price, 2) }}</p>
+                  <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: Rs {{ number_format($event->price, 2) }}</p>
                   <p class="text-sm">Seats: <span id="seats-{{ $event->id }}">{{ $event->available_seats }}</span></p>
                   <p class="text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
 
@@ -151,11 +151,11 @@
 
             <div class="bg-white dark:bg-gray-800 p-3 rounded-lg mb-4 shadow-sm border border-gray-200 dark:border-gray-700">
                 <p class="text-gray-800 dark:text-gray-200 text-sm">
-                    Price per ticket: $<span x-text="selectedEvent ? Number(selectedEvent.price).toFixed(2) : '0.00'"></span>
+                    Price per ticket: Rs<span x-text="selectedEvent ? Number(selectedEvent.price).toFixed(2) : '0.00'"></span>
                 </p>
                 <p class="text-gray-800 dark:text-gray-200 text-sm mt-1">
                     Total amount: 
-                    <span class="font-bold text-[#8D85EC] text-lg">$<span x-text="selectedEvent ? (tickets * Number(selectedEvent.price)).toFixed(2) : '0.00'"></span></span>
+                    <span class="font-bold text-[#8D85EC] text-lg">Rs<span x-text="selectedEvent ? (tickets * Number(selectedEvent.price)).toFixed(2) : '0.00'"></span></span>
                 </p>
             </div>
 

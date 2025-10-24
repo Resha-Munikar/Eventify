@@ -195,11 +195,6 @@
           <p class="text-gray-400 mb-2">123 Event Street, Kathmandu, Nepal</p>
           <p class="text-gray-400 mb-2">Email: info@eventify.com</p>
           <p class="text-gray-400 mb-4">Phone: +977 9812345678</p>
-          <h3 class="text-xl font-semibold mb-2">Subscribe</h3>
-          <form class="flex flex-col sm:flex-row gap-2">
-            <input type="email" placeholder="Your email" class="px-4 py-2 rounded-md text-gray-900 focus:outline-none flex-1" />
-            <button type="submit" class="bg-[#8D85EC] dark:bg-[#a78df0] text-white px-4 py-2 rounded-md hover:opacity-90 transition">Subscribe</button>
-          </form>
         </div>
       </div>
       <!-- Bottom Footer -->
