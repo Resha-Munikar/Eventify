@@ -1,11 +1,13 @@
 <h2>Screenshots</h2>
 <div style="display: flex; gap: 10px;">
-  <img src="https://github.com/user-attachments/assets/acac651c-b403-445f-b1bb-12666305504b" alt="Landing" style="height: 100px;"/>
-  <img src="https://github.com/user-attachments/assets/64fc2fc1-2032-469a-826b-c7523bf8cd1f" alt="About Us" style="height: 100px;"/>
+ <img width="562" height="1600" alt="image" src="https://github.com/user-attachments/assets/5bd60caa-31ca-4387-8510-29877091722e" />
+<img width="616" height="1600" alt="image" src="https://github.com/user-attachments/assets/08ecae52-1e00-452b-955a-06dc18639ef3" />
+
 </div>
 
 <div style="display: flex; gap: 10px; margin-top: 20px;">
-  <img src="https://github.com/user-attachments/assets/7139ace3-c03e-4f08-9cde-898beb65189a" alt="Events" style="height: 100px;"/>
+ <img width="1401" height="1600" alt="image" src="https://github.com/user-attachments/assets/1f22d04a-5685-4213-a3ac-4f9543331e98" />
+
 </div>
 
 
