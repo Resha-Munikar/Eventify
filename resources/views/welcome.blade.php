@@ -45,8 +45,8 @@
       <div class="grid md:grid-cols-3 gap-8 text-center">
         <div class="p-8 bg-[#d9d4f7] dark:bg-gray-700 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2">
           <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-[#8D85EC]/10 text-[#8D85EC] text-3xl shadow-md">🎉</div>
-          <h3 class="text-xl font-bold mb-3">Event Planning</h3>
-          <p class="text-gray-600 dark:text-gray-300">Complete planning services for weddings, birthdays, and corporate events.</p>
+          <h3 class="text-xl font-bold mb-3">Event Booking</h3>
+          <p class="text-gray-600 dark:text-gray-300">Comprehensive booking services for weddings, birthdays, corporate events, and more.</p>
         </div>
         <div class="p-8 bg-[#d9d4f7] dark:bg-gray-700 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2">
           <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-[#8D85EC]/10 text-[#8D85EC] text-3xl shadow-md">🍽</div>
@@ -223,62 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="relative">
     <!-- Scrollable container -->
     <div id="testimonial-container" class="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-4">
-
-      <!-- Card 1 -->
-      <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800  text-black dark:text-white rounded-xl shadow-lg 
+      @foreach($reviews as $review)
+        <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg 
             flex flex-col items-center text-center 
             transition-all duration-300 ease-in-out 
             hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
             hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
-        <p class="italic mb-4">"They made our wedding day absolutely magical!"</p>
-        <h4 class="font-semibold">Aarav & Priya</h4>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800  text-black dark:text-white rounded-xl shadow-lg 
-            flex flex-col items-center text-center 
-            transition-all duration-300 ease-in-out 
-            hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
-            hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Client Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
-        <p class="italic mb-4">"Our corporate gala was seamless, thanks to their team."</p>
-        <h4 class="font-semibold">TechCorp Ltd.</h4>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg 
-            flex flex-col items-center text-center 
-            transition-all duration-300 ease-in-out 
-            hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
-            hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Corporate Event" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
-        <p class="italic mb-4">"Best event planners! Stress-free and professional."</p>
-        <h4 class="font-semibold">Maya Sharma</h4>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800  text-black dark:text-white rounded-xl shadow-lg 
-            flex flex-col items-center text-center 
-            transition-all duration-300 ease-in-out 
-            hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
-            hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Client Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
-        <p class="italic mb-4">"Absolutely loved their attention to detail!"</p>
-        <h4 class="font-semibold">Rohan & Simran</h4>
-      </div>
-
-      <!-- Card 5 -->
-      <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg 
-            flex flex-col items-center text-center 
-            transition-all duration-300 ease-in-out 
-            hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
-            hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-        <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="Client Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
-        <p class="italic mb-4">"Professional, creative, and reliable team!"</p>
-        <h4 class="font-semibold">Sita & Ram</h4>
-      </div>
-
+            <img src="{{ $review->user->profile_photo }}" alt="User Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
+            <p class="italic mb-4">"{{ $review->comment }}"</p>
+            <h4 class="font-semibold">{{ $review->user->name }}</h4>
+        </div>
+    @endforeach
+      
     </div>
 
     <!-- Left Arrow -->

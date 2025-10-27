@@ -7,6 +7,7 @@ use App\Models\Contact;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\Venue;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -76,10 +77,12 @@ class ChirpController extends Controller
         return redirect()->route('chirps.index');
     }
 
-    public function welcome(){
-        return view('welcome');
-    }
-
+    public function welcome()
+{
+    $reviews = Review::with('user')->get(); 
+    
+    return view('welcome', compact('reviews'));
+}
     public function about(){
         return view('about');
     }
