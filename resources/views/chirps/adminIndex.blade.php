@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Admin')
-@php $noNavbar = true; $showFooter = false; @endphp
+@php $noNavbar = true; $noFooter = true; @endphp
 @include('admin.sidebar')
 
 @section('content')

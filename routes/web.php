@@ -303,7 +303,10 @@ Route::get('/vendor/reports/eventbooking/pdf', [VendorEventController::class, 'd
 Route::get('/admin/reports/admineventbooking/pdf', [UserController::class, 'downloadAdminPdf'])->name('admin.reports.admineventbooking.pdf');
 
 Route::post('/venue-review', [ReviewController::class, 'store'])->name('venueReview.store');
+Route::get('/admin/reviews', [ReviewController::class, 'index'])
+    ->name('admin.reports.review');
 
+Route::delete('/venue-review/{review}', [ReviewController::class, 'destroy'])->name('venueReview.destroy');
 
 
 ?>

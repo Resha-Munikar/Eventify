@@ -29,5 +29,17 @@ class ReviewController extends Controller
         return back()->with('success', 'Review Submitted Successfully!');
     }
 
+    public function index()
+    {
+        // Get all reviews with associated user and event/venue if needed
+        $reviews = Review::with(['user', 'venue'])->latest()->paginate(10);
+
+        return view('admin.reports.review', compact('reviews'));
+    }
+    public function destroy(Review $review)
+    {
+        $review->delete();
+        return redirect()->back()->with('success', 'Review deleted successfully.');
+    }
 
 }
