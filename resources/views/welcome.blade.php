@@ -229,8 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             transition-all duration-300 ease-in-out 
             hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
             hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-            <img src="{{ $review->user->profile_photo }}" alt="User Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">
-            <p class="italic mb-4">"{{ $review->comment }}"</p>
+<img src="{{ asset('uploads/profile_photos/' . $review->user->profile_photo) }}" alt="User Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">            <p class="italic mb-4">"{{ $review->comment }}"</p>
             <h4 class="font-semibold">{{ $review->user->name }}</h4>
         </div>
     @endforeach
