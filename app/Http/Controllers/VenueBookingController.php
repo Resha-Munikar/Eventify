@@ -81,7 +81,7 @@ public function markAsPaid($id)
     // Fetch all venue bookings related to logged-in vendor
     $vendorId = auth()->user()->id;
 
-    $venueBookings = VenueBooking::with(['user', 'venue'])
+    $venueBookings = VenueBooking::with(['user', 'venue','review'])
         ->whereHas('venue', function ($query) use ($vendorId) {
             $query->where('vendor_id', $vendorId);
         })
@@ -94,7 +94,7 @@ public function bookingReport(Request $request)
 {
     $vendorId = auth()->user()->id;
     // Start query with the vendor filter
-    $query = VenueBooking::with(['user', 'venue'])
+    $query = VenueBooking::with(['user', 'venue','review'])
         ->whereHas('venue', function ($q) use ($vendorId) {
             $q->where('vendor_id', $vendorId);
         });
@@ -128,7 +128,7 @@ public function downloadBookingPdf(Request $request)
     $vendorId = auth()->user()->id;
 
     // Build the query with filters
-    $query = VenueBooking::with(['user', 'venue'])
+    $query = VenueBooking::with(['user', 'venue','review'])
         ->whereHas('venue', function ($q) use ($vendorId) {
             $q->where('vendor_id', $vendorId);
         });
@@ -154,7 +154,7 @@ public function downloadBookingPdf(Request $request)
 public function downloadAdminBookingPdf(Request $request)
 {
     // Fetch the same data with filters applied, possibly with additional admin-specific filters
-    $query = VenueBooking::with(['user', 'venue']);
+    $query = VenueBooking::with(['user', 'venue','review']);
 
     if ($request->filled('from_date')) {
         $query->where('event_date', '>=', $request->input('from_date'));
@@ -179,7 +179,7 @@ public function downloadAdminBookingPdf(Request $request)
 public function showReport(Request $request)
 {
     // Start a query on VenueBooking with related user and venue info
-    $query = VenueBooking::with(['user', 'venue']);
+    $query = VenueBooking::with(['user', 'venue','review']);
 
     // Apply date filters if provided
     if ($request->filled('from_date')) {

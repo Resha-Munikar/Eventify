@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorForgotPasswordController;
 use App\Http\Controllers\KhaltiController;
 use App\Http\Controllers\VenueBookingController;
+use App\Http\Controllers\ReviewController;
 
 
 Route::get('/', function () {
@@ -301,6 +302,7 @@ Route::post('/chatbot/message', [App\Http\Controllers\ChatbotController::class, 
 Route::get('/vendor/reports/eventbooking/pdf', [VendorEventController::class, 'downloadPdf'])->name('vendor.reports.eventbooking.pdf');
 Route::get('/admin/reports/admineventbooking/pdf', [UserController::class, 'downloadAdminPdf'])->name('admin.reports.admineventbooking.pdf');
 
+Route::post('/venue-review', [ReviewController::class, 'store'])->name('venueReview.store');
 
 
 

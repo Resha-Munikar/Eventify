@@ -29,4 +29,10 @@ class VenueBooking extends Model
     {
         return $this->belongsTo(Venue::class);
     }
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'booking_id');
+    }
+
+
 }
