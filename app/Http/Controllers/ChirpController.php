@@ -77,11 +77,12 @@ class ChirpController extends Controller
         return redirect()->route('chirps.index');
     }
 
-    public function welcome()
+public function showWelcomePage()
 {
-    $reviews = Review::with('user')->get(); 
-    
-    return view('welcome', compact('reviews'));
+    $reviews = Review::with('user')->get();
+    $upcomingEvents = Event::orderBy('event_date', 'asc')->take(10)->get();
+
+    return view('welcome', compact('reviews', 'upcomingEvents'));
 }
     public function about(){
         return view('about');
@@ -365,9 +366,7 @@ public function storeContact(Request $request)
 
 //     return view('venues', compact('venues','venueName', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
 // }
-public function getUpcomingEvents($limit = 5){
-    return Event::orderBy('event_date', 'asc')->take($limit)->get();
-}
+
 public function venues(Request $request)
 {
     // Fetch query parameters

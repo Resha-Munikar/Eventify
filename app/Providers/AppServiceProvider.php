@@ -16,16 +16,5 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot()
-{
-    // Attach composer to 'welcome' view (used for both '/' and '/welcome')
-    View::composer(['welcome'], function ($view) {
-        $controller = new ChirpController();
-        $upcomingEvents = $controller->getUpcomingEvents(10);
-        $view->with('upcomingEvents', $upcomingEvents);
-    });
-}
+    
 }
