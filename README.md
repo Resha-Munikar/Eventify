@@ -8,7 +8,8 @@
 </div>
 <div style="display: flex; gap: 10px; margin-top: 20px;">
       <h3>About us :  </h3>
-<img width="616" height="1600" alt="image" src="https://github.com/user-attachments/assets/b7f76c0c-3784-4e74-9c70-bf54df3239cc" />
+<img width="1920" height="4993" alt="image" src="https://github.com/user-attachments/assets/184065bf-3ed2-462c-9848-3d73d4895fa4" />
+
 </div>
 <div style="display: flex; gap: 10px; margin-top: 20px;">
     <h3>Events page : </h3>
