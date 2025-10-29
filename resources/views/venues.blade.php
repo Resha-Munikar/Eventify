@@ -163,10 +163,10 @@
   </div>
   <!-- Reviews Modal -->
   <div id="reviewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"  style="background-color: rgba(0, 0, 0, 0.6) !important;">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto p-4 relative">
+   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-2/4 max-w-[600px] max-h-[80vh] overflow-y-auto p-4 relative">
       <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeReviews()">&times;</button>
       <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white" id="venueReviewsTitle">Venue Reviews</h2>
-      <div id="reviewsContainer" class="space-y-4">
+      <div id="reviewsContainer" class="space-y-7 max-h-[80vh] overflow-y-auto">
         <!-- Reviews will be loaded here dynamically -->
         <p class="italic mb-4 break-all whitespace-normal max-h-24 overflow-y-auto bg-[#8D85EC] text-white p-2 rounded">Loading reviews...</p>
         
@@ -175,7 +175,9 @@
   </div>
 
 </div>
-
+<script>
+  const profilePhotosUrl = "{{ asset('uploads/profile_photos') }}";
+</script>
 <script>
 function searchVenues() {
   const input = document.getElementById('simple-search');
@@ -307,6 +309,8 @@ document.getElementById('bookingForm').addEventListener('submit', function(e) {
       .then(data => {
         const container = document.getElementById('reviewsContainer');
         container.innerHTML = '';
+        console.log('Reviews API response:', data);
+        
 
         if(data.reviews.length === 0) {
           container.innerHTML = '<p class="text-gray-600 dark:text-gray-300">No reviews yet.</p>';
@@ -315,19 +319,19 @@ document.getElementById('bookingForm').addEventListener('submit', function(e) {
 
         data.reviews.forEach(review => {
          const reviewDiv = document.createElement('div');
-reviewDiv.className = 'border rounded p-3 bg-purple-100';
+reviewDiv.className = 'border rounded p-5 bg-purple-100';
 
 reviewDiv.innerHTML = `
   <div class="flex items-center space-x-3 mb-2">
-    <img src="{{ asset('uploads/profile_photos/') }}${review.user_profile_photo}" alt="${review.user_name}" class="w-8 h-8 rounded-full object-cover">
-    <div>
-      <p class="font-semibold text-gray-900 dark:text-black">${review.user_name}</p>
+<img src="${profilePhotosUrl}/${review.profile_photos}" alt="${review.user_name}" class="w-8 h-8 rounded-full object-cover">      <p class="font-semibold text-gray-900 dark:text-black">${review.user_name}</p>
       <div class="flex items-center space-x-1">
         ${'⭐'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
       </div>
     </div>
   </div>
-  <p class="break-all whitespace-normal bg-purple-100 text-black p-2 rounded">${review.comment}</p>
+ <p class="break-words whitespace-normal bg-purple-100 text-black p-2 rounded">
+  ${review.comment}
+</p>
 `;
           container.appendChild(reviewDiv);
         });

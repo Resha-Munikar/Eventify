@@ -59,7 +59,7 @@
 </head>
 <body>
     <div class="card">
-        <h1>New Contact Inquiry</h1>
+        <h1>New Inquiry</h1>
         <div class="info"><span class="label">Name:</span><span class="value">{{ $name }}</span></div>
         <div class="info"><span class="label">Email:</span><span class="value">{{ $email }}</span></div>
         <div class="info"><span class="label">Message:</span></div>
