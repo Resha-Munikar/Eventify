@@ -53,9 +53,11 @@
 
             <!-- Review -->
             <li>
-                <a href="{{ route('admin.reports.review')}}" 
-                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                          hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
+                <a href="{{ route('admin.reports.review') }}" 
+                class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                        {{ request()->routeIs('admin.reports.review') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                     <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5z"/>
                     </svg>
@@ -63,37 +65,39 @@
                 </a>
             </li>
 
-            <!-- Report Dropdown -->
-            <li x-data="{ open: {{ request()->routeIs('admin.reports.*') ? 'true' : 'false' }} }" class="relative">
-            <button @click="open = !open"
+            <!-- Reports Dropdown -->
+            <li class="relative" x-data="{ open: {{ request()->routeIs('admin.reports.admineventbooking') || request()->routeIs('admin.reports.adminbooking') ? 'true' : 'false' }} }">
+                <button 
+                    @click="open = !open"
                     class="flex items-center w-full p-2 rounded-lg group transition-colors duration-200 ease-in-out text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
-                </svg>
-                <span class="ms-3 flex-1 text-left whitespace-nowrap">Reports</span>
-                <svg class="w-4 h-4 ms-auto transition-transform duration-200" 
-                    :class="{'rotate-90': open}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
+                    <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+                    </svg>
+                    <span class="ms-3 flex-1 text-left whitespace-nowrap">Reports</span>
+                    <svg class="w-4 h-4 ms-auto transition-transform duration-200" 
+                        :class="{'rotate-90': open}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
 
-            <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
-                <li>
-                    <a href="{{ route('admin.reports.admineventbooking') }}"
-                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                            {{ request()->routeIs('admin.reports.admineventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
-                        Event Booking Report
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.reports.adminbooking') }}"
-                    class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-                            {{ request()->routeIs('admin.reports.adminbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
-                        Venue Booking Report
-                    </a>
-                </li>
-            </ul>
-        </li>
+                <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
+                    <li>
+                        <a href="{{ route('admin.reports.admineventbooking') }}"
+                        class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                                {{ request()->routeIs('admin.reports.admineventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                            Event Booking Report
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.reports.adminbooking') }}"
+                        class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                                {{ request()->routeIs('admin.reports.adminbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                            Venue Booking Report
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
 
 
 
