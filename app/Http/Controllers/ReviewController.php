@@ -67,7 +67,7 @@ class ReviewController extends Controller
     $reviewsData = $reviews->map(function ($review) {
         return [
             'user_name' => $review->user->name,
-            'user_profile' => asset('storage/' . $review->user->profile_image), // or your profile image path
+            'profile_photos' => $review->user->profile_photo,// or your profile image path
             'rating' => $review->rating,
             'comment' => $review->comment,
         ];
