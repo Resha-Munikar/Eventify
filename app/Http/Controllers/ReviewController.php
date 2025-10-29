@@ -56,6 +56,24 @@ class ReviewController extends Controller
         return view('vendor.venue-reviews', compact('reviews'));
     }
 
+    public function getVenueReviews($venueId)
+{
+    // Fetch reviews with user data
+    $reviews = Review::where('venue_id', $venueId)
+        ->with('user') // assuming you have relation 'user' in Review model
+        ->get();
 
+    // Map reviews to include user name and profile
+    $reviewsData = $reviews->map(function ($review) {
+        return [
+            'user_name' => $review->user->name,
+            'user_profile' => asset('storage/' . $review->user->profile_image), // or your profile image path
+            'rating' => $review->rating,
+            'comment' => $review->comment,
+        ];
+    });
+
+    return response()->json(['reviews' => $reviewsData]);
+}
 
 }
