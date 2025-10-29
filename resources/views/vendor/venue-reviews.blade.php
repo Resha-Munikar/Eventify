@@ -17,7 +17,7 @@ $noFooter = true;
             <table class="w-full text-sm text-left border-collapse">
                 <thead>
                     <tr class="bg-[#8d85ec] text-white">
-                        <th scope="col" class="px-6 py-3 rounded-tl-lg">#</th>
+                        <th scope="col" class="px-6 py-3 rounded-tl-lg">Id</th>
                         <th scope="col" class="px-6 py-3">Venue Details</th>
                         <th scope="col" class="px-6 py-3">User</th>
                         <th scope="col" class="px-6 py-3">Rating</th>
