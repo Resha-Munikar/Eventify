@@ -105,10 +105,18 @@
                 @auth
                   <button 
                     onclick="openBookingForm({{ $venue->id }}, '{{ $venue->venue_name }}', {{ $venue->price_type === 'package' ? $venue->package_price ?? 0 : $venue->base_price ?? 0 }}, '{{ $venue->price_type }}')"
-                    class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold py-2 px-4 rounded-lg transition">
+                    class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold py-2 px-4  rounded-lg transition">
                     Book Now
                   </button>
+                   <!-- Review Button -->
+                  
                 @endauth
+                <button 
+                    onclick="showReviews({{ $venue->id }})"
+                    class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold  ml-1 py-2 px-4 rounded-lg transition"
+                    >
+                    Reviews
+                  </button>
               </div>
             </div>
           </div>
@@ -151,6 +159,18 @@
           <button type="submit" class="px-4 py-2 bg-[#8D85EC] text-white rounded hover:bg-[#7b76e4]">Confirm</button>
         </div>
       </form>
+    </div>
+  </div>
+  <!-- Reviews Modal -->
+  <div id="reviewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"  style="background-color: rgba(0, 0, 0, 0.6) !important;">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto p-4 relative">
+      <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeReviews()">&times;</button>
+      <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white" id="venueReviewsTitle">Venue Reviews</h2>
+      <div id="reviewsContainer" class="space-y-4">
+        <!-- Reviews will be loaded here dynamically -->
+        <p class="italic mb-4 break-all whitespace-normal max-h-24 overflow-y-auto bg-[#8D85EC] text-white p-2 rounded">Loading reviews...</p>
+        
+      </div>
     </div>
   </div>
 
@@ -277,5 +297,48 @@ function closeBookingForm() {
 document.getElementById('bookingForm').addEventListener('submit', function(e) {
   updateTotalPrice();
 });
+// Show reviews
+  function showReviews(venueId) {
+    document.getElementById('reviewsModal').classList.remove('hidden');
+    document.getElementById('reviewsContainer').innerHTML = '<p class="text-gray-600 dark:text-gray-300">Loading reviews...</p>';
+
+    fetch(`/venues/${venueId}/reviews`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('reviewsContainer');
+        container.innerHTML = '';
+
+        if(data.reviews.length === 0) {
+          container.innerHTML = '<p class="text-gray-600 dark:text-gray-300">No reviews yet.</p>';
+          return;
+        }
+
+        data.reviews.forEach(review => {
+         const reviewDiv = document.createElement('div');
+reviewDiv.className = 'border rounded p-3 bg-purple-100';
+
+reviewDiv.innerHTML = `
+  <div class="flex items-center space-x-3 mb-2">
+    <img src="{{ asset('uploads/profile_photos/') }}${review.user_profile_photo}" alt="${review.user_name}" class="w-8 h-8 rounded-full object-cover">
+    <div>
+      <p class="font-semibold text-gray-900 dark:text-black">${review.user_name}</p>
+      <div class="flex items-center space-x-1">
+        ${'⭐'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
+      </div>
+    </div>
+  </div>
+  <p class="break-all whitespace-normal bg-purple-100 text-black p-2 rounded">${review.comment}</p>
+`;
+          container.appendChild(reviewDiv);
+        });
+      })
+      .catch(() => {
+        document.getElementById('reviewsContainer').innerHTML = '<p class="text-gray-600 dark:text-gray-300">Failed to load reviews.</p>';
+      });
+  }
+
+  function closeReviews() {
+    document.getElementById('reviewsModal').classList.add('hidden');
+  }
 </script>
 @endsection
