@@ -306,6 +306,9 @@ Route::get('/admin/reviews', [ReviewController::class, 'index'])
     ->name('admin.reports.review');
 
 Route::delete('/venue-review/{review}', [ReviewController::class, 'destroy'])->name('venueReview.destroy');
+Route::get('/vendor/reviews', [ReviewController::class, 'vendorIndex'])
+    ->name('vendor.venue-reviews')
+    ->middleware('auth');
 
 
 ?>
