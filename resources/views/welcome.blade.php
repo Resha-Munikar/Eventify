@@ -224,12 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Scrollable container -->
     <div id="testimonial-container" class="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-4">
       @foreach($reviews as $review)
-        <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg 
+      <div class="flex-shrink-0 w-[calc(25%-18px)] p-6 bg-[#d9d4f7] dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg 
             flex flex-col items-center text-center 
             transition-all duration-300 ease-in-out 
             hover:scale-105 hover:-translate-y-2 hover:shadow-2xl 
             hover:bg-[#9a8ff0] dark:hover:bg-gray-700 snap-start">
-<img src="{{ asset('uploads/profile_photos/' . $review->user->profile_photo) }}" alt="User Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">            <p class="italic mb-4">"{{ $review->comment }}"</p>
+    <img src="{{ asset('uploads/profile_photos/' . $review->user->profile_photo) }}" alt="User Photo" class="w-20 h-20 rounded-full object-cover shadow-md mb-4 border-2 border-white dark:border-gray-300">            
+    <p class="italic mb-4 break-all whitespace-normal max-h-24 overflow-y-auto">{{ $review->comment }}</p>
             <h4 class="font-semibold">{{ $review->user->name }}</h4>
         </div>
     @endforeach
