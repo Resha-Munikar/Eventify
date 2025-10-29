@@ -41,5 +41,21 @@ class ReviewController extends Controller
         $review->delete();
         return redirect()->back()->with('success', 'Review deleted successfully.');
     }
+    public function vendorIndex()
+    {
+        $vendorId = auth()->id();
+
+        // Fetch all reviews for venues that belong to the logged-in vendor
+        $reviews = \App\Models\Review::with(['user', 'venue'])
+            ->whereHas('venue', function ($query) use ($vendorId) {
+                $query->where('vendor_id', $vendorId);
+            })
+            ->latest()
+            ->get();
+
+        return view('vendor.venue-reviews', compact('reviews'));
+    }
+
+
 
 }

@@ -29,6 +29,8 @@ class Venue extends Model
     {
         return $this->belongsTo(User::class, 'vendor_id');
     }
-
-
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Review::class);
+    }
 }

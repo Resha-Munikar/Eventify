@@ -2,7 +2,7 @@
     <div class="h-full px-6 py-6 overflow-y-auto bg-gray-200 dark:bg-gray-800">
 
         <!-- Profile Section -->
-        <div class="flex flex-col items-center mb-8">
+        <div class="flex flex-col items-center mb-4">
             <div class="relative">
                 <img class="w-20 h-20 rounded-full border-4 border-[#8d85ec] object-cover" 
                 src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('uploads/avatar.jpg') }}" 
@@ -63,15 +63,15 @@
 
             <!-- My Event Booking -->
             <li>
-    <a href="{{ route('vendor.eventbooking') }}"
-       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-              {{ request()->routeIs('vendor.eventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
-        <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 2h6v2h3a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h3V2zm2 2v2h2V4h-2zm-2 6h8v2H9v-2zm0 4h8v2H9v-2z"/>
-        </svg>
-        <span class="ms-3 flex-1 whitespace-nowrap">My Event Booking</span>
-    </a>
-</li>
+                <a href="{{ route('vendor.eventbooking') }}"
+                class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                        {{ request()->routeIs('vendor.eventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 2h6v2h3a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1h3V2zm2 2v2h2V4h-2zm-2 6h8v2H9v-2zm0 4h8v2H9v-2z"/>
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">My Event Booking</span>
+                </a>
+            </li>
 
             <!-- My Venue Booking -->
             <li>
@@ -101,21 +101,32 @@
                 <!-- submenu -->
                 <ul x-show="open" x-transition class="mt-2 space-y-2 pl-8">
                     <li>
-                             <a href="{{ route('vendor.reports.eventbooking') }}"
-       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-              {{ request()->routeIs('vendor.reports.eventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
-        Event Booking Report
-    </a>
+                        <a href="{{ route('vendor.reports.eventbooking') }}"
+                        class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                                {{ request()->routeIs('vendor.reports.eventbooking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                            Event Booking Report
+                        </a>
                     </li>
                     <li>
                        <a href="{{ route('vendor.reports.booking') }}"
-       class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
-              {{ request()->routeIs('vendor.reports.booking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
-        Venue Booking Report
-    </a>
+                        class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                                {{ request()->routeIs('vendor.reports.booking') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                            Venue Booking Report
+                        </a>
                     </li>
                 </ul>
             </li>  
+            <!-- Reviews -->
+            <li>
+                <a href="{{ route('vendor.venue-reviews') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('vendor.venue-reviews') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 21V3h18v18H3zm2-16v14h14V5H5zm2 2h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">Reviews</span>
+                </a>
+            </li>
 
             <!-- Logout -->
             <li>
