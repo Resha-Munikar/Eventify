@@ -9,7 +9,7 @@ $noFooter = true;
 
 <div class="max-w-7xl mx-auto mt-10 px-4">
     <div class="bg-white rounded-2xl shadow-lg p-6">
-        <h2 class="text-3xl font-bold text-[#8d85ec] mb-6"> Venues Booking</h2>
+        <h2 class="text-3xl font-bold text-[#8d85ec] mb-6"> Venue Bookings</h2>
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left border-collapse">

@@ -291,11 +291,11 @@ function saveBooking(event, tickets) {
       // Update seats dynamically
       const seatEl = document.getElementById(`seats-${event.id}`);
       if (seatEl) seatEl.textContent = event.available_seats - tickets;
-      alert("🎟️ Booking saved successfully and ticket emailed!");
-    } else {
-      console.error("Error saving booking:", data);
-      alert("❌ Failed to save booking. Check console for details.");
-    }
+    //   alert("🎟️ Booking saved successfully and ticket emailed!");
+    // } else {
+    //   console.error("Error saving booking:", data);
+    //   alert("❌ Failed to save booking. Check console for details.");
+    // }
   })
   .catch(err => {
     console.error("Fetch error:", err);
