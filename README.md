@@ -17,7 +17,8 @@
 </div>
 <div style="display: flex; gap: 10px; margin-top: 20px;">
     <h3>Venue page : </h3>
- <img width="1920" height="1547" alt="image" src="https://github.com/user-attachments/assets/357c4a73-f9ff-4343-9e2d-54ed2c2e6202" />
+    <img width="793" height="627" alt="image" src="https://github.com/user-attachments/assets/5dc86674-dbc5-42b8-9d4f-c66c11f2c1ed" />
+
 </div>
 <div style="display: flex; gap: 10px; margin-top: 20px;">
     <h3>Contact us : </h3>
@@ -34,6 +35,15 @@
 <div style="display: flex; gap: 10px; margin-top: 20px;">
       <h3> User profile :  </h3>
 <img width="1920" height="877" alt="image" src="https://github.com/user-attachments/assets/3b162330-04bf-43bd-91f2-1fb0c04febdb" />
+
+</div>
+<div style="display: flex; gap: 10px; margin-top: 20px;">
+      <h3> Admin dashboard :  </h3>
+<img width="655" height="290" alt="image" src="https://github.com/user-attachments/assets/f159ce9e-d634-48c4-ad77-31bcdc0ea3f7" />
+</div>
+<div style="display: flex; gap: 10px; margin-top: 20px;">
+      <h3> Vendor dashboard :  </h3>
+<img width="731" height="320" alt="image" src="https://github.com/user-attachments/assets/5fc8d983-4b49-46b6-bddd-4ce1bb7ed756" />
 
 </div>
 
