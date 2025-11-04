@@ -5,12 +5,10 @@
 @section('content')
 
 <div class="max-w-7xl mx-auto flex gap-4 p-4 dark:bg-gray-800">
-  
-  <!-- Sidebar Filters -->
+  <!-- Filter Sidebar -->
   <div class="w-60 bg-white p-3 rounded-lg shadow-lg sticky top-4 z-10 h-[80vh] overflow-y-auto dark:bg-gray-700">
     <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Filters</h2>
-    
-    <!-- Date Filter -->
+    <!-- Date Filter Toggle Button -->
     <div class="mb-4">
       <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('dateFilter')">
         <span class="font-semibold text-gray-700 dark:text-gray-200">Date</span>
@@ -18,21 +16,17 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      <div id="dateFilter" class="mt-2 hidden">
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Today</button>
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Tomorrow</button>
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">This Weekend</button>
-        <div class="mt-2">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From - To</label>
-          <div class="flex space-x-2">
-            <input type="date" class="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-1/2" />
-            <input type="date" class="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-1/2" />
-          </div>
+      <!-- Date Filter Options -->
+      <div id="dateFilter" class="mt-4 hidden">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From - To</label>
+        <div class="flex space-x-2">
+          <input type="date" id="startDate" class="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-1/2" />
+          <input type="date" id="endDate" class="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-1/2" />
         </div>
+        <button onclick="applyCustomRange()" class="mt-2 w-full bg-[#8D85EC] dark:bg-[#a78df0]  text-white py-1 px-2 rounded text-sm">Apply Range</button>
       </div>
     </div>
-    
-    <!-- Categories Filter -->
+     <!-- Categories Filter -->
     <div class="mb-4">
       <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('categoriesFilter')">
         <span class="font-semibold text-gray-700 dark:text-gray-200">Categories</span>
@@ -59,27 +53,44 @@
            class="block w-full text-sm mb-2 {{ !$activeCategory ? 'font-bold text-blue-600' : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white' }}">All</a>
       </div>
     </div>
-    
-    <!-- More Filters -->
+    <!-- Price Filter -->
     <div class="mb-4">
-      <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('moreFilters')">
-        <span class="font-semibold text-gray-700 dark:text-gray-200">More Filters</span>
-        <svg id="icon-moreFilters" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('priceFilter')">
+        <span class="font-semibold text-gray-700 dark:text-gray-200">Price</span>
+        <svg id="icon-priceFilter" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      <div id="moreFilters" class="mt-2 hidden">
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Filter 1</button>
-        <button class="block w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white mb-2">Filter 2</button>
+      <div id="priceFilter" class="mt-4 hidden">
+        <div class="flex space-x-2">
+          <input type="number" id="minPrice" placeholder="Min" class="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-1/2" />
+          <input type="number" id="maxPrice" placeholder="Max" class="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-1/2" />
+        </div>
+        <button onclick="applyPriceFilter()" class="mt-2 w-full  bg-[#8D85EC] dark:bg-[#a78df0]  text-white py-1 px-2 rounded text-sm">Apply Price</button>
       </div>
     </div>
-    
-    <!-- Price / Browse -->
+
+    <!-- Search Venues with Input -->
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price</label>
-      <button class="w-full bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded mb-2">Browse by Venues</button>
+      <button class="flex items-center justify-between w-full text-left" onclick="toggleSection('venueFilter')">
+        <span class="font-semibold text-gray-700 dark:text-gray-200">Venues</span>
+        <svg id="icon-venueFilter" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div id="venueFilter" class="mt-4 hidden px-2">
+        <div class="flex mb-3">
+          <input type="text" placeholder="Search Venue" class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" id="venueSearchInput" />
+          <button onclick="searchVenues()" class="ml-2  bg-[#8D85EC] dark:bg-[#a78df0]   hover:opacity-90 text-white px-3 py-2 rounded">Search</button>
+        </div>
+      </div>
+      <div>
+      <!-- Reset Button -->
+  <button onclick="resetFilters()" class="w-full bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 px-4 rounded mb-2 mt-2 hover:bg-gray-400 dark:hover:bg-gray-600 transition">Reset Filters</button>
+</div>
     </div>
-  </div>
+    </div>
+  
 
   <!-- Events Listing with Booking Modal -->
   <div x-data="{ openBookingId: null, selectedEvent: null }" class="flex-1">
@@ -270,7 +281,78 @@
         <!-- End of modal content -->
     </div>
 </div>
+
 <script>
+// Toggle filter sections
+function toggleSection(id) {
+    const section = document.getElementById(id);
+    const icon = document.getElementById('icon-' + id);
+    section.classList.toggle('hidden');
+    if(icon) icon.classList.toggle('rotate-180');
+}
+
+// Helper functions for filters
+function getQueryParams() {
+    return new URLSearchParams(window.location.search);
+}
+function setQueryParams(params) {
+    window.location.search = params.toString();
+}
+function resetFilters() {
+  // Clear venue search input
+  document.getElementById('venueSearchInput').value = '';
+
+  // Clear date filters
+  document.getElementById('startDate').value = '';
+  document.getElementById('endDate').value = '';
+
+  // Clear price filters
+  document.getElementById('minPrice').value = '';
+  document.getElementById('maxPrice').value = '';
+
+  // Remove filters from URL
+  const params = new URLSearchParams(window.location.search);
+  params.delete('venue');
+  params.delete('start_date');
+  params.delete('end_date');
+  params.delete('min_price');
+  params.delete('max_price');
+  params.delete('category'); 
+
+  // Update URL and reload
+  window.location.search = params.toString();
+}
+function applyCustomRange() {
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+    const params = getQueryParams();
+    if (start) params.set('start_date', start);
+    if (end) params.set('end_date', end);
+    setQueryParams(params);
+}
+function applyPriceFilter() {
+    const minPrice = document.getElementById('minPrice').value;
+    const maxPrice = document.getElementById('maxPrice').value;
+    const params = getQueryParams();
+    if (minPrice) params.set('min_price', minPrice);
+    if (maxPrice) params.set('max_price', maxPrice);
+    setQueryParams(params);
+}
+function searchVenues() {
+    const input = document.getElementById('venueSearchInput').value.trim();
+    const params = getQueryParams();
+    if(input) params.set('venue', input);
+    else params.delete('venue');
+    setQueryParams(params);
+}
+function filterVenue(venueName) {
+    const params = getQueryParams();
+    if (venueName) params.set('venue', venueName);
+    else params.delete('venue');
+    setQueryParams(params);
+}
+
+// Save booking function
 function saveBooking(event, tickets) {
   fetch("{{ route('khalti.saveBooking') }}", {
     method: "POST",
