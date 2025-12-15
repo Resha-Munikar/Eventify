@@ -20,13 +20,8 @@
     <div class="flex justify-center mb-8">
         <form class="flex items-center w-full max-w-xl" onsubmit="searchVenues(); return false;">
             <div class="relative w-full">
-                <!-- <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div> -->
                 <input type="text" id="simple-search"
-                       class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#8D85EC] focus:border-[#8D85EC] block w-full pl-10 p-3"
+                       class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-[#8D85EC] focus:border-[#8D85EC] block w-full pl-10 p-3"
                        placeholder="Search venue..."/>
             </div>
             <button type="submit"
@@ -40,13 +35,13 @@
     </div>
 
     <!-- Section Title -->
-    <h2 class="text-2xl font-bold mb-6 text-gray-900">Venues</h2>
+    <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Venues</h2>
 
     @if($venues->count() > 0)
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-4 gap-8">
 
         @foreach($venues as $venue)
-        <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition duration-300 w-full">
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden hover:shadow-lg transition duration-300 w-full border border-gray-200 dark:border-gray-700">
 
             <!-- Image -->
             <div class="w-full h-52 overflow-hidden">
@@ -57,45 +52,43 @@
 
             <!-- Content -->
             <div class="p-5 flex flex-col gap-2">
-
-                <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $venue->venue_name }}</h3>
-                <p class="text-gray-600 text-sm leading-snug">{{ Str::limit($venue->description, 80) }}</p>
-                <p class="text-gray-700 text-sm">Location: {{ $venue->location }}</p>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">{{ $venue->venue_name }}</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm leading-snug">{{ Str::limit($venue->description, 80) }}</p>
+                <p class="text-gray-700 dark:text-gray-400 text-sm">Location: {{ $venue->location }}</p>
 
                 <!-- Pricing -->
                 @if($venue->price_type === 'package')
-                        <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                            <p class="text-sm text-gray-700 dark:text-gray-200">
-                                🎁 <span class="font-semibold text-[#8d85ec]">Package Price:</span> 
-                                Rs {{ number_format($venue->package_price ?? 0, 2) }}
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Package Includes: {{ $venue->package_details ?? '-' }}
-                            </p>
-                        </div>
-                    @else
-                        <p class="text-[#8d85ec] font-semibold text-sm mt-1">
-                            Price: Rs {{ number_format($venue->base_price ?? 0, 2) }} / 
-                            {{ $venue->price_type === 'per_person' ? 'person' : ($venue->price_type === 'per_day' ? 'day' : 'hour') }}
+                    <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <p class="text-sm text-gray-700 dark:text-gray-200">
+                            🎁 <span class="font-semibold text-[#8d85ec]">Package Price:</span> 
+                            Rs {{ number_format($venue->package_price ?? 0, 2) }}
                         </p>
-                    @endif
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Package Includes: {{ $venue->package_details ?? '-' }}
+                        </p>
+                    </div>
+                @else
+                    <p class="text-[#8d85ec] font-semibold text-sm mt-1">
+                        Price: Rs {{ number_format($venue->base_price ?? 0, 2) }} / 
+                        {{ $venue->price_type === 'per_person' ? 'person' : ($venue->price_type === 'per_day' ? 'day' : 'hour') }}
+                    </p>
+                @endif
 
                 <!-- Catering -->
                 @if($venue->has_catering)
-                        <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                            <p class="text-sm text-gray-700 dark:text-gray-200">
-                                🍽️ <span class="font-semibold text-[#8d85ec]">Catering Available</span><br>
-                                Rs {{ number_format($venue->catering_price_per_person ?? 0, 2) }} per person
-                            </p>
-                            @if($venue->catering_menu)
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Menu: {{ $venue->catering_menu }}</p>
-                            @endif
-                        </div>
-                    @endif
+                    <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <p class="text-sm text-gray-700 dark:text-gray-200">
+                            🍽️ <span class="font-semibold text-[#8d85ec]">Catering Available</span><br>
+                            Rs {{ number_format($venue->catering_price_per_person ?? 0, 2) }} per person
+                        </p>
+                        @if($venue->catering_menu)
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Menu: {{ $venue->catering_menu }}</p>
+                        @endif
+                    </div>
+                @endif
 
                 <!-- Buttons -->
                 <div class="flex gap-3 mt-4">
-
                     @guest
                     <a href="{{ route('login') }}"
                         class="bg-[#8D85EC] text-white w-1/2 text-center py-2 rounded-lg hover:bg-[#7b76e4]">
@@ -122,7 +115,7 @@
 
     </div>
     @else
-        <p class="text-center text-gray-600 text-lg mt-16">No venues found!</p>
+        <p class="text-center text-gray-600 dark:text-gray-300 text-lg mt-16">No venues found!</p>
     @endif
 
   <!-- Booking Modal -->
@@ -157,33 +150,27 @@
       </form>
     </div>
   </div>
+
 <!-- Reviews Modal -->
-    <div id="reviewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"  style="background-color: rgba(0, 0, 0, 0.6) !important;">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col relative">
+<div id="reviewsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"  style="background-color: rgba(0, 0, 0, 0.6) !important;">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col relative">
 
-        <!-- Close Button -->
-        <button class="absolute top-3 right-2 md:right-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl"
-                onclick="closeReviews()">
-            &times;
-        </button>
+      <button class="absolute top-3 right-2 md:right-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl"
+              onclick="closeReviews()">&times;</button>
 
-        <!-- Header -->
-        <div class="px-6 pt-6 pb-3 border-b border-gray-200 dark:border-gray-700">
-            <h2 class="text-2xl font-semibold text-gray-800 dark:text-white" id="venueReviewsTitle">
-                Venue Reviews
-            </h2>
-        </div>
+      <div class="px-6 pt-6 pb-3 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white" id="venueReviewsTitle">
+              Venue Reviews
+          </h2>
+      </div>
 
-        <!-- Reviews Content -->
-        <div id="reviewsContainer" class="space-y-4 p-6 overflow-y-auto">
-            <p class="italic text-center bg-[#8D85EC] text-white p-3 rounded-lg">
-                Loading reviews...
-            </p>
-        </div>
-
-    </div>
+      <div id="reviewsContainer" class="space-y-4 p-6 overflow-y-auto">
+          <p class="italic text-center bg-[#8D85EC] text-white p-3 rounded-lg">
+              Loading reviews...
+          </p>
+      </div>
+  </div>
 </div>
-
 
 </div>
 <script>

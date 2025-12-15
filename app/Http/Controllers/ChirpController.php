@@ -386,8 +386,7 @@ public function venues(Request $request)
 
     // Check if the request expects JSON (AJAX) or a full page load
     if ($request->ajax() || $request->wantsJson()) {
-        return response()->json($venues);
-    }
+        return response()->json($venues);}
 
     // Otherwise, return the view with venues
     return view('venues', compact('venues'));

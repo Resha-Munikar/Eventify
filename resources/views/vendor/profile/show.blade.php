@@ -77,9 +77,9 @@
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC]">
                 </div>
                 <!-- Forgot Password Link -->
-                <p class="mt-1 text-xs text-blue-600 hover:underline cursor-pointer" @click="openForgot = true; openChange = false">
+                <!-- <p class="mt-1 text-xs text-blue-600 hover:underline cursor-pointer" @click="openForgot = true; openChange = false">
                     Forgot Password?
-                </p>
+                </p> -->
 
                 <!-- New Password -->
                 <div>

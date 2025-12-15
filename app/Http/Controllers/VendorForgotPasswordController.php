@@ -23,43 +23,49 @@ class VendorForgotPasswordController extends Controller
 
     // Handle form submission
     public function sendResetLink(Request $request)
-    {
-        $request->validate(['email' => 'required|email|exists:users,email']);
+{
+    // Validate email
+    $request->validate(['email' => 'required|email|exists:users,email']);
 
-        $token = Str::random(64);
+    // Generate token
+    $token = Str::random(64);
 
-        DB::table('password_resets')->updateOrInsert(
-            ['email' => $request->email],
-            [
-                'token' => $token,
-                'created_at' => Carbon::now()
-            ]
-        );
+    // Store or update token in password_resets table
+    DB::table('password_resets')->updateOrInsert(
+        ['email' => $request->email],
+        [
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]
+    );
 
+    // Create reset link
+    $resetLink = url('/vendor/reset-password/' . $token . '?email=' . urlencode($request->email));
+
+    try {
         // Send email
-$resetLink = url('/vendor/reset-password/' . $token . '?email=' . urlencode($request->email));
+        Mail::html('
+            <p>Hello,</p>
+            <p>Click the button below to reset your password:</p>
+            <p style="text-align:center; margin:20px 0;">
+                <a href="' . $resetLink . '" style="background:#8D85EC; padding:10px 15px; color:white; text-decoration:none; border-radius:5px;">
+                    Reset Password
+                </a>
+            </p>
+            <p>If you did not request a password reset, please ignore this email.</p>
+        ', function ($message) use ($request) {
+            $message->to($request->email)
+                    ->subject('Vendor Password Reset');
+        });
 
-try {
-    Mail::html('
-        <p>Hello,</p>
-        <p>Click the button below to reset your password:</p>
-        <p style="text-align:center; margin:20px 0;">
-            <a href="' . $resetLink . '" style="background:#8D85EC; padding:10px 15px; color:white; text-decoration:none; border-radius:5px;">
-                Reset Password
-            </a>
-        </p>
-        <p>If you did not request a password reset, ignore this email.</p>
-    ', function ($message) use ($request) {
-        $message->to($request->email)
-                ->subject('Vendor Password Reset');
-    });
+        // ✅ Show success toast (no JSON)
+        return back()->with('status', 'Password reset link sent to your email.');
 
-    return response()->json(['status' => 'Password reset link sent to your email.']);
-
-} catch (\Exception $e) {
-    return response()->json(['error' => 'Failed to send email. Please try again later.'], 500);
-}
+    } catch (\Exception $e) {
+        // ✅ Show error toast
+        return back()->withErrors(['email' => 'Failed to send email. Please try again later.']);
     }
+}
 
 
     // Show reset password form

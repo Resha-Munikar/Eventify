@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div>
         <h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-white">Dream Weddings</h3>
         <p class="mb-6 text-gray-600 dark:text-gray-300">Elegant wedding ceremonies with beautiful decor, catering, and entertainment tailored to create lifelong memories.</p>
-        <a href="#" class="inline-block px-6 py-2 bg-[#8D85EC] text-white rounded-lg shadow hover:opacity-90">Explore</a>
+        <a href="{{ route('venues') }}" class="inline-block px-6 py-2 bg-[#8D85EC] text-white rounded-lg shadow hover:opacity-90">Explore</a>
       </div>
     </div>
     <!-- Card 2 -->
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div>
         <h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-white">Live Concerts</h3>
         <p class="mb-6 text-gray-600 dark:text-gray-300">High-energy concerts and music festivals, complete with stage design, sound systems, and crowd management.</p>
-        <a href="#" class="inline-block px-6 py-2 bg-[#8D85EC] text-white rounded-lg shadow hover:opacity-90">Explore</a>
+        <a href="{{ route('events') }}" class="inline-block px-6 py-2 bg-[#8D85EC] text-white rounded-lg shadow hover:opacity-90">Explore</a>
       </div>
     </div>
     <!-- Card 3 -->
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div>
         <h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-white">Corporate Events</h3>
         <p class="mb-6 text-gray-600 dark:text-gray-300">Seamless corporate events, including conferences, product launches, and gala dinners, designed for maximum impact.</p>
-        <a href="#" class="inline-block px-6 py-2 bg-[#8D85EC] text-white rounded-lg shadow hover:opacity-90">Explore</a>
+        <a href="{{ route('events') }}" class="inline-block px-6 py-2 bg-[#8D85EC] text-white rounded-lg shadow hover:opacity-90">Explore</a>
       </div>
     </div>
   </div>

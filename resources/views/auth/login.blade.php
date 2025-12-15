@@ -57,9 +57,14 @@
                 </button>
 
                 <!-- Sign up link -->
-                <p class="mt-3 text-sm text-gray-600 dark:text-gray-400 text-center">
-                    Don't have an account? <a href="{{route('register')}}" class="text-[#F76C6C] font-medium hover:underline">Sign Up</a>
-                </p>
+                <!-- Sign up and Forgot password links -->
+<p class="mt-3 text-sm text-gray-600 dark:text-gray-400 text-center">
+    Don't have an account? 
+    <a href="{{ route('register') }}" class="text-[#F76C6C] font-medium hover:underline">Sign Up</a>
+    <span class="mx-2 text-gray-400">|</span>
+    <a href="{{ route('vendor.password.request') }}" class="text-[#8d85ec] font-medium hover:underline">Forgot Password?</a>
+</p>
+
             </form>
         </div>
     </div>
