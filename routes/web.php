@@ -282,9 +282,8 @@ Route::get('/payment', function () {
 Route::post('/khalti/verify', [KhaltiController::class, 'verify'])
     ->name('khalti.verify')
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
-
-Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
+// Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
+// Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/venues/book', [VenueBookingController::class, 'store'])->name('venues.book');

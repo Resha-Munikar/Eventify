@@ -73,17 +73,27 @@
                 <p><span class="highlight">Event:</span> {{ $event->event_name }}</p>
                 <p><span class="highlight">Venue:</span> {{ $event->venue }}</p>
                 <p><span class="highlight">Date:</span> {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
+                @if(!empty($ticketType))
+                <p><span class="highlight">Ticket Type:</span> {{ $ticketType->name }}</p>
+                @endif
             </div>
             <div>
-                <p><span class="highlight">Tickets:</span> {{ $tickets }}</p>
-                <p><span class="highlight">Price per ticket:</span> Rs {{ number_format($event->price, 2) }}</p>
-                <p><span class="highlight">Total:</span> Rs {{ number_format($event->price * $tickets, 2) }}</p>
+                <p><span class="highlight">Quantity:</span> {{ $tickets }}</p>
+                @php
+                    $unitPrice = $booking->price_per_ticket ?? $ticketType->price ?? $event->price ?? 0;
+                    $total = $booking->total_amount ?? ($unitPrice * $tickets + 5.65);
+                @endphp
+                <p><span class="highlight">Price per ticket:</span> Rs {{ number_format($unitPrice, 2) }}</p>
+                @if(isset($booking->service_charge) && $booking->service_charge > 0)
+                <p><span class="highlight">Service Charge:</span> Rs {{ number_format($booking->service_charge, 2) }}</p>
+                @endif
+                <p><span class="highlight">Total Amount:</span> Rs {{ number_format($total, 2) }}</p>
             </div>
         </div>
 
         <div class="qr-code">
             <p>Scan for verification:</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode('Event: '.$event->event_name.', User: '.$user->name) }}" alt="QR Code">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode('Event: '.$event->event_name.', Ticket: '.($ticketType->name ?? 'Standard').', User: '.$user->name) }}" alt="QR Code">
         </div>
 
         <div class="ticket-footer">

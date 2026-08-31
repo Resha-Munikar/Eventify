@@ -80,7 +80,7 @@ class ChirpController extends Controller
 public function showWelcomePage()
 {
     $reviews = Review::with('user')->get();
-    $upcomingEvents = Event::orderBy('event_date', 'asc')->take(10)->get();
+    $upcomingEvents = Event::with('ticketTypes')->orderBy('event_date', 'asc')->take(10)->get();
 
     return view('welcome', compact('reviews', 'upcomingEvents'));
 }
@@ -111,7 +111,7 @@ public function events(Request $request){
     $maxPrice = $request->query('max_price');
 
     // Start building the query
-    $query = Event::query();
+    $query = Event::with('ticketTypes');
 
     // Filter by category if provided
     if ($category && $category != '') {

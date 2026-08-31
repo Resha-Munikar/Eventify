@@ -538,7 +538,7 @@ PROMPT;
     protected function getDynamicEventsSummary(): string
     {
         try {
-            $events = Event::with('vendor')->orderBy('event_date', 'asc')->take(15)->get();
+            $events = Event::with(['vendor', 'ticketTypes'])->orderBy('event_date', 'asc')->take(15)->get();
             if ($events->isEmpty()) {
                 return "No events currently published in database.";
             }
@@ -546,9 +546,17 @@ PROMPT;
             $lines = [];
             foreach ($events as $e) {
                 $date = $e->event_date ? $e->event_date->format('Y-m-d H:i') : 'TBD';
-                $price = $e->price > 0 ? "NPR {$e->price}" : "FREE";
                 $vendor = $e->vendor ? " (Hosted by {$e->vendor->name})" : "";
-                $lines[] = "- Event: \"{$e->event_name}\" | Category: {$e->category} | Date: {$date} | Venue: {$e->venue} | Price: {$price} | Available Seats: {$e->available_seats}{$vendor} | Desc: {$e->description}";
+                
+                $ticketSummary = [];
+                if ($e->ticketTypes && $e->ticketTypes->isNotEmpty()) {
+                    foreach ($e->ticketTypes->where('status', 'active') as $tt) {
+                        $ticketSummary[] = "{$tt->name}: NPR {$tt->price} ({$tt->remaining_quantity} left)";
+                    }
+                }
+                $ticketsStr = !empty($ticketSummary) ? implode(', ', $ticketSummary) : "NPR {$e->price}";
+
+                $lines[] = "- Event: \"{$e->event_name}\" | Category: {$e->category} | Date: {$date} | Venue: {$e->venue} | Ticket Tiers: [{$ticketsStr}] | Available Seats: {$e->available_seats}{$vendor} | Desc: {$e->description}";
             }
             return implode("\n", $lines);
         } catch (\Throwable $e) {
@@ -591,14 +599,15 @@ PROMPT;
         }
 
         try {
-            $eventBookings = Booking::with('event')->where('user_id', $user->id)->take(5)->get();
+            $eventBookings = Booking::with(['event', 'ticketType'])->where('user_id', $user->id)->take(5)->get();
             $venueBookings = VenueBooking::with('venue')->where('user_id', $user->id)->take(5)->get();
 
             $info = "User Name: {$user->name} | Email: {$user->email} | Role: {$user->role}\n";
             $info .= "Event Bookings count: " . $eventBookings->count() . "\n";
             foreach ($eventBookings as $b) {
                 $name = $b->event->event_name ?? 'Event #' . $b->event_id;
-                $info .= "  * Booked {$b->tickets} tickets for '{$name}' (Amount: NPR {$b->amount})\n";
+                $tier = $b->ticketType ? " ({$b->ticketType->name} Tier)" : "";
+                $info .= "  * Booked {$b->tickets} ticket(s){$tier} for '{$name}' (Amount: NPR {$b->amount})\n";
             }
             $info .= "Venue Bookings count: " . $venueBookings->count() . "\n";
             foreach ($venueBookings as $vb) {

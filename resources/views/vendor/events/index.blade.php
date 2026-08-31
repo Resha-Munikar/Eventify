@@ -12,166 +12,121 @@
 <div class="ml-0 sm:ml-64 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen overflow-x-hidden">
 
     <!-- Header & Add Event Button -->
-    <div class="mb-6 mt-6 max-w-4xl mx-auto flex justify-between">
-        <!-- Title on the left -->
-        <h2 class="text-3xl font-bold text-[#8d85ec] truncate">My Events</h2>
-        
-        <!-- Add Event Button on the right -->
-        <button id="toggleFormBtn"
-                class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-5 py-2 rounded-full shadow-md flex items-center transition transform hover:-translate-y-0.5">
-            <span id="toggleIcon" class="inline-block mr-2 transition-transform duration-300">+</span>
-            <span id="toggleText">Add Event</span>
-        </button>
-    </div>
-
-    <!-- Add Event Form -->
-    <div id="addEventFormWrapper" class="max-w-xl mx-auto overflow-hidden transition-all duration-500" style="height:0">
-        <div id="addEventForm" class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-5">
-            <h2 class="text-xl font-bold text-[#8d85ec] mb-4 text-center">Add New Event</h2>
-
-            <form action="{{ route('vendor.events.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
-                @csrf
-
-                <div>
-                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Event Name</label>
-                    <input type="text" name="event_name" value="{{ old('event_name') }}"
-                           class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Event Date</label>
-                    <input type="date" name="event_date" value="{{ old('event_date') }}"
-                           class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
-                </div>
-
-                <!-- Updated Category Dropdown -->
-                <div>
-                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Category</label>
-                    <select name="category"
-                            class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="Concert" {{ old('category') == 'Concert' ? 'selected' : '' }}>Concert</option>
-                        <option value="Art" {{ old('category') == 'Exhibition' ? 'selected' : '' }}>Exhibition</option>
-                        <option value="Food & Drink" {{ old('category') == 'Food & Drink' ? 'selected' : '' }}>Food & Drink</option>
-                        <option value="Technology" {{ old('category') == 'Technology' ? 'selected' : '' }}>Technology</option>
-                        <option value="Sports" {{ old('category') == 'Sports' ? 'selected' : '' }}>Sports</option>
-                        <option value="Wellness" {{ old('category') == 'Workshop' ? 'selected' : '' }}>Workshop</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Venue / Location</label>
-                    <input type="text" name="venue" value="{{ old('venue') }}"
-                           class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Description</label>
-                    <textarea name="description" rows="3"
-                              class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>{{ old('description') }}</textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Price</label>
-                        <input type="number" name="price" value="{{ old('price') }}"
-                               class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Available Seats</label>
-                        <input type="number" name="available_seats" value="{{ old('available_seats') }}"
-                               class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 text-sm" required>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-gray-700 dark:text-gray-200 text-sm">Event Photo</label>
-                    <input type="file" name="image"
-                           class="w-full text-gray-700 dark:text-gray-200 text-sm" accept="image/*" required>
-                </div>
-
-                <div class="flex justify-center gap-12 mt-8">
-                    <button type="submit"
-                            class="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-4 py-2 rounded-full font-semibold shadow-md transition text-sm w-40">
-                        Add Event
-                    </button>
-                    <button type="button" id="cancelFormBtn"
-                            class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-semibold transition text-sm w-40">
-                        Cancel
-                    </button>
-                </div>
-            </form>
+    <div class="mb-6 mt-6 max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-3xl font-bold text-[#8d85ec] truncate">My Events</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Manage your published events and ticket types.</p>
         </div>
+        
+        <!-- Add Event Button -->
+        <a href="{{ route('vendor.events.create') }}"
+           class="bg-gradient-to-r from-purple-500 to-[#8d85ec] hover:from-purple-600 hover:to-[#7a72d6] text-white px-6 py-2.5 rounded-full shadow-md flex items-center gap-2 transition transform hover:-translate-y-0.5 font-semibold text-sm">
+            <span class="text-lg font-bold">+</span>
+            <span>Add New Event</span>
+        </a>
     </div>
+
+    @if(session('success'))
+        <div class="max-w-6xl mx-auto mb-6 bg-green-100 text-green-800 p-4 rounded-lg border border-green-300">
+            {{ session('success') }}
+        </div>
+    @endif
 
     <!-- Events Grid -->
     @if($events->count() > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 max-w-6xl mx-auto">
             @foreach($events as $event)
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-105 w-full">
-                    <div class="w-full h-64 overflow-hidden rounded-t-2xl">
-                        <img src="{{ asset('uploads/' . $event->image) }}" 
-                            alt="{{ $event->event_name }}" 
-                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full flex flex-col justify-between">
+                    <div>
+                        <div class="w-full h-56 overflow-hidden rounded-t-2xl relative">
+                            <img src="{{ asset('uploads/' . $event->image) }}" 
+                                alt="{{ $event->event_name }}" 
+                                class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+                            @if($event->category)
+                                <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow">
+                                    {{ $event->category }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="p-5 flex flex-col gap-2.5">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
+                            <p class="text-gray-600 dark:text-gray-300 text-xs line-clamp-2">{{ $event->description }}</p>
+                            
+                            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                                <span>📍</span>
+                                <span class="truncate">{{ $event->venue }}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                                <span>📅</span>
+                                <span>{{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y - h:i A') }}</span>
+                            </div>
+
+                            <!-- Ticket Types Summary -->
+                            <div class="mt-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Tickets:</span>
+                                    <span class="text-xs font-bold text-[#8d85ec]">
+                                        @if($event->ticketTypes->isNotEmpty())
+                                            @php
+                                                $min = $event->ticketTypes->where('status', 'active')->min('price') ?? $event->price;
+                                                $max = $event->ticketTypes->where('status', 'active')->max('price') ?? $event->price;
+                                            @endphp
+                                            @if($min == $max)
+                                                Rs {{ number_format($min, 2) }}
+                                            @else
+                                                Rs {{ number_format($min, 0) }} - {{ number_format($max, 0) }}
+                                            @endif
+                                        @else
+                                            Rs {{ number_format($event->price, 2) }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                <div class="flex flex-wrap gap-1.5">
+                                    @forelse($event->ticketTypes as $t)
+                                        <span class="text-[11px] px-2 py-0.5 rounded-full {{ $t->status === 'active' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300' : 'bg-gray-100 text-gray-600' }}">
+                                            {{ $t->name }}: Rs {{ number_format($t->price, 0) }} 
+                                            <span class="text-[10px] opacity-75">({{ $t->remaining_quantity }} left)</span>
+                                        </span>
+                                    @empty
+                                        <span class="text-xs text-gray-400">Standard ({{ $event->available_seats }} seats)</span>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="p-5 flex flex-col gap-2">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
-                        <p class="text-gray-900 font-medium dark:text-gray-200 text-sm line-clamp-2">{{ $event->description }}</p>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Category: {{ $event->category }}</p>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm truncate">Location: {{ $event->venue }}</p>
-                        <p class="text-[#8d85ec] font-semibold text-sm mt-1">Price: Rs {{ number_format($event->price, 2) }}</p>
-                        <p class="text-gray-700 dark:text-gray-200 text-sm">Seats: {{ $event->available_seats }}</p>
-                        <p class="text-gray-700 dark:text-gray-200 text-sm">Date: {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</p>
+                    <div class="p-5 pt-0 flex justify-between gap-2">
+                        <a href="{{ route('vendor.events.edit', $event->id) }}"
+                        class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold text-xs py-2 rounded-lg text-center transition shadow-sm">Edit</a>
 
-                        <div class="flex justify-between mt-3 gap-2">
-                            <a href="{{ route('vendor.events.edit', $event->id) }}"
-                            class="flex-1 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold text-sm py-2 rounded-lg text-center transition">Edit</a>
-
-                            <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
-                                onsubmit="return confirm('Are you sure?');" class="flex-1">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                        class="w-full bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-semibold text-sm py-2 rounded-lg transition">
-                                    Delete
-                                </button>
-                            </form>
-                        </div>
+                        <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
+                            onsubmit="return confirm('Are you sure you want to delete this event?');" class="flex-1">
+                            @csrf @method('DELETE')
+                            <button type="submit"
+                                    class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold text-xs py-2 rounded-lg transition shadow-sm">
+                                Delete
+                            </button>
+                        </form>
                     </div>
                 </div>
             @endforeach
         </div>
+
+        <div class="mt-8 max-w-6xl mx-auto">
+            {{ $events->links() }}
+        </div>
     @else
-        <div class="text-center mt-20">
-            <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold">No events found. Start by adding a new event!</p>
+        <div class="text-center mt-20 bg-white dark:bg-gray-800 p-12 rounded-2xl shadow-sm max-w-xl mx-auto">
+            <span class="text-5xl">🎪</span>
+            <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold mt-4">No events found.</p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 mb-6">Start by publishing your first event with multiple ticket options.</p>
+            <a href="{{ route('vendor.events.create') }}" class="bg-[#8d85ec] hover:bg-[#7a72d6] text-white font-semibold px-6 py-2.5 rounded-full transition shadow">
+                + Add New Event
+            </a>
         </div>
     @endif
 
 </div>
-
-<script>
-const toggleBtn = document.getElementById('toggleFormBtn');
-const formWrapper = document.getElementById('addEventFormWrapper');
-const toggleIcon = document.getElementById('toggleIcon');
-const toggleText = document.getElementById('toggleText');
-const cancelBtn = document.getElementById('cancelFormBtn');
-
-toggleBtn.addEventListener('click', () => {
-    if(formWrapper.style.height === '0px' || formWrapper.style.height === ''){
-        formWrapper.style.height = formWrapper.scrollHeight + 'px';
-        toggleIcon.style.transform = 'rotate(45deg)';
-        toggleText.textContent = 'Close Form';
-    } else {
-        formWrapper.style.height = '0';
-        toggleIcon.style.transform = 'rotate(0deg)';
-        toggleText.textContent = 'Add Event';
-    }
-});
-
-cancelBtn.addEventListener('click', () => {
-    formWrapper.style.height = '0';
-    toggleIcon.style.transform = 'rotate(0deg)';
-    toggleText.textContent = 'Add Event';
-});
-</script>
 @endsection
