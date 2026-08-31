@@ -145,9 +145,10 @@
             </div>
 
             <!-- Description -->
-            <div>
+            <div x-data="{ wordCount: {{ str_word_count(old('description', '')) }} }">
                 <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">Event Description <span class="text-red-500">*</span></label>
-                <textarea name="description" rows="4" placeholder="Provide full details about the event, schedule, speakers/artists..." class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8d85ec] focus:outline-none" required>{{ old('description') }}</textarea>
+                <textarea name="description" rows="4" maxlength="500" placeholder="Provide full details about the event, schedule, speakers/artists..." class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8d85ec] focus:outline-none" required @input="wordCount = $event.target.value.trim() ? $event.target.value.trim().split(/\s+/).length : 0">{{ old('description') }}</textarea>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"><span x-text="wordCount"></span>/50 words</p>
             </div>
 
             <!-- Photo -->

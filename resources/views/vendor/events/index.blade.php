@@ -26,11 +26,20 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="max-w-6xl mx-auto mb-6 bg-green-100 text-green-800 p-4 rounded-lg border border-green-300">
-            {{ session('success') }}
-        </div>
-    @endif
+    <!-- Category Filters -->
+    <div class="max-w-6xl mx-auto mb-6 flex flex-wrap items-center gap-2">
+        
+        <a href="{{ route('vendor.events.index') }}"
+           class="px-4 py-1.5 rounded-full text-xs font-semibold transition {{ !$category ? 'bg-[#8d85ec] text-white shadow-sm' : 'bg-white text-gray-600 hover:bg-purple-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+            All
+        </a>
+        @foreach($categories as $eventCategory)
+            <a href="{{ route('vendor.events.index', ['category' => $eventCategory]) }}"
+               class="px-4 py-1.5 rounded-full text-xs font-semibold transition {{ $category === $eventCategory ? 'bg-[#8d85ec] text-white shadow-sm' : 'bg-white text-gray-600 hover:bg-purple-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                {{ $eventCategory }}
+            </a>
+        @endforeach
+    </div>
 
     <!-- Events Grid -->
     @if($events->count() > 0)
@@ -51,55 +60,31 @@
 
                         <div class="p-5 flex flex-col gap-2.5">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>
-                            <p class="text-gray-600 dark:text-gray-300 text-xs line-clamp-2">{{ $event->description }}</p>
+                            <p class="text-gray-600 dark:text-gray-300 text-xs line-clamp-2 break-words">{{ \Illuminate\Support\Str::words($event->description, 20, '...') }}</p>
                             
-                            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                            <div class="flex items-center gap-1.5 text-xs font-medium text-gray-800 dark:text-gray-400">
                                 <span>📍</span>
                                 <span class="truncate">{{ $event->venue }}</span>
                             </div>
-                            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                            <div class="flex items-center gap-1.5 text-xs font-medium text-gray-800 dark:text-gray-400">
                                 <span>📅</span>
                                 <span>{{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y - h:i A') }}</span>
                             </div>
-
-                            <!-- Ticket Types Summary -->
-                            <div class="mt-2 pt-3 border-t border-gray-100 dark:border-gray-700">
-                                <div class="flex justify-between items-center mb-1.5">
-                                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">Tickets:</span>
-                                    <span class="text-xs font-bold text-[#8d85ec]">
-                                        @if($event->ticketTypes->isNotEmpty())
-                                            @php
-                                                $min = $event->ticketTypes->where('status', 'active')->min('price') ?? $event->price;
-                                                $max = $event->ticketTypes->where('status', 'active')->max('price') ?? $event->price;
-                                            @endphp
-                                            @if($min == $max)
-                                                Rs {{ number_format($min, 2) }}
-                                            @else
-                                                Rs {{ number_format($min, 0) }} - {{ number_format($max, 0) }}
-                                            @endif
-                                        @else
-                                            Rs {{ number_format($event->price, 2) }}
-                                        @endif
-                                    </span>
-                                </div>
-
-                                <div class="flex flex-wrap gap-1.5">
-                                    @forelse($event->ticketTypes as $t)
-                                        <span class="text-[11px] px-2 py-0.5 rounded-full {{ $t->status === 'active' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300' : 'bg-gray-100 text-gray-600' }}">
-                                            {{ $t->name }}: Rs {{ number_format($t->price, 0) }} 
-                                            <span class="text-[10px] opacity-75">({{ $t->remaining_quantity }} left)</span>
-                                        </span>
-                                    @empty
-                                        <span class="text-xs text-gray-400">Standard ({{ $event->available_seats }} seats)</span>
-                                    @endforelse
-                                </div>
+                            @php
+                                $basePrice = $event->ticketTypes->where('status', 'active')->min('price') ?? $event->price;
+                            @endphp
+                            <div class="text-sm font-bold text-[#8d85ec]">
+                                From Rs {{ number_format($basePrice, 0) }} onwards
                             </div>
+
                         </div>
                     </div>
 
                     <div class="p-5 pt-0 flex justify-between gap-2">
-                        <a href="{{ route('vendor.events.edit', $event->id) }}"
-                        class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold text-xs py-2 rounded-lg text-center transition shadow-sm">Edit</a>
+                       <a href="{{ route('vendor.events.edit', $event->id) }}"
+   class="flex-1 bg-[#7169D2] hover:bg-[#625BC0] text-white font-semibold text-xs py-2 rounded-lg text-center transition shadow-sm">
+    Edit
+</a>
 
                         <form action="{{ route('vendor.events.destroy', $event->id) }}" method="POST"
                             onsubmit="return confirm('Are you sure you want to delete this event?');" class="flex-1">

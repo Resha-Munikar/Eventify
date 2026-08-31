@@ -14,14 +14,27 @@ use PDF;
 class VendorEventController extends Controller
 {
     // Display all events for the logged-in vendor
-    public function index()
+    public function index(Request $request)
     {
+        $category = $request->query('category');
+
         $events = Event::with('ticketTypes')
             ->where('vendor_id', Auth::id())
+            ->when($category, function ($query, $category) {
+                $query->where('category', $category);
+            })
             ->latest()
-            ->paginate(9);
+            ->paginate(9)
+            ->withQueryString();
 
-        return view('vendor.events.index', compact('events'));
+        $categories = Event::where('vendor_id', Auth::id())
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
+
+        return view('vendor.events.index', compact('events', 'categories', 'category'));
     }
 
     // Show form to create a new event
@@ -38,7 +51,15 @@ class VendorEventController extends Controller
             'event_date' => 'required|date',
             'category' => 'nullable|string|max:255',
             'venue' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count(strip_tags($value)) > 50) {
+                        $fail('The event description may not exceed 50 words.');
+                    }
+                },
+            ],
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'ticket_types' => 'required|array|min:1',
             'ticket_types.*.name' => 'required|string|max:255',
@@ -130,7 +151,15 @@ class VendorEventController extends Controller
             'event_date' => 'required|date',
             'category' => 'nullable|string|max:255',
             'venue' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count(strip_tags($value)) > 50) {
+                        $fail('The event description may not exceed 50 words.');
+                    }
+                },
+            ],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'ticket_types' => 'required|array|min:1',
             'ticket_types.*.id' => 'nullable|integer',

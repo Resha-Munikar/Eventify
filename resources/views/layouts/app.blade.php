@@ -132,23 +132,69 @@
     @endif
         <!-- Main Content -->
         <main class="flex-1 p-0">
-        @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-            class="max-w-4xl mx-auto mt-4 bg-green-100 text-green-800 p-4 rounded-lg relative transition duration-300">
-            {{ session('success') }}
-            <button @click="show = false" 
-                    class="absolute top-2 right-2 text-green-800 font-bold hover:text-green-900">&times;</button>
-        </div>
-        @endif
+      @if(session('success'))
+    <div
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-transition
+        class="fixed top-5 right-5 z-[9999]
+               w-[380px]
+               bg-green-100
+               text-green-800
+               border border-green-300
+               px-5 py-4
+               rounded-xl
+               shadow-lg"
+    >
+        <div class="flex items-center justify-between gap-4">
 
-        @if(session('error'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-            class="max-w-4xl mx-auto mt-4 bg-red-100 text-red-800 p-4 rounded-lg relative transition duration-300">
-            {{ session('error') }}
-            <button @click="show = false" 
-                    class="absolute top-2 right-2 text-red-800 font-bold hover:text-red-900">&times;</button>
+            <span class="text-sm font-medium">
+                {{ session('success') }}
+            </span>
+
+            <button
+                @click="show = false"
+                class="text-green-800 font-bold text-lg leading-none
+                       hover:text-green-900">
+                &times;
+            </button>
+
         </div>
-        @endif
+    </div>
+@endif
+
+     @if(session('error'))
+    <div
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-transition
+        class="fixed top-5 right-5 z-[9999]
+               w-[380px]
+               bg-red-100
+               text-red-800
+               border border-red-300
+               px-5 py-4
+               rounded-xl
+               shadow-lg"
+    >
+        <div class="flex items-center justify-between gap-4">
+
+            <span class="text-sm font-medium">
+                {{ session('error') }}
+            </span>
+
+            <button
+                @click="show = false"
+                class="text-red-800 font-bold text-lg leading-none
+                       hover:text-red-900">
+                &times;
+            </button>
+
+        </div>
+    </div>
+@endif
 
         @yield('content')
     </main>
