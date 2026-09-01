@@ -60,13 +60,15 @@ class VendorEventController extends Controller
                     }
                 },
             ],
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120'],
             'ticket_types' => 'required|array|min:1',
             'ticket_types.*.name' => 'required|string|max:255',
             'ticket_types.*.price' => 'required|numeric|min:0',
             'ticket_types.*.quantity' => 'required|integer|min:1',
             'ticket_types.*.description' => 'nullable|string',
         ], [
+            'image.mimes' => 'Please upload a JPG, JPEG, or PNG image.',
+            'image.max' => 'Image size must be 5 MB or less.',
             'ticket_types.required' => 'At least one ticket type must be added before an event can be published.',
             'ticket_types.min' => 'At least one ticket type must be added before an event can be published.',
             'ticket_types.*.name.required' => 'Ticket type name is required.',
@@ -85,10 +87,12 @@ class VendorEventController extends Controller
             return back()->withErrors(['ticket_types' => 'Ticket type names must be unique within the same event.'])->withInput();
         }
 
-        // Handle image upload
-        $extension = $request->file('image')->getClientOriginalExtension();
+        // Handle image upload with a 4:5 cropped cover image
+        $imageFile = $request->file('image');
+        $extension = strtolower($imageFile->getClientOriginalExtension() ?: 'jpg');
         $filename = Str::uuid() . '.' . $extension;
-        $request->file('image')->move(public_path('uploads'), $filename);
+
+        $imageFile->move(public_path('uploads'), $filename);
         $imagePath = $filename;
 
         // Calculate aggregate minimum price and total capacity

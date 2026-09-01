@@ -47,16 +47,19 @@
             @foreach($events as $event)
                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full flex flex-col justify-between">
                     <div>
-                        <div class="w-full h-56 overflow-hidden rounded-t-2xl relative">
-                            <img src="{{ asset('uploads/' . $event->image) }}" 
-                                alt="{{ $event->event_name }}" 
-                                class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-                            @if($event->category)
-                                <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow">
-                                    {{ $event->category }}
-                                </span>
-                            @endif
-                        </div>
+                        <div class="w-full h-56 rounded-t-2xl relative flex items-center justify-center overflow-hidden">
+    <img 
+        src="{{ asset('uploads/' . $event->image) }}" 
+        alt="{{ $event->event_name }}" 
+        class="w-full h-full object-cover"
+    >
+
+    @if($event->category)
+        <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow">
+            {{ $event->category }}
+        </span>
+    @endif
+</div>
 
                         <div class="p-5 flex flex-col gap-2.5">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">{{ $event->event_name }}</h3>

@@ -179,10 +179,10 @@
           @endphp
           <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full bg-white dark:bg-gray-700 flex flex-col justify-between border border-gray-100 dark:border-gray-600">
               <div>
-                  <div class="relative h-52 w-full overflow-hidden">
-                      <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="h-full w-full object-cover" />
+                  <div class="w-full h-56 overflow-hidden rounded-t-2xl relative">
+                      <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                       @if($event->category)
-                          <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">
+                          <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow">
                               {{ $event->category }}
                           </span>
                       @endif
