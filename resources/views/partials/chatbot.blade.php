@@ -1,6 +1,6 @@
 <!-- Chatbot Container (Opens at the exact original position above floating button) -->
 <div id="chatbot-container" 
-     style="position: fixed; bottom: 100px; right: 24px; width: 345px; height: 470px; background: #ffffff; border: 1px solid rgba(141, 133, 236, 0.25); border-radius: 20px; box-shadow: 0 12px 35px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 99999; overflow: hidden; font-family: inherit; transition: all 0.3s ease;">
+     style="position: fixed; bottom: 100px; right: 24px; width: 345px; height: 470px; background: #ffffff; border: 1px solid rgba(141, 133, 236, 0.25); border-radius: 20px; box-shadow: 0 12px 35px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 35; overflow: hidden; font-family: inherit; transition: all 0.3s ease;">
     
     <!-- Chat Header -->
     <div style="background: linear-gradient(135deg, #8D85EC, #6C63FF); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -89,7 +89,7 @@
 <!-- Floating Chat Button (At the exact original position with smooth floating animation) -->
 <button id="openChat" 
         aria-label="Open EventBot"
-        style="position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, #8D85EC, #6C63FF); color: white; border: none; border-radius: 50%; width: 68px; height: 68px; cursor: pointer; box-shadow: 0 8px 25px rgba(108, 99, 255, 0.45); z-index: 99999; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; animation: floatingBot 3s ease-in-out infinite;">
+        style="position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, #8D85EC, #6C63FF); color: white; border: none; border-radius: 50%; width: 68px; height: 68px; cursor: pointer; box-shadow: 0 8px 25px rgba(108, 99, 255, 0.45); z-index: 30; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; animation: floatingBot 3s ease-in-out infinite;">
     
     <!-- Modern AI Bot Icon inside button -->
     <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">

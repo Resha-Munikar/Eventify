@@ -90,23 +90,32 @@
 
   <!-- Events Listing with Multi-Ticket-Type Booking Modal -->
   <div x-data="{
-      openBookingId: null,
+      activeModal: null, // null | 'booking' | 'khalti'
       selectedEvent: null,
       selectedTicketId: null,
       tickets: 1,
-      showKhaltiPopup: false,
       phone: '',
       mpin: '',
       paymentError: '',
+      isSubmitting: false,
       
+      init() {
+          this.$watch('activeModal', (value) => {
+              if (value) {
+                  document.body.style.overflow = 'hidden';
+              } else {
+                  document.body.style.overflow = '';
+              }
+          });
+      },
+
       initBooking(event) {
           this.selectedEvent = event;
-          this.openBookingId = event.id;
           this.tickets = 1;
           this.phone = '';
           this.mpin = '';
           this.paymentError = '';
-          this.showKhaltiPopup = false;
+          this.isSubmitting = false;
           
           // Auto-select first active available ticket type
           if (event.ticket_types && event.ticket_types.length > 0) {
@@ -115,6 +124,28 @@
           } else {
               this.selectedTicketId = null;
           }
+
+          this.activeModal = 'booking';
+      },
+
+      proceedToKhalti() {
+          if (this.isSoldOut() || !this.selectedTicketId) return;
+          this.paymentError = '';
+          this.activeModal = 'khalti';
+      },
+
+      backToBooking() {
+          this.paymentError = '';
+          this.activeModal = 'booking';
+      },
+
+      closeModal() {
+          this.activeModal = null;
+          this.paymentError = '';
+          this.phone = '';
+          this.mpin = '';
+          this.isSubmitting = false;
+          document.body.style.overflow = '';
       },
 
       getSelectedTicket() {
@@ -145,8 +176,30 @@
 
       getTotal() {
           return this.getSubtotal() + 5.65;
+      },
+
+      confirmPayment() {
+          this.paymentError = '';
+          let allowedPhones = ['9800000000','9800000001','9800000002','9800000003','9800000004','9800000005'];
+          if (allowedPhones.includes(this.phone.trim()) && this.mpin === '1111') {
+              this.isSubmitting = true;
+              let eventToSave = {...this.selectedEvent};
+              let ticketTypeId = this.selectedTicketId;
+              let count = this.tickets;
+              
+              saveBooking(eventToSave, ticketTypeId, count, () => {
+                  this.closeModal();
+              }, (err) => {
+                  this.isSubmitting = false;
+                  this.paymentError = err || 'Booking failed. Please try again.';
+              });
+          } else {
+              this.paymentError = '❌ Invalid Khalti ID or MPIN. (Use test phone 9800000000 and PIN 1111)';
+          }
       }
-  }" class="flex-1">
+  }" 
+  @keydown.escape.window="closeModal()"
+  class="flex-1">
     
     <div class="flex justify-between items-center mb-6">
       <div>
@@ -253,253 +306,372 @@
       </div>
     @endif
 
-    <!-- Interactive Multi-Ticket-Type Booking Modal -->
-    <div 
-        x-show="openBookingId !== null" 
-        x-transition.opacity
+    <!-- 1. Full-screen Background Overlay (Strong Blur + Darkened) -->
+    <div
+        x-show="activeModal !== null"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xl modal-backdrop-blur"
+        style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background-color: rgba(15, 23, 42, 0.60);"
+        @click="closeModal()"
+        aria-hidden="true"
+    ></div>
+
+    <!-- 2. Full-screen Active Modal Container (Sharp and Clear Content) -->
+    <div
+        x-show="activeModal === 'booking' || activeModal === 'khalti'"
+        x-cloak
+        class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 overflow-y-auto pointer-events-none"
     >
-        <!-- Modal Content Box -->
+        <!-- 1. BOOKING MODAL -->
         <div 
-            @click.away="openBookingId = null; selectedEvent = null" 
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-lg border border-gray-200 dark:border-gray-700 transform transition-all max-h-[90vh] overflow-y-auto"
+            x-show="activeModal === 'booking'" 
+            x-transition:enter="transition ease-out duration-250"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-3"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-3"
+            @click.stop
+            class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-purple-100 dark:border-gray-700 my-auto overflow-hidden flex flex-col max-h-[90vh] pointer-events-auto"
         >
-            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white truncate">
-                    Book: <span class="text-[#8d85ec]" x-text="selectedEvent ? selectedEvent.event_name : ''"></span>
-                </h2>
-                <button @click="openBookingId = null; selectedEvent = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl font-bold">
-                    &times;
+            <!-- Booking Modal Header -->
+            <div class="p-5 sm:p-6 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#8D85EC]/15 text-[#6f69d9] dark:bg-purple-900/50 dark:text-purple-300">
+                        🎟️ Book Tickets
+                    </span>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white truncate mt-2" x-text="selectedEvent ? selectedEvent.event_name : ''"></h2>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <span class="flex items-center gap-1 truncate">
+                            <span>📍</span> <span x-text="selectedEvent ? selectedEvent.venue : ''"></span>
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <span>📅</span> <span x-text="selectedEvent ? selectedEvent.event_date : ''"></span>
+                        </span>
+                    </div>
+                </div>
+                <button 
+                    type="button"
+                    @click="closeModal()" 
+                    class="w-9 h-9 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition shrink-0"
+                    aria-label="Close modal"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
-            <template x-if="selectedEvent">
-                <div class="space-y-5">
-                    
-                    <!-- 1. CHOOSE TICKET TYPE -->
-                    <div>
-                        <label class="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
-                            1. Choose Ticket Type:
-                        </label>
+            <!-- Booking Modal Scrollable Body -->
+            <div class="p-5 sm:p-6 space-y-5 overflow-y-auto">
+                <template x-if="selectedEvent">
+                    <div class="space-y-5">
+                        <!-- 1. CHOOSE TICKET TYPE -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-2.5">
+                                1. Select Ticket Tier
+                            </label>
 
-                        <div class="space-y-2.5">
-                            <template x-for="ticket in (selectedEvent.ticket_types || [])" :key="ticket.id">
-                                <label 
-                                    :class="{
-                                        'border-[#8d85ec] bg-purple-50/70 dark:bg-purple-950/30 ring-2 ring-[#8d85ec]': selectedTicketId === ticket.id,
-                                        'border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600': selectedTicketId !== ticket.id,
-                                        'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800': (ticket.quantity - ticket.sold_quantity) <= 0
-                                    }"
-                                    class="flex items-start justify-between p-3.5 rounded-xl border transition cursor-pointer"
-                                >
-                                    <div class="flex items-start gap-3">
-                                        <input 
-                                            type="radio" 
-                                            name="modal_ticket_type" 
-                                            :value="ticket.id" 
-                                            x-model="selectedTicketId" 
-                                            :disabled="(ticket.quantity - ticket.sold_quantity) <= 0"
-                                            class="mt-1 text-[#8d85ec] focus:ring-[#8d85ec]"
-                                        >
-                                        <div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-bold text-gray-900 dark:text-white text-sm" x-text="ticket.name"></span>
-                                                <template x-if="(ticket.quantity - ticket.sold_quantity) <= 0">
-                                                    <span class="text-[10px] bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-2 py-0.5 rounded-full font-bold">Sold Out</span>
-                                                </template>
-                                            </div>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5" x-text="ticket.description || 'Standard admission'"></p>
-                                            
-                                            <!-- Remaining capacity text -->
-                                            <div class="mt-1 text-[11px]">
-                                                <template x-if="(ticket.quantity - ticket.sold_quantity) > 5">
-                                                    <span class="text-gray-500 dark:text-gray-400" x-text="(ticket.quantity - ticket.sold_quantity) + ' tickets available'"></span>
-                                                </template>
-                                                <template x-if="(ticket.quantity - ticket.sold_quantity) > 0 && (ticket.quantity - ticket.sold_quantity) <= 5">
-                                                    <span class="text-amber-600 dark:text-amber-400 font-bold" x-text="'Only ' + (ticket.quantity - ticket.sold_quantity) + ' tickets remaining!'"></span>
-                                                </template>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-right">
-                                        <span class="text-base font-extrabold text-[#8d85ec]" x-text="'Rs ' + Number(ticket.price).toFixed(2)"></span>
-                                    </div>
-                                </label>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- 2. QUANTITY SELECTOR -->
-                    <div>
-                        <label class="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
-                            2. Select Quantity:
-                        </label>
-                        <div class="flex items-center gap-3">
-                            <button 
-                                type="button" 
-                                @click="if(tickets > 1) tickets--" 
-                                :disabled="tickets <= 1 || isSoldOut()"
-                                class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white font-bold text-lg hover:bg-gray-300 transition flex items-center justify-center disabled:opacity-40"
-                            >-</button>
-                            <input 
-                                type="number" 
-                                x-model.number="tickets" 
-                                min="1" 
-                                :max="getMaxTickets()" 
-                                :disabled="isSoldOut()"
-                                class="w-24 text-center border border-gray-300 dark:border-gray-600 rounded-lg py-2 text-gray-900 dark:text-white font-bold focus:ring-2 focus:ring-[#8d85ec] focus:outline-none dark:bg-gray-700"
-                            >
-                            <button 
-                                type="button" 
-                                @click="if(tickets < getMaxTickets()) tickets++" 
-                                :disabled="tickets >= getMaxTickets() || isSoldOut()"
-                                class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white font-bold text-lg hover:bg-gray-300 transition flex items-center justify-center disabled:opacity-40"
-                            >+</button>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 ml-2" x-text="'Max: ' + getMaxTickets() + ' ticket(s)'"></span>
-                        </div>
-                    </div>
-
-                    <!-- 3. REAL-TIME PRICE BREAKDOWN -->
-                    <div class="bg-gray-50 dark:bg-gray-700/60 p-4 rounded-xl border border-gray-200 dark:border-gray-600 space-y-2 text-sm">
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
-                            <span>Selected Ticket:</span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="getSelectedTicket() ? getSelectedTicket().name : 'None'"></span>
-                        </div>
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
-                            <span>Price per Ticket:</span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="'Rs ' + getTicketPrice().toFixed(2)"></span>
-                        </div>
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
-                            <span>Subtotal (<span x-text="tickets"></span> &times; Rs <span x-text="getTicketPrice().toFixed(0)"></span>):</span>
-                            <span class="font-semibold text-gray-900 dark:text-white" x-text="'Rs ' + getSubtotal().toFixed(2)"></span>
-                        </div>
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
-                            <span>Service Charge:</span>
-                            <span class="font-semibold text-gray-900 dark:text-white">Rs 5.65</span>
-                        </div>
-                        <div class="border-t border-gray-200 dark:border-gray-600 pt-2 flex justify-between items-center">
-                            <span class="font-bold text-gray-900 dark:text-white text-base">Total Amount:</span>
-                            <span class="font-extrabold text-[#8d85ec] text-xl" x-text="'Rs ' + getTotal().toFixed(2)"></span>
-                        </div>
-                    </div>
-
-                    <!-- Modal Actions -->
-                    <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" @click="openBookingId = null; selectedEvent = null" 
-                            class="px-5 py-2.5 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold text-sm transition">
-                            Cancel
-                        </button>
-
-                        <button
-                            @click="if(!isSoldOut() && selectedTicketId) { showKhaltiPopup = true; }"
-                            :disabled="isSoldOut() || !selectedTicketId"
-                            class="px-6 py-2.5 rounded-xl text-white font-bold text-sm transition transform hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                            style="background: linear-gradient(90deg, #8D85EC 0%, #7a72d6 100%); box-shadow: 0 4px 15px rgba(141, 133, 236, 0.4);">
-                            <span x-text="isSoldOut() ? 'Sold Out' : 'Proceed to Pay with Khalti'"></span>
-                        </button>
-                    </div>
-
-                    <!-- Khalti Modal Popup -->
-                    <div x-show="showKhaltiPopup" x-transition.opacity
-                        class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-                        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden flex flex-col md:flex-row border border-gray-200 dark:border-gray-700">
-
-                            <!-- Left Section: Payment Summary -->
-                            <div class="w-full md:w-2/3 bg-[#FAF9FC] dark:bg-gray-800 p-6 flex flex-col justify-between gap-6">
-                                <div>
-                                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Payment Details</h2>
-                                    <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Complete your ticket booking via official Khalti verification</p>
-
-                                    <!-- User & Event Info -->
-                                    <div class="mt-4 bg-white dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 space-y-1">
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Booking For</p>
-                                        <p class="font-bold text-gray-900 dark:text-white text-base" x-text="selectedEvent.event_name"></p>
-                                        <p class="text-xs text-purple-600 dark:text-purple-300 font-semibold" x-text="'Ticket Tier: ' + (getSelectedTicket() ? getSelectedTicket().name : '') + ' (' + tickets + ' ticket(s))'"></p>
-                                        <p class="text-xs text-gray-600 dark:text-gray-300" x-text="'Billed to: {{ Auth::user()->name ?? 'User' }} ({{ Auth::user()->email ?? '' }})'"></p>
-                                    </div>
-
-                                    <!-- Amount Summary -->
-                                    <div class="mt-4 bg-white dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 space-y-2 text-sm">
-                                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
-                                            <span>Ticket Price (<span x-text="tickets"></span> &times; Rs <span x-text="getTicketPrice().toFixed(0)"></span>)</span>
-                                            <span class="font-semibold text-gray-900 dark:text-white" x-text="'Rs ' + getSubtotal().toFixed(2)"></span>
-                                        </div>
-                                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
-                                            <span>Service Charge</span>
-                                            <span class="font-semibold text-gray-900 dark:text-white">Rs 5.65</span>
-                                        </div>
-                                        <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
-                                        <div class="flex justify-between font-extrabold text-gray-900 dark:text-white text-lg">
-                                            <span>Total Payable</span>
-                                            <span class="text-[#8D85EC]" x-text="'Rs ' + getTotal().toFixed(2)"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="bg-[#7B2CBF] text-white text-xs font-semibold py-2 px-4 text-center rounded-xl">
-                                    PAYMENT POWERED BY <span class="ml-1 font-bold">KHALTI WALLET</span>
-                                </div>
-                            </div>
-
-                            <!-- Right Section: Khalti Wallet Credentials -->
-                            <div class="w-full md:w-1/3 bg-white dark:bg-gray-900 p-6 flex flex-col justify-between gap-4 relative">
-                                <button @click="showKhaltiPopup=false; paymentError='';" 
-                                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white text-lg font-bold">
-                                    ✕
-                                </button>
-
-                                <div>
-                                    <div class="flex items-center justify-center mb-3">
-                                        <img src="uploads/khalti.png" alt="Khalti Logo" class="h-8">
-                                    </div>
-                                    <h3 class="text-base font-bold text-gray-900 dark:text-white text-center">Pay via Khalti Wallet</h3>
-                                    <p class="text-gray-500 dark:text-gray-400 text-xs text-center mt-1">Enter your Khalti Mobile Number and MPIN</p>
-
-                                    <div class="mt-4 space-y-3">
-                                        <div>
-                                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Khalti Mobile Number</label>
-                                            <input type="text" x-model="phone" placeholder="e.g. 9800000000"
-                                                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#8D85EC] dark:bg-gray-800 dark:text-white outline-none">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Khalti MPIN</label>
-                                            <input type="password" x-model="mpin" placeholder="MPIN (1111)"
-                                                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#8D85EC] dark:bg-gray-800 dark:text-white outline-none">
-                                        </div>
-                                        <p class="text-red-500 text-xs font-semibold" x-text="paymentError"></p>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <button @click="
-                                        paymentError='';
-                                        let allowedPhones = ['9800000000','9800000001','9800000002','9800000003','9800000004','9800000005'];
-                                        if (allowedPhones.includes(phone.trim()) && mpin === '1111') {
-                                            let eventToSave = {...selectedEvent};
-                                            let ticketTypeId = selectedTicketId;
-                                            let count = tickets;
-                                            showKhaltiPopup = false;
-                                            openBookingId = null;
-                                            selectedEvent = null;
-                                            saveBooking(eventToSave, ticketTypeId, count);
-                                        } else {
-                                            paymentError = '❌ Invalid Khalti ID or MPIN. (Use test phone 9800000000 and PIN 1111)';
+                            <div class="space-y-2.5">
+                                <template x-for="ticket in (selectedEvent.ticket_types || [])" :key="ticket.id">
+                                    <label 
+                                        :class="{
+                                            'border-[#8D85EC] bg-purple-50/70 dark:bg-purple-950/30 ring-2 ring-[#8D85EC] shadow-sm': selectedTicketId === ticket.id,
+                                            'border-gray-200 dark:border-gray-700 hover:border-[#8D85EC]/60 hover:bg-gray-50/50 dark:hover:bg-gray-700/50': selectedTicketId !== ticket.id,
+                                            'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-gray-800': (ticket.quantity - ticket.sold_quantity) <= 0
                                         }"
-                                        class="w-full py-3 rounded-xl text-white font-bold text-sm transition transform hover:scale-[1.02] active:scale-95 shadow-md"
-                                        style="background: linear-gradient(90deg,#8D85EC 0%,#6E29B0 100%);">
-                                        Confirm & Pay
-                                    </button>
-                                </div>
+                                        class="flex items-start justify-between p-3.5 rounded-xl border transition cursor-pointer"
+                                    >
+                                        <div class="flex items-start gap-3">
+                                            <input 
+                                                type="radio" 
+                                                name="modal_ticket_type" 
+                                                :value="ticket.id" 
+                                                x-model="selectedTicketId" 
+                                                :disabled="(ticket.quantity - ticket.sold_quantity) <= 0"
+                                                class="mt-1 text-[#8D85EC] focus:ring-[#8D85EC] border-gray-300"
+                                            >
+                                            <div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-bold text-gray-900 dark:text-white text-sm" x-text="ticket.name"></span>
+                                                    <template x-if="(ticket.quantity - ticket.sold_quantity) <= 0">
+                                                        <span class="text-[10px] bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-2 py-0.5 rounded-full font-bold">Sold Out</span>
+                                                    </template>
+                                                </div>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5" x-text="ticket.description || 'Standard admission'"></p>
+                                                
+                                                <!-- Remaining capacity text -->
+                                                <div class="mt-1 text-[11px]">
+                                                    <template x-if="(ticket.quantity - ticket.sold_quantity) > 5">
+                                                        <span class="text-gray-500 dark:text-gray-400" x-text="(ticket.quantity - ticket.sold_quantity) + ' tickets available'"></span>
+                                                    </template>
+                                                    <template x-if="(ticket.quantity - ticket.sold_quantity) > 0 && (ticket.quantity - ticket.sold_quantity) <= 5">
+                                                        <span class="text-amber-600 dark:text-amber-400 font-bold" x-text="'🔥 Only ' + (ticket.quantity - ticket.sold_quantity) + ' tickets remaining!'"></span>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-right shrink-0">
+                                            <span class="text-base font-extrabold text-[#6f69d9] dark:text-[#8D85EC]" x-text="'Rs ' + Number(ticket.price).toFixed(2)"></span>
+                                        </div>
+                                    </label>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- 2. QUANTITY SELECTOR -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-2.5">
+                                2. Select Quantity
+                            </label>
+                            <div class="flex items-center gap-3">
+                                <button 
+                                    type="button" 
+                                    @click="if(tickets > 1) tickets--" 
+                                    :disabled="tickets <= 1 || isSoldOut()"
+                                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white font-bold text-lg hover:bg-purple-100 hover:text-[#6f69d9] dark:hover:bg-gray-600 transition flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                                >-</button>
+                                <input 
+                                    type="number" 
+                                    x-model.number="tickets" 
+                                    min="1" 
+                                    :max="getMaxTickets()" 
+                                    :disabled="isSoldOut()"
+                                    class="w-20 text-center border border-gray-300 dark:border-gray-600 rounded-xl py-2 text-gray-900 dark:text-white font-bold text-base focus:ring-2 focus:ring-[#8D85EC] focus:border-[#8D85EC] focus:outline-none dark:bg-gray-700"
+                                >
+                                <button 
+                                    type="button" 
+                                    @click="if(tickets < getMaxTickets()) tickets++" 
+                                    :disabled="tickets >= getMaxTickets() || isSoldOut()"
+                                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white font-bold text-lg hover:bg-purple-100 hover:text-[#6f69d9] dark:hover:bg-gray-600 transition flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                                >+</button>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-1" x-text="'Max: ' + getMaxTickets() + ' ticket(s)'"></span>
+                            </div>
+                        </div>
+
+                        <!-- 3. REAL-TIME PRICE BREAKDOWN -->
+                        <div class="bg-[#f7f7fc] dark:bg-gray-700/60 p-4 rounded-2xl border border-purple-100 dark:border-gray-600 space-y-2.5 text-xs sm:text-sm">
+                            <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                <span>Selected Ticket Tier:</span>
+                                <span class="font-semibold text-gray-900 dark:text-white" x-text="getSelectedTicket() ? getSelectedTicket().name : 'None'"></span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                <span>Price per Ticket:</span>
+                                <span class="font-semibold text-gray-900 dark:text-white" x-text="'Rs ' + getTicketPrice().toFixed(2)"></span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                <span>Subtotal (<span x-text="tickets"></span> &times; Rs <span x-text="getTicketPrice().toFixed(0)"></span>):</span>
+                                <span class="font-semibold text-gray-900 dark:text-white" x-text="'Rs ' + getSubtotal().toFixed(2)"></span>
+                            </div>
+                            <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                <span>Service Charge:</span>
+                                <span class="font-semibold text-gray-900 dark:text-white">Rs 5.65</span>
+                            </div>
+                            <div class="border-t border-purple-200/70 dark:border-gray-600 pt-2.5 flex justify-between items-center">
+                                <span class="font-bold text-gray-900 dark:text-white text-sm sm:text-base">Total Payable:</span>
+                                <span class="font-black text-[#6f69d9] dark:text-[#8D85EC] text-xl" x-text="'Rs ' + getTotal().toFixed(2)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Booking Modal Footer Actions -->
+            <div class="p-4 sm:p-5 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end gap-3">
+                <button 
+                    type="button" 
+                    @click="closeModal()" 
+                    class="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 font-semibold text-sm transition"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    @click="proceedToKhalti()"
+                    :disabled="isSoldOut() || !selectedTicketId"
+                    class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition shadow-md hover:shadow-lg transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style="background: linear-gradient(135deg, #8D85EC 0%, #7b76e4 50%, #6f69d9 100%);"
+                >
+                    <span x-text="isSoldOut() ? 'Sold Out' : 'Proceed to Pay with Khalti'"></span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. KHALTI PAYMENT MODAL (MUTUALLY EXCLUSIVE SIBLING) -->
+        <div 
+            x-show="activeModal === 'khalti'" 
+            x-transition:enter="transition ease-out duration-250"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-3"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 translate-y-3"
+            @click.stop
+            class="relative w-full max-w-3xl lg:max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-purple-100 dark:border-gray-700 my-auto overflow-hidden flex flex-col md:flex-row max-h-[90vh] pointer-events-auto"
+        >
+            <!-- Left Side: Order & Payment Summary -->
+            <div class="w-full md:w-5/12 bg-[#f7f7fc] dark:bg-gray-800 p-6 sm:p-7 flex flex-col justify-between border-b md:border-b-0 md:border-r border-purple-100 dark:border-gray-700 overflow-y-auto">
+                <div>
+                    <!-- Back Button -->
+                    <button 
+                        type="button" 
+                        @click="backToBooking()" 
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6f69d9] hover:text-[#8D85EC] dark:text-purple-300 dark:hover:text-purple-200 mb-4 transition"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        &larr; Back to Ticket Selection
+                    </button>
+
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Payment Summary</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Please review your ticket details before checkout.</p>
+
+                    <template x-if="selectedEvent">
+                        <div class="mt-4 space-y-3">
+                            <!-- Booking For Card -->
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-xl border border-purple-100/80 dark:border-gray-600 shadow-sm space-y-1">
+                                <p class="text-[10px] uppercase tracking-wider font-bold text-[#8D85EC]">Booking For</p>
+                                <p class="font-bold text-gray-900 dark:text-white text-sm" x-text="selectedEvent.event_name"></p>
+                                <p class="text-xs text-purple-700 dark:text-purple-300 font-semibold" x-text="'Tier: ' + (getSelectedTicket() ? getSelectedTicket().name : '') + ' (' + tickets + ' ticket' + (tickets > 1 ? 's' : '') + ')'"></p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" x-text="'Billed to: {{ Auth::user()->name ?? 'User' }}'"></p>
                             </div>
 
+                            <!-- Amount Breakdown -->
+                            <div class="bg-white dark:bg-gray-700 p-4 rounded-xl border border-purple-100/80 dark:border-gray-600 shadow-sm space-y-2 text-xs">
+                                <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                    <span>Tickets (<span x-text="tickets"></span> &times; Rs <span x-text="getTicketPrice().toFixed(0)"></span>)</span>
+                                    <span class="font-semibold text-gray-900 dark:text-white" x-text="'Rs ' + getSubtotal().toFixed(2)"></span>
+                                </div>
+                                <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                    <span>Service Charge</span>
+                                    <span class="font-semibold text-gray-900 dark:text-white">Rs 5.65</span>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-600 pt-2 flex justify-between items-center text-sm font-bold">
+                                    <span class="text-gray-900 dark:text-white">Total Amount</span>
+                                    <span class="text-[#6f69d9] dark:text-[#8D85EC] font-extrabold text-base" x-text="'Rs ' + getTotal().toFixed(2)"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-purple-100 dark:border-gray-700 flex items-center justify-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
+                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V8H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 7V5.5a3 3 0 10-6 0V8h6z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Official Khalti Sandbox Verification</span>
+                </div>
+            </div>
+
+            <!-- Right Side: Khalti Wallet Credentials -->
+            <div class="w-full md:w-7/12 bg-white dark:bg-gray-900 p-6 sm:p-8 flex flex-col justify-between relative overflow-y-auto">
+                <!-- Close Button -->
+                <button 
+                    type="button" 
+                    @click="closeModal()" 
+                    class="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                    aria-label="Close modal"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="space-y-4">
+                    <!-- Khalti Brand Header -->
+                    <div class="text-center pt-2">
+                        <img src="{{ asset('uploads/khalti.png') }}" alt="Khalti Logo" class="h-9 mx-auto object-contain">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mt-2">Pay via Khalti Wallet</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Enter your Khalti credentials to complete this payment.</p>
+                    </div>
+
+                    <!-- Sandbox credentials hint card -->
+                    <div class="bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 rounded-xl p-3 text-xs text-purple-900 dark:text-purple-200">
+                        <p class="font-bold flex items-center gap-1.5 mb-1 text-[#6f69d9] dark:text-purple-300">
+                            <span>💡</span> Test Sandbox Credentials
+                        </p>
+                        <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                            <span>Phone: <code class="bg-white dark:bg-gray-800 px-1.5 py-0.5 rounded font-mono font-bold text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-900">9800000000</code></span>
+                            <span class="text-purple-300 dark:text-purple-600">|</span>
+                            <span>MPIN: <code class="bg-white dark:bg-gray-800 px-1.5 py-0.5 rounded font-mono font-bold text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-900">1111</code></span>
                         </div>
                     </div>
 
+                    <!-- Form Inputs -->
+                    <div class="space-y-3.5 pt-1">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">
+                                Khalti Mobile Number
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 text-sm">📱</span>
+                                <input 
+                                    type="text" 
+                                    x-model="phone" 
+                                    placeholder="9800000000"
+                                    maxlength="10"
+                                    class="w-full pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-[#8D85EC] focus:border-[#8D85EC] outline-none transition"
+                                >
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">
+                                Khalti MPIN
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 text-sm">🔒</span>
+                                <input 
+                                    type="password" 
+                                    x-model="mpin" 
+                                    placeholder="1111"
+                                    maxlength="6"
+                                    class="w-full pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-[#8D85EC] focus:border-[#8D85EC] outline-none transition"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Error Banner -->
+                        <template x-if="paymentError">
+                            <div class="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-xl text-xs flex items-start gap-2">
+                                <span class="shrink-0 mt-0.5">⚠️</span>
+                                <span x-text="paymentError"></span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-            </template>
+
+                <!-- Payment Action Button -->
+                <div class="mt-6 pt-2">
+                    <button 
+                        type="button"
+                        @click="confirmPayment()"
+                        :disabled="isSubmitting || !phone || !mpin"
+                        class="w-full py-3 px-4 rounded-xl text-white font-bold text-sm transition shadow-lg hover:shadow-xl transform active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        style="background: linear-gradient(135deg, #8D85EC 0%, #7b76e4 50%, #5C2D91 100%);"
+                    >
+                        <template x-if="isSubmitting">
+                            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                        </template>
+                        <span x-text="isSubmitting ? 'Processing Payment...' : 'Confirm & Pay Rs ' + getTotal().toFixed(2)"></span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -557,7 +729,7 @@ function searchVenues() {
 }
 
 // Server-side safe booking function with ticket_type_id
-function saveBooking(event, ticketTypeId, tickets) {
+function saveBooking(event, ticketTypeId, tickets, onSuccess, onError) {
   fetch("{{ route('khalti.saveBooking') }}", {
     method: "POST",
     headers: {
@@ -574,16 +746,21 @@ function saveBooking(event, ticketTypeId, tickets) {
   .then(async response => {
     const data = await response.json();
     if (response.ok && data.success) {
+      if (typeof onSuccess === 'function') onSuccess(data);
       alert("✅ Payment & Booking Successful! Your ticket has been emailed to you.");
       window.location.href = "{{ route('usereventbook') }}";
     } else {
       console.error("Booking error:", data);
-      alert("❌ " + (data.message || "Failed to complete booking."));
+      const errMsg = data.message || "Failed to complete booking.";
+      if (typeof onError === 'function') onError(errMsg);
+      alert("❌ " + errMsg);
     }
   })
   .catch(err => {
     console.error("Fetch error:", err);
-    alert("⚠️ Network or server error. Please try again.");
+    const networkErr = "Network or server error. Please try again.";
+    if (typeof onError === 'function') onError(networkErr);
+    alert("⚠️ " + networkErr);
   });
 }
 </script>

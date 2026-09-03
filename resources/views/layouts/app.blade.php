@@ -17,6 +17,13 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         [x-cloak] { display: none !important; }
+
+        /* Professional Strong Modal Backdrop Blur */
+        .modal-backdrop-blur {
+            -webkit-backdrop-filter: blur(20px) !important;
+            backdrop-filter: blur(20px) !important;
+            background-color: rgba(15, 23, 42, 0.60) !important;
+        }
     </style>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -26,7 +33,7 @@
     {{-- Navbar only shows if $noNavbar is not set or false --}}
     @if (!isset($noNavbar) || !$noNavbar)
         <!-- Navbar -->
-        <header class="w-full bg-[#8D85EC]  dark:bg-gray-900 shadow-md">
+        <header class="w-full bg-[#8D85EC] dark:bg-gray-900 shadow-md relative z-20">
         <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
             <!-- Logo + Title -->
             <div class="flex items-center space-x-4">
