@@ -306,18 +306,18 @@
       </div>
     @endif
 
-    <!-- 1. Full-screen Background Overlay (Strong Blur + Darkened) -->
+    <!-- 1. Full-screen Background Overlay (Matching Venues: rgba(0, 0, 0, 0.6)) -->
     <div
         x-show="activeModal !== null"
-        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter="transition ease-out duration-250"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xl modal-backdrop-blur"
-        style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background-color: rgba(15, 23, 42, 0.60);"
+        class="fixed inset-0 z-[100] bg-black bg-opacity-50"
+        style="background-color: rgba(0, 0, 0, 0.6) !important;"
         @click="closeModal()"
         aria-hidden="true"
     ></div>

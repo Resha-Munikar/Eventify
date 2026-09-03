@@ -19,9 +19,4 @@
 /* For Flowbite Dark Mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Enhanced modal backdrop blur */
-.backdrop-blur-xl, .modal-backdrop-blur {
-    -webkit-backdrop-filter: blur(20px) !important;
-    backdrop-filter: blur(20px) !important;
-}
 
