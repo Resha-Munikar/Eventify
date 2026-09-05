@@ -80,27 +80,23 @@ class ChirpController extends Controller
 public function showWelcomePage()
 {
     $reviews = Review::with('user')->get();
-    $upcomingEvents = Event::with('ticketTypes')->orderBy('event_date', 'asc')->take(10)->get();
+    $upcomingEvents = Event::with('ticketTypes')->orderBy('event_date', 'asc')->get();
+    $trendingEvents = Event::with('ticketTypes')->orderBy('created_at', 'desc')->take(4)->get();
 
-    return view('welcome', compact('reviews', 'upcomingEvents'));
+    // Category event counts
+    $categoryCounts = [
+        'Concert' => Event::where('category', 'Concert')->count(),
+        'Sports' => Event::where('category', 'Sports')->count(),
+        'Theatre' => Event::where('category', 'Theatre')->count(),
+        'Comedy' => Event::where('category', 'Comedy')->count(),
+    ];
+
+    return view('welcome', compact('reviews', 'upcomingEvents', 'trendingEvents', 'categoryCounts'));
 }
     public function about(){
         return view('about');
     }
-    
-//     public function events(Request $request){
-//     // Fetch the query parameter 'category' from URL
-//     $category = $request->query('category');
 
-//     // If category filter is present, filter events
-//     if ($category && $category != '') {
-//         $events = Event::where('category', $category)->get();
-//     } else {
-//         $events = Event::all();
-//     }
-
-//     return view('events', compact('events', 'category'));
-// }
 public function events(Request $request){
     // Fetch query parameters
     $category = $request->query('category');
@@ -109,9 +105,20 @@ public function events(Request $request){
     $endDate = $request->query('end_date');
     $minPrice = $request->query('min_price');
     $maxPrice = $request->query('max_price');
+    $searchTerm = $request->query('query') ?? $request->query('search');
 
     // Start building the query
     $query = Event::with('ticketTypes');
+
+    // Search query filter if provided
+    if ($searchTerm && $searchTerm != '') {
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('event_name', 'like', "%{$searchTerm}%")
+              ->orWhere('venue', 'like', "%{$searchTerm}%")
+              ->orWhere('description', 'like', "%{$searchTerm}%")
+              ->orWhere('category', 'like', "%{$searchTerm}%");
+        });
+    }
 
     // Filter by category if provided
     if ($category && $category != '') {
@@ -142,7 +149,7 @@ public function events(Request $request){
     // Order by event_date descending (latest first)
     $events = $query->orderBy('created_at', 'desc')->get();
 
-    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
+    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice', 'searchTerm'));
 }
       // Show contact form
     
