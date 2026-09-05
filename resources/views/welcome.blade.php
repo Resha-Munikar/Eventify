@@ -186,12 +186,26 @@
                                 <span class="block text-[10px] font-semibold text-[#6C5CE7] uppercase leading-none mt-0.5">{{ $eventDate->format('M') }}</span>
                             </div>
 
-                            <!-- Bookmark icon button -->
-                            <a href="{{ route('events.show', $event->slug ?: $event->id) }}" class="absolute top-3.5 right-3.5 w-9 h-9 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-[#6C5CE7] shadow-md transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                            <!-- Save / Favorite Button -->
+                            @php
+                                $isSaved = in_array($event->id, $savedEventIds ?? []);
+                            @endphp
+                            <button 
+                                type="button"
+                                onclick="toggleSaveEvent(event, {{ $event->id }}, this)"
+                                data-save-event-id="{{ $event->id }}"
+                                aria-label="{{ $isSaved ? 'Remove from saved events' : 'Save this event' }}"
+                                title="{{ $isSaved ? 'Saved to favorites' : 'Save to favorites' }}"
+                                class="save-event-btn absolute top-3.5 right-3.5 w-9 h-9 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-110 active:scale-90 z-20 group/btn {{ $isSaved ? 'text-rose-500' : 'text-gray-600 dark:text-gray-300 hover:text-rose-500' }}"
+                            >
+                                <svg class="w-4 h-4 transition-transform duration-200" 
+                                     fill="{{ $isSaved ? 'currentColor' : 'none' }}" 
+                                     stroke="currentColor" 
+                                     stroke-width="{{ $isSaved ? '0' : '2' }}" 
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
-                            </a>
+                            </button>
                         </div>
                         
                         <!-- Event Body -->
@@ -453,12 +467,31 @@
                 @forelse($trendingEvents as $tEvent)
                     @php
                         $tImage = $tEvent->image ? (file_exists(public_path('uploads/' . $tEvent->image)) ? asset('uploads/' . $tEvent->image) : asset('uploads/concert.jpg')) : asset('uploads/concert.jpg');
+                        $tIsSaved = in_array($tEvent->id, $savedEventIds ?? []);
                     @endphp
                     <div onclick="window.location.href='{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}'" class="cursor-pointer bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
-                        <div class="h-44 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                        <div class="h-44 overflow-hidden bg-gray-100 dark:bg-gray-700 relative">
                             <a href="{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}">
                                 <img src="{{ $tImage }}" alt="{{ $tEvent->event_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             </a>
+                            
+                            <!-- Save / Favorite Button -->
+                            <button 
+                                type="button"
+                                onclick="toggleSaveEvent(event, {{ $tEvent->id }}, this)"
+                                data-save-event-id="{{ $tEvent->id }}"
+                                aria-label="{{ $tIsSaved ? 'Remove from saved events' : 'Save this event' }}"
+                                title="{{ $tIsSaved ? 'Saved to favorites' : 'Save to favorites' }}"
+                                class="save-event-btn absolute top-3 right-3 w-8 h-8 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-110 active:scale-90 z-20 group/btn {{ $tIsSaved ? 'text-rose-500' : 'text-gray-600 dark:text-gray-300 hover:text-rose-500' }}"
+                            >
+                                <svg class="w-3.5 h-3.5 transition-transform duration-200" 
+                                     fill="{{ $tIsSaved ? 'currentColor' : 'none' }}" 
+                                     stroke="currentColor" 
+                                     stroke-width="{{ $tIsSaved ? '0' : '2' }}" 
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
                         </div>
                         <div class="p-4 flex-1 flex flex-col justify-between space-y-4 text-left">
                             <div>

@@ -40,6 +40,17 @@ class Event extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'saved_events', 'event_id', 'user_id')->withTimestamps();
+    }
+
+    public function isSavedBy(?User $user): bool
+    {
+        if (!$user) return false;
+        return $this->savedByUsers()->where('users.id', $user->id)->exists();
+    }
+
     public function getMinPriceAttribute(): float
     {
         $min = $this->ticketTypes->where('status', 'active')->min('price');

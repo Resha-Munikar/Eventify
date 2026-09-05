@@ -291,6 +291,99 @@
                 updateIcons();
             });
         });
+
+        // Global Save / Favorite Event Handler
+        function toggleSaveEvent(e, eventId, btn) {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+
+            @guest
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endguest
+
+            const allButtons = document.querySelectorAll(`[data-save-event-id="${eventId}"]`);
+            allButtons.forEach(b => b.classList.add('scale-90', 'opacity-70'));
+
+            fetch(`/events/${eventId}/toggle-save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(async response => {
+                allButtons.forEach(b => b.classList.remove('scale-90', 'opacity-70'));
+                if (response.status === 401) {
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    allButtons.forEach(b => {
+                        updateSaveButtonVisual(b, data.saved);
+                    });
+
+                    const countBadges = document.querySelectorAll('.saved-count-badge');
+                    countBadges.forEach(el => {
+                        if (data.saved_count !== undefined) {
+                            el.textContent = data.saved_count;
+                        }
+                    });
+
+                    // If on Saved Events tab and item unsaved, animate removal
+                    if (window.location.search.includes('tab=saved') || window.location.search.includes('saved=1')) {
+                        const card = btn.closest('.event-card, .event-listing-card');
+                        if (card && !data.saved) {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                card.remove();
+                                const remaining = document.querySelectorAll('.event-listing-card');
+                                if (remaining.length === 0) {
+                                    const emptyBox = document.getElementById('saved-empty-state');
+                                    if (emptyBox) emptyBox.classList.remove('hidden');
+                                }
+                            }, 300);
+                        }
+                    }
+                } else {
+                    alert(data.message || 'Failed to update saved event.');
+                }
+            })
+            .catch(err => {
+                allButtons.forEach(b => b.classList.remove('scale-90', 'opacity-70'));
+                console.error('Save event error:', err);
+            });
+        }
+
+        function updateSaveButtonVisual(btn, isSaved) {
+            if (!btn) return;
+            const svg = btn.querySelector('svg');
+            if (isSaved) {
+                btn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                btn.classList.add('text-rose-500');
+                btn.setAttribute('title', 'Saved to favorites');
+                btn.setAttribute('aria-label', 'Remove from saved events');
+                if (svg) {
+                    svg.setAttribute('fill', 'currentColor');
+                    svg.setAttribute('stroke-width', '0');
+                }
+            } else {
+                btn.classList.remove('text-rose-500');
+                btn.classList.add('text-gray-600', 'dark:text-gray-300');
+                btn.setAttribute('title', 'Save to favorites');
+                btn.setAttribute('aria-label', 'Save this event');
+                if (svg) {
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke-width', '2');
+                }
+            }
+        }
 </script>
 @include('partials.chatbot')
 

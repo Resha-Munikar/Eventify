@@ -82,6 +82,7 @@ public function showWelcomePage()
     $reviews = Review::with('user')->get();
     $upcomingEvents = Event::with('ticketTypes')->orderBy('event_date', 'asc')->get();
     $trendingEvents = Event::with('ticketTypes')->orderBy('created_at', 'desc')->take(4)->get();
+    $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
 
     // Category event counts
     $categoryCounts = [
@@ -91,7 +92,7 @@ public function showWelcomePage()
         'Comedy' => Event::where('category', 'Comedy')->count(),
     ];
 
-    return view('welcome', compact('reviews', 'upcomingEvents', 'trendingEvents', 'categoryCounts'));
+    return view('welcome', compact('reviews', 'upcomingEvents', 'trendingEvents', 'categoryCounts', 'savedEventIds'));
 }
     public function about(){
         return view('about');
@@ -106,9 +107,21 @@ public function events(Request $request){
     $minPrice = $request->query('min_price');
     $maxPrice = $request->query('max_price');
     $searchTerm = $request->query('query') ?? $request->query('search');
+    $tab = $request->query('tab');
+    $savedOnly = $request->query('saved') || $tab === 'saved';
+    $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
 
     // Start building the query
     $query = Event::with('ticketTypes');
+
+    // Filter by saved events if requested
+    if ($savedOnly) {
+        if (Auth::check()) {
+            $query->whereIn('id', $savedEventIds);
+        } else {
+            $query->whereRaw('1 = 0');
+        }
+    }
 
     // Search query filter if provided
     if ($searchTerm && $searchTerm != '') {
@@ -149,7 +162,7 @@ public function events(Request $request){
     // Order by event_date descending (latest first)
     $events = $query->orderBy('created_at', 'desc')->get();
 
-    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice', 'searchTerm'));
+    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice', 'searchTerm', 'tab', 'savedOnly', 'savedEventIds'));
 }
 
 public function showEvent($identifier)
@@ -188,6 +201,9 @@ public function showEvent($identifier)
         abort(404, 'Event not found');
     }
 
+    $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
+    $isSaved = in_array($event->id, $savedEventIds);
+
     // Fetch related events in the same category
     $relatedEvents = Event::with('ticketTypes')
         ->where('id', '!=', $event->id)
@@ -202,7 +218,41 @@ public function showEvent($identifier)
             ->get();
     }
 
-    return view('events.show', compact('event', 'relatedEvents'));
+    return view('events.show', compact('event', 'relatedEvents', 'savedEventIds', 'isSaved'));
+}
+
+public function toggleSave(Request $request, $eventId)
+{
+    if (!Auth::check()) {
+        return response()->json([
+            'success' => false,
+            'redirect' => route('login'),
+            'message' => 'Please log in to save events.'
+        ], 401);
+    }
+
+    $user = Auth::user();
+    $event = Event::findOrFail($eventId);
+
+    $isSaved = $user->savedEvents()->where('events.id', $event->id)->exists();
+
+    if ($isSaved) {
+        $user->savedEvents()->detach($event->id);
+        $saved = false;
+        $message = 'Event removed from saved events.';
+    } else {
+        $user->savedEvents()->attach($event->id);
+        $saved = true;
+        $message = 'Event saved to your favorites!';
+    }
+
+    return response()->json([
+        'success' => true,
+        'saved' => $saved,
+        'saved_count' => $user->savedEvents()->count(),
+        'message' => $message,
+        'event_id' => $event->id
+    ]);
 }
 
       // Show contact form

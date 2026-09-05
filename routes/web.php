@@ -178,6 +178,7 @@ Route::get('/contact',[ChirpController::class, 'contact'])->name('contact');
 Route::post('/contact', [ChirpController::class, 'storeContact'])->name('contact.store');
 Route::get('/events', [ChirpController::class, 'events'])->name('events');
 Route::get('/events/{event}', [ChirpController::class, 'showEvent'])->name('events.show');
+Route::post('/events/{event}/toggle-save', [ChirpController::class, 'toggleSave'])->name('events.toggleSave');
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 Route::get('/userbooking', [UserController::class, 'showReport'])->name('userbooking');
 Route::get('/usereventbook', [UserController::class, 'showUserEvent'])->name('usereventbook');

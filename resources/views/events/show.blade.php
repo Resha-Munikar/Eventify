@@ -108,10 +108,28 @@
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         
                         @if($event->category)
-                            <span class="absolute top-3.5 left-3.5 bg-black/75 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+                            <span class="absolute top-3.5 left-3.5 bg-black/75 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20 z-10">
                                 {{ $event->category }}
                             </span>
                         @endif
+
+                        <!-- Save / Favorite Button on Poster -->
+                        <button 
+                            type="button"
+                            onclick="toggleSaveEvent(event, {{ $event->id }}, this)"
+                            data-save-event-id="{{ $event->id }}"
+                            aria-label="{{ ($isSaved ?? false) ? 'Remove from saved events' : 'Save this event' }}"
+                            title="{{ ($isSaved ?? false) ? 'Saved to favorites' : 'Save to favorites' }}"
+                            class="save-event-btn absolute top-3.5 right-3.5 w-10 h-10 bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-lg transition-all duration-200 hover:scale-110 active:scale-90 z-20 group/btn {{ ($isSaved ?? false) ? 'text-rose-500' : 'text-white hover:text-rose-400' }}"
+                        >
+                            <svg class="w-5 h-5 transition-transform duration-200" 
+                                 fill="{{ ($isSaved ?? false) ? 'currentColor' : 'none' }}" 
+                                 stroke="currentColor" 
+                                 stroke-width="{{ ($isSaved ?? false) ? '0' : '2' }}" 
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </button>
 
                         <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
                             <span class="text-xs font-semibold text-purple-200 uppercase tracking-wider">
@@ -321,23 +339,41 @@
                                 @php
                                     $rImage = $rEvent->image ? (file_exists(public_path('uploads/' . $rEvent->image)) ? asset('uploads/' . $rEvent->image) : asset('uploads/concert.jpg')) : asset('uploads/concert.jpg');
                                     $rMinPrice = $rEvent->min_price ?? $rEvent->price;
+                                    $rIsSaved = in_array($rEvent->id, $savedEventIds ?? []);
                                 @endphp
-                                <a href="{{ route('events.show', $rEvent->slug ?: $rEvent->id) }}" 
-                                   class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition hover:-translate-y-1 flex flex-col justify-between group">
+                                <div onclick="window.location.href='{{ route('events.show', $rEvent->slug ?: $rEvent->id) }}'" 
+                                   class="cursor-pointer bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition hover:-translate-y-1 flex flex-col justify-between group relative">
                                     <div class="h-32 overflow-hidden bg-gray-100 dark:bg-gray-700 relative">
                                         <img src="{{ $rImage }}" alt="{{ $rEvent->event_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                         @if($rEvent->category)
-                                            <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                            <span class="absolute top-2 left-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
                                                 {{ $rEvent->category }}
                                             </span>
                                         @endif
+
+                                        <button 
+                                            type="button"
+                                            onclick="toggleSaveEvent(event, {{ $rEvent->id }}, this)"
+                                            data-save-event-id="{{ $rEvent->id }}"
+                                            aria-label="{{ $rIsSaved ? 'Remove from saved events' : 'Save this event' }}"
+                                            title="{{ $rIsSaved ? 'Saved to favorites' : 'Save to favorites' }}"
+                                            class="save-event-btn absolute top-2 right-2 w-7 h-7 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-110 active:scale-90 z-20 group/btn {{ $rIsSaved ? 'text-rose-500' : 'text-gray-600 dark:text-gray-300 hover:text-rose-500' }}"
+                                        >
+                                            <svg class="w-3.5 h-3.5 transition-transform duration-200" 
+                                                 fill="{{ $rIsSaved ? 'currentColor' : 'none' }}" 
+                                                 stroke="currentColor" 
+                                                 stroke-width="{{ $rIsSaved ? '0' : '2' }}" 
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                            </svg>
+                                        </button>
                                     </div>
                                     <div class="p-3 space-y-1">
                                         <h3 class="font-bold text-xs text-gray-900 dark:text-white line-clamp-1 group-hover:text-[#8D85EC] transition">{{ $rEvent->event_name }}</h3>
                                         <p class="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-1">📍 {{ $rEvent->venue }}</p>
                                         <p class="text-xs font-extrabold text-[#8D85EC] pt-1">Rs {{ number_format($rMinPrice, 0) }}</p>
                                     </div>
-                                </a>
+                                </div>
                             @endforeach
                         </div>
                     </div>

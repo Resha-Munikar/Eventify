@@ -12,6 +12,22 @@
       <button onclick="resetFilters()" class="text-xs text-[#8d85ec] hover:underline font-normal">Reset All</button>
     </h2>
 
+    <!-- Quick Saved Filter in Sidebar -->
+    <div class="mb-4 border-b border-gray-100 dark:border-gray-600 pb-3">
+      <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), ['tab' => 'saved'])) }}" 
+         class="flex items-center justify-between w-full text-left font-semibold text-xs py-2 px-2.5 rounded-lg transition {{ (request('tab') === 'saved' || request('saved')) ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600' }}">
+        <span class="flex items-center gap-1.5">
+          <span class="text-rose-500 font-bold">♥</span>
+          <span>My Saved Events</span>
+        </span>
+        @auth
+          <span class="saved-count-badge text-[10px] bg-purple-200 text-purple-800 dark:bg-purple-800 dark:text-purple-200 px-2 py-0.5 rounded-full font-bold">
+            {{ count($savedEventIds ?? []) }}
+          </span>
+        @endauth
+      </a>
+    </div>
+
     <!-- Date Filter Toggle Button -->
     <div class="mb-4 border-b border-gray-100 dark:border-gray-600 pb-3">
       <button class="flex items-center justify-between w-full text-left font-semibold text-gray-700 dark:text-gray-200 text-sm" onclick="toggleSection('dateFilter')">
@@ -148,14 +164,39 @@
       }
   }" class="flex-1">
     
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Upcoming Events</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Discover and book tickets for top events in Nepal.</p>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <span>{{ (request('tab') === 'saved' || request('saved')) ? 'Saved Events' : 'Upcoming Events' }}</span>
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          {{ (request('tab') === 'saved' || request('saved')) ? 'Events you have bookmarked to your wishlist.' : 'Discover and book tickets for top events in Nepal.' }}
+        </p>
       </div>
-      <span class="text-xs bg-purple-100 text-[#8d85ec] font-bold px-3 py-1 rounded-full dark:bg-purple-900/50">
-        {{ $events->count() }} Event(s)
-      </span>
+
+      <!-- Quick View Tabs: All Events vs Saved Events -->
+      <div class="flex items-center gap-2">
+        <div class="inline-flex p-1 bg-gray-100 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm">
+          <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), [])) }}" 
+             class="px-4 py-1.5 rounded-full text-xs font-bold transition {{ !(request('tab') === 'saved' || request('saved')) ? 'bg-[#8D85EC] text-white shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white' }}">
+            All Events
+          </a>
+          <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), ['tab' => 'saved'])) }}" 
+             class="px-4 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 {{ (request('tab') === 'saved' || request('saved')) ? 'bg-[#8D85EC] text-white shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white' }}">
+            <span class="text-rose-500">♥</span>
+            <span>Saved</span>
+            @auth
+              <span class="saved-count-badge text-[10px] {{ (request('tab') === 'saved' || request('saved')) ? 'bg-white/25 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200' }} px-1.5 py-0.2 rounded-full font-bold">
+                {{ count($savedEventIds ?? []) }}
+              </span>
+            @endauth
+          </a>
+        </div>
+
+        <span class="text-xs bg-purple-100 text-[#8d85ec] font-bold px-3 py-1.5 rounded-full dark:bg-purple-900/50 hidden md:inline-block">
+          {{ $events->count() }} Event(s)
+        </span>
+      </div>
     </div>
 
     @if(session('success'))
@@ -177,15 +218,37 @@
             $maxPrice = $activeTickets->isNotEmpty() ? $activeTickets->max('price') : $event->price;
             $totalRemaining = $activeTickets->isNotEmpty() ? $activeTickets->sum(fn($t) => max(0, $t->quantity - $t->sold_quantity)) : $event->available_seats;
           @endphp
-          <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full bg-white dark:bg-gray-700 flex flex-col justify-between border border-gray-100 dark:border-gray-600 group">
+          @php
+            $isSaved = in_array($event->id, $savedEventIds ?? []);
+          @endphp
+          <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="event-listing-card cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full bg-white dark:bg-gray-700 flex flex-col justify-between border border-gray-100 dark:border-gray-600 group">
               <div>
-                  <div class="w-full h-56 overflow-hidden rounded-t-2xl relative">
+                  <div class="w-full h-56 overflow-hidden rounded-t-2xl relative bg-gray-100 dark:bg-gray-800">
                       <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                      
                       @if($event->category)
-                          <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow">
+                          <span class="absolute top-3 left-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow z-10">
                               {{ $event->category }}
                           </span>
                       @endif
+
+                      <!-- Save / Favorite Button -->
+                      <button 
+                          type="button"
+                          onclick="toggleSaveEvent(event, {{ $event->id }}, this)"
+                          data-save-event-id="{{ $event->id }}"
+                          aria-label="{{ $isSaved ? 'Remove from saved events' : 'Save this event' }}"
+                          title="{{ $isSaved ? 'Saved to favorites' : 'Save to favorites' }}"
+                          class="save-event-btn absolute top-3.5 right-3.5 w-9 h-9 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-110 active:scale-90 z-20 group/btn {{ $isSaved ? 'text-rose-500' : 'text-gray-600 dark:text-gray-300 hover:text-rose-500' }}"
+                      >
+                          <svg class="w-4 h-4 transition-transform duration-200" 
+                               fill="{{ $isSaved ? 'currentColor' : 'none' }}" 
+                               stroke="currentColor" 
+                               stroke-width="{{ $isSaved ? '0' : '2' }}" 
+                               viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                          </svg>
+                      </button>
                   </div>
 
                   <div class="p-5 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
@@ -236,11 +299,30 @@
         @endforeach
       </div>
     @else
-      <div class="text-center mt-20 bg-white dark:bg-gray-700 p-12 rounded-2xl shadow-sm">
-          <span class="text-5xl">🎪</span>
-          <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold mt-4">No events found matching your criteria.</p>
-          <button onclick="resetFilters()" class="mt-4 bg-[#8d85ec] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90">Reset Filters</button>
-      </div>
+      @if(request('tab') === 'saved' || request('saved'))
+        <!-- Saved Events Empty State -->
+        <div id="saved-empty-state" class="text-center py-16 bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-600 max-w-lg mx-auto mt-6">
+            <div class="w-16 h-16 bg-purple-50 dark:bg-purple-950/50 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 text-rose-500">
+                ♥
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">No saved events yet</h3>
+            <p class="text-gray-500 dark:text-gray-300 text-sm mt-1 leading-relaxed">
+                Save events you’re interested in and they’ll appear here for quick access anytime.
+            </p>
+            <div class="mt-6 flex justify-center gap-3">
+                <a href="{{ route('events') }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-xs px-6 py-2.5 rounded-full transition shadow-md">
+                    Browse All Events
+                </a>
+            </div>
+        </div>
+      @else
+        <!-- General Empty State -->
+        <div class="text-center mt-20 bg-white dark:bg-gray-700 p-12 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-600">
+            <span class="text-5xl">🎪</span>
+            <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold mt-4">No events found matching your criteria.</p>
+            <button onclick="resetFilters()" class="mt-4 bg-[#8d85ec] text-white px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90">Reset Filters</button>
+        </div>
+      @endif
     @endif
 
     <!-- Interactive Multi-Ticket-Type Booking Modal -->
