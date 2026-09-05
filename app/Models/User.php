@@ -60,9 +60,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Chirp::class);
     }
-    public function scopeRoles($query, array $roles)
-{
-    return $query->whereIn('role', $roles);
-}
 
+    public function savedEvents()
+    {
+        return $this->belongsToMany(Event::class, 'saved_events', 'user_id', 'event_id')->withTimestamps();
+    }
+
+    public function scopeRoles($query, array $roles)
+    {
+        return $query->whereIn('role', $roles);
+    }
 }

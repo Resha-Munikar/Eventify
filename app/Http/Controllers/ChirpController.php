@@ -80,27 +80,24 @@ class ChirpController extends Controller
 public function showWelcomePage()
 {
     $reviews = Review::with('user')->get();
-    $upcomingEvents = Event::orderBy('event_date', 'asc')->take(10)->get();
+    $upcomingEvents = Event::with('ticketTypes')->orderBy('event_date', 'asc')->get();
+    $trendingEvents = Event::with('ticketTypes')->orderBy('created_at', 'desc')->take(4)->get();
+    $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
 
-    return view('welcome', compact('reviews', 'upcomingEvents'));
+    // Category event counts
+    $categoryCounts = [
+        'Concert' => Event::where('category', 'Concert')->count(),
+        'Sports' => Event::where('category', 'Sports')->count(),
+        'Theatre' => Event::where('category', 'Theatre')->count(),
+        'Comedy' => Event::where('category', 'Comedy')->count(),
+    ];
+
+    return view('welcome', compact('reviews', 'upcomingEvents', 'trendingEvents', 'categoryCounts', 'savedEventIds'));
 }
     public function about(){
         return view('about');
     }
-    
-//     public function events(Request $request){
-//     // Fetch the query parameter 'category' from URL
-//     $category = $request->query('category');
 
-//     // If category filter is present, filter events
-//     if ($category && $category != '') {
-//         $events = Event::where('category', $category)->get();
-//     } else {
-//         $events = Event::all();
-//     }
-
-//     return view('events', compact('events', 'category'));
-// }
 public function events(Request $request){
     // Fetch query parameters
     $category = $request->query('category');
@@ -109,9 +106,32 @@ public function events(Request $request){
     $endDate = $request->query('end_date');
     $minPrice = $request->query('min_price');
     $maxPrice = $request->query('max_price');
+    $searchTerm = $request->query('query') ?? $request->query('search');
+    $tab = $request->query('tab');
+    $savedOnly = $request->query('saved') || $tab === 'saved';
+    $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
 
     // Start building the query
-    $query = Event::query();
+    $query = Event::with('ticketTypes');
+
+    // Filter by saved events if requested
+    if ($savedOnly) {
+        if (Auth::check()) {
+            $query->whereIn('id', $savedEventIds);
+        } else {
+            $query->whereRaw('1 = 0');
+        }
+    }
+
+    // Search query filter if provided
+    if ($searchTerm && $searchTerm != '') {
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('event_name', 'like', "%{$searchTerm}%")
+              ->orWhere('venue', 'like', "%{$searchTerm}%")
+              ->orWhere('description', 'like', "%{$searchTerm}%")
+              ->orWhere('category', 'like', "%{$searchTerm}%");
+        });
+    }
 
     // Filter by category if provided
     if ($category && $category != '') {
@@ -142,8 +162,99 @@ public function events(Request $request){
     // Order by event_date descending (latest first)
     $events = $query->orderBy('created_at', 'desc')->get();
 
-    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice'));
+    return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice', 'searchTerm', 'tab', 'savedOnly', 'savedEventIds'));
 }
+
+public function showEvent($identifier)
+{
+    $event = null;
+
+    // 1. Try finding by numeric ID first
+    if (is_numeric($identifier)) {
+        $event = Event::with(['ticketTypes' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }, 'vendor'])->find($identifier);
+    }
+
+    // 2. If not found or non-numeric, match by slug or event name
+    if (!$event) {
+        $cleanIdentifier = strtolower(trim($identifier));
+        $allEvents = Event::with(['ticketTypes' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }, 'vendor'])->get();
+
+        $event = $allEvents->first(function ($e) use ($cleanIdentifier) {
+            $slug = \Illuminate\Support\Str::slug($e->event_name);
+            if ($slug === $cleanIdentifier) {
+                return true;
+            }
+            if (\Illuminate\Support\Str::is($cleanIdentifier . '*', $slug) || \Illuminate\Support\Str::is('*' . $cleanIdentifier . '*', $slug)) {
+                return true;
+            }
+            $nameClean = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $e->event_name));
+            $identClean = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $cleanIdentifier));
+            return $nameClean === $identClean || str_contains($nameClean, $identClean) || str_contains($identClean, $nameClean);
+        });
+    }
+
+    if (!$event) {
+        abort(404, 'Event not found');
+    }
+
+    $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
+    $isSaved = in_array($event->id, $savedEventIds);
+
+    // Fetch related events in the same category
+    $relatedEvents = Event::with('ticketTypes')
+        ->where('id', '!=', $event->id)
+        ->where('category', $event->category)
+        ->take(3)
+        ->get();
+
+    if ($relatedEvents->isEmpty()) {
+        $relatedEvents = Event::with('ticketTypes')
+            ->where('id', '!=', $event->id)
+            ->take(3)
+            ->get();
+    }
+
+    return view('events.show', compact('event', 'relatedEvents', 'savedEventIds', 'isSaved'));
+}
+
+public function toggleSave(Request $request, $eventId)
+{
+    if (!Auth::check()) {
+        return response()->json([
+            'success' => false,
+            'redirect' => route('login'),
+            'message' => 'Please log in to save events.'
+        ], 401);
+    }
+
+    $user = Auth::user();
+    $event = Event::findOrFail($eventId);
+
+    $isSaved = $user->savedEvents()->where('events.id', $event->id)->exists();
+
+    if ($isSaved) {
+        $user->savedEvents()->detach($event->id);
+        $saved = false;
+        $message = 'Event removed from saved events.';
+    } else {
+        $user->savedEvents()->attach($event->id);
+        $saved = true;
+        $message = 'Event saved to your favorites!';
+    }
+
+    return response()->json([
+        'success' => true,
+        'saved' => $saved,
+        'saved_count' => $user->savedEvents()->count(),
+        'message' => $message,
+        'event_id' => $event->id
+    ]);
+}
+
       // Show contact form
     
     public function contact()

@@ -176,9 +176,9 @@ Route::get('/welcome', [ChirpController::class, 'showWelcomePage'])->name('welco
 Route::get('/about',[ChirpController::class, 'about'])->name('about');
 Route::get('/contact',[ChirpController::class, 'contact'])->name('contact');
 Route::post('/contact', [ChirpController::class, 'storeContact'])->name('contact.store');
-Route::get('/events',[ChirpController::class, 'events'])->name('events');
-// Route::resource('events', ChirpController::class);
-// Route::get('/events/{id}', [ChirpController::class, 'show'])->name('events.show');
+Route::get('/events', [ChirpController::class, 'events'])->name('events');
+Route::get('/events/{event}', [ChirpController::class, 'showEvent'])->name('events.show');
+Route::post('/events/{event}/toggle-save', [ChirpController::class, 'toggleSave'])->name('events.toggleSave');
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 Route::get('/userbooking', [UserController::class, 'showReport'])->name('userbooking');
 Route::get('/usereventbook', [UserController::class, 'showUserEvent'])->name('usereventbook');
@@ -282,9 +282,8 @@ Route::get('/payment', function () {
 Route::post('/khalti/verify', [KhaltiController::class, 'verify'])
     ->name('khalti.verify')
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
-
-Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
+// Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
+// Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/venues/book', [VenueBookingController::class, 'store'])->name('venues.book');
@@ -297,6 +296,8 @@ Route::post('/khalti/save-booking', [App\Http\Controllers\KhaltiController::clas
 Route::delete('/venue-bookings/{id}/cancel', [VenueBookingController::class, 'cancel'])->name('venueBooking.cancel');
 Route::post('/chatbot/message', [App\Http\Controllers\ChatbotController::class, 'respond'])
     ->name('chatbot.message');
+Route::post('/chatbot/clear', [App\Http\Controllers\ChatbotController::class, 'clearHistory'])
+    ->name('chatbot.clear');
 
 Route::get('/vendor/reports/eventbooking/pdf', [VendorEventController::class, 'downloadPdf'])->name('vendor.reports.eventbooking.pdf');
 Route::get('/admin/reports/admineventbooking/pdf', [UserController::class, 'downloadAdminPdf'])->name('admin.reports.admineventbooking.pdf');
