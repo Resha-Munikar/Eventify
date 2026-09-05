@@ -177,10 +177,10 @@
             $maxPrice = $activeTickets->isNotEmpty() ? $activeTickets->max('price') : $event->price;
             $totalRemaining = $activeTickets->isNotEmpty() ? $activeTickets->sum(fn($t) => max(0, $t->quantity - $t->sold_quantity)) : $event->available_seats;
           @endphp
-          <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full bg-white dark:bg-gray-700 flex flex-col justify-between border border-gray-100 dark:border-gray-600">
+          <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-[1.02] w-full bg-white dark:bg-gray-700 flex flex-col justify-between border border-gray-100 dark:border-gray-600 group">
               <div>
                   <div class="w-full h-56 overflow-hidden rounded-t-2xl relative">
-                      <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
+                      <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                       @if($event->category)
                           <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-xs font-bold px-3 py-1 rounded-full shadow">
                               {{ $event->category }}
@@ -189,7 +189,7 @@
                   </div>
 
                   <div class="p-5 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
-                      <h3 class="text-lg font-bold truncate text-gray-900 dark:text-white">{{ $event->event_name }}</h3>
+                      <h3 class="text-lg font-bold truncate text-gray-900 dark:text-white group-hover:text-[#8D85EC] transition">{{ $event->event_name }}</h3>
                       <p class="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
                           <span>📍</span> {{ $event->venue }}
                       </p>
@@ -227,20 +227,10 @@
               </div>
 
               <div class="p-5 pt-0">
-                  @guest
-                      <a href="{{ route('login') }}"
-                        class="block text-center w-full bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2.5 px-4 rounded-xl transition shadow-md">
-                          Book Now
-                      </a>
-                  @endguest
-
-                  @auth
-                      <button 
-                        @click="initBooking({{ $event->toJson() }})"
-                        class="w-full bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2.5 px-4 rounded-xl transition shadow-md transform active:scale-95">
-                          Book Tickets
-                      </button>
-                  @endauth
+                  <a href="{{ route('events.show', $event->slug ?: $event->id) }}"
+                    class="block text-center w-full bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-sm py-2.5 px-4 rounded-xl transition shadow-md transform active:scale-95">
+                      Book Tickets
+                  </a>
               </div>
           </div>
         @endforeach

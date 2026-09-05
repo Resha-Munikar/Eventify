@@ -66,4 +66,14 @@ class Event extends Model
     {
         return (int)$this->ticketTypes->sum('sold_quantity');
     }
+
+    protected $appends = [
+        'slug',
+    ];
+
+    public function getSlugAttribute(): string
+    {
+        return \Illuminate\Support\Str::slug($this->event_name);
+    }
 }
+

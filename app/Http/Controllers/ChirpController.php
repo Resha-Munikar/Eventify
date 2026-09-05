@@ -151,6 +151,60 @@ public function events(Request $request){
 
     return view('events', compact('events', 'category', 'venue', 'startDate', 'endDate', 'minPrice', 'maxPrice', 'searchTerm'));
 }
+
+public function showEvent($identifier)
+{
+    $event = null;
+
+    // 1. Try finding by numeric ID first
+    if (is_numeric($identifier)) {
+        $event = Event::with(['ticketTypes' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }, 'vendor'])->find($identifier);
+    }
+
+    // 2. If not found or non-numeric, match by slug or event name
+    if (!$event) {
+        $cleanIdentifier = strtolower(trim($identifier));
+        $allEvents = Event::with(['ticketTypes' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }, 'vendor'])->get();
+
+        $event = $allEvents->first(function ($e) use ($cleanIdentifier) {
+            $slug = \Illuminate\Support\Str::slug($e->event_name);
+            if ($slug === $cleanIdentifier) {
+                return true;
+            }
+            if (\Illuminate\Support\Str::is($cleanIdentifier . '*', $slug) || \Illuminate\Support\Str::is('*' . $cleanIdentifier . '*', $slug)) {
+                return true;
+            }
+            $nameClean = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $e->event_name));
+            $identClean = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $cleanIdentifier));
+            return $nameClean === $identClean || str_contains($nameClean, $identClean) || str_contains($identClean, $nameClean);
+        });
+    }
+
+    if (!$event) {
+        abort(404, 'Event not found');
+    }
+
+    // Fetch related events in the same category
+    $relatedEvents = Event::with('ticketTypes')
+        ->where('id', '!=', $event->id)
+        ->where('category', $event->category)
+        ->take(3)
+        ->get();
+
+    if ($relatedEvents->isEmpty()) {
+        $relatedEvents = Event::with('ticketTypes')
+            ->where('id', '!=', $event->id)
+            ->take(3)
+            ->get();
+    }
+
+    return view('events.show', compact('event', 'relatedEvents'));
+}
+
       // Show contact form
     
     public function contact()

@@ -172,11 +172,11 @@
                         $minPrice = $event->min_price ?? $event->price;
                     @endphp
 
-                    <div class="event-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-category="{{ $event->category }}">
+                    <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer event-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-category="{{ $event->category }}">
                         
                         <!-- Event Image -->
                         <div class="relative h-52 sm:h-56 overflow-hidden bg-gray-100 dark:bg-gray-700">
-                            <a href="{{ route('events', ['query' => $event->event_name]) }}">
+                            <a href="{{ route('events.show', $event->slug ?: $event->id) }}">
                                 <img src="{{ $imagePath }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             </a>
                             
@@ -187,7 +187,7 @@
                             </div>
 
                             <!-- Bookmark icon button -->
-                            <a href="{{ route('events', ['query' => $event->event_name]) }}" class="absolute top-3.5 right-3.5 w-9 h-9 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-[#6C5CE7] shadow-md transition">
+                            <a href="{{ route('events.show', $event->slug ?: $event->id) }}" class="absolute top-3.5 right-3.5 w-9 h-9 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-[#6C5CE7] shadow-md transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
                                 </svg>
@@ -200,7 +200,7 @@
                                 <span class="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full {{ $catColor }}">
                                     • {{ $event->category ?? 'General' }}
                                 </span>
-                                <a href="{{ route('events', ['query' => $event->event_name]) }}" class="block">
+                                <a href="{{ route('events.show', $event->slug ?: $event->id) }}" class="block">
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition line-clamp-1">
                                         {{ $event->event_name }}
                                     </h3>
@@ -220,7 +220,7 @@
                                     <span class="text-[11px] text-gray-400 block leading-tight">From</span>
                                     <span class="text-base font-extrabold text-gray-900 dark:text-white">Rs. {{ number_format($minPrice) }}</span>
                                 </div>
-                                <a href="{{ route('events', ['query' => $event->event_name]) }}" class="px-5 py-2 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold hover:bg-black dark:hover:bg-gray-100 transition shadow-sm">
+                                <a href="{{ route('events.show', $event->slug ?: $event->id) }}" class="px-5 py-2 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold hover:bg-black dark:hover:bg-gray-100 transition shadow-sm">
                                     Book now
                                 </a>
                             </div>
@@ -454,15 +454,15 @@
                     @php
                         $tImage = $tEvent->image ? (file_exists(public_path('uploads/' . $tEvent->image)) ? asset('uploads/' . $tEvent->image) : asset('uploads/concert.jpg')) : asset('uploads/concert.jpg');
                     @endphp
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                    <div onclick="window.location.href='{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}'" class="cursor-pointer bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
                         <div class="h-44 overflow-hidden bg-gray-100 dark:bg-gray-700">
-                            <a href="{{ route('events', ['query' => $tEvent->event_name]) }}">
+                            <a href="{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}">
                                 <img src="{{ $tImage }}" alt="{{ $tEvent->event_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             </a>
                         </div>
                         <div class="p-4 flex-1 flex flex-col justify-between space-y-4 text-left">
                             <div>
-                                <a href="{{ route('events', ['query' => $tEvent->event_name]) }}" class="block">
+                                <a href="{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}" class="block">
                                     <h3 class="font-bold text-gray-900 dark:text-white text-sm group-hover:text-[#6C5CE7] transition line-clamp-1">
                                         {{ $tEvent->event_name }}
                                     </h3>
@@ -471,7 +471,7 @@
                                     <span>📍</span> {{ $tEvent->venue }}
                                 </p>
                             </div>
-                            <a href="{{ route('events', ['query' => $tEvent->event_name]) }}" class="w-full py-2 px-4 rounded-xl bg-[#6C5CE7] hover:bg-[#5b48db] text-white text-xs font-bold text-center block transition shadow-sm">
+                            <a href="{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}" class="w-full py-2 px-4 rounded-xl bg-[#6C5CE7] hover:bg-[#5b48db] text-white text-xs font-bold text-center block transition shadow-sm">
                                 Book Now
                             </a>
                         </div>
