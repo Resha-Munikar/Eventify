@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Services\EventifyCacheService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(function (Event $event) {
+            EventifyCacheService::clearEventCaches($event->id, $event->slug, $event->vendor_id);
+        });
+
+        static::deleted(function (Event $event) {
+            EventifyCacheService::clearEventCaches($event->id, $event->slug, $event->vendor_id);
+        });
+    }
 
     protected $fillable = [
         'vendor_id',
@@ -20,6 +32,7 @@ class Event extends Model
         'available_seats',
         'category',
     ];
+
     protected $casts = [
         'event_date' => 'datetime',
     ];
@@ -28,4 +41,62 @@ class Event extends Model
     {
         return $this->belongsTo(User::class, 'vendor_id');
     }
+
+    public function ticketTypes()
+    {
+        return $this->hasMany(TicketType::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'saved_events', 'event_id', 'user_id')->withTimestamps();
+    }
+
+    public function isSavedBy(?User $user): bool
+    {
+        if (!$user) return false;
+        return $this->savedByUsers()->where('users.id', $user->id)->exists();
+    }
+
+    public function getMinPriceAttribute(): float
+    {
+        $min = $this->ticketTypes->where('status', 'active')->min('price');
+        return $min !== null ? (float)$min : (float)$this->price;
+    }
+
+    public function getMaxPriceAttribute(): float
+    {
+        $max = $this->ticketTypes->where('status', 'active')->max('price');
+        return $max !== null ? (float)$max : (float)$this->price;
+    }
+
+    public function getTotalAvailableSeatsAttribute(): int
+    {
+        if ($this->ticketTypes->isNotEmpty()) {
+            return (int)$this->ticketTypes->where('status', 'active')->sum(function ($t) {
+                return $t->remaining_quantity;
+            });
+        }
+        return (int)$this->available_seats;
+    }
+
+    public function getTotalSoldTicketsAttribute(): int
+    {
+        return (int)$this->ticketTypes->sum('sold_quantity');
+    }
+
+    protected $appends = [
+        'slug',
+    ];
+
+    public function getSlugAttribute(): string
+    {
+        return \Illuminate\Support\Str::slug($this->event_name);
+    }
 }
+

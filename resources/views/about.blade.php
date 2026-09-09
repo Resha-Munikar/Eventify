@@ -22,7 +22,7 @@
         <!-- Right Image -->
         <div class="w-full md:w-1/2 flex justify-center items-center relative z-10">
             <div class="w-120 h-90 overflow-hidden shadow-lg rounded-lg">
-                <img src="uploads/team.jpg" alt="Rectangle Image" class="w-full h-full object-cover" />
+                <img src="{{ asset('uploads/team.jpg') }}" alt="Rectangle Image" class="w-full h-full object-cover" />
             </div>
         </div>
     </div>
@@ -39,17 +39,23 @@
 <section class="w-full bg-[#F5F2FF] dark:bg-gray-900 py-20">
     <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-10 text-center">
         <div class="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition">
-            <div class="text-5xl mb-4 animate-bounce">🎯</div>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-[#8D85EC] text-3xl shadow-sm">
+                <iconify-icon icon="solar:target-bold"></iconify-icon>
+            </div>
             <h3 class="font-bold text-2xl mb-3 text-[#8D85EC] dark:text-[#a78df0]">Mission</h3>
             <p class="text-gray-600 dark:text-gray-300">To deliver exceptional events that inspire, connect, and leave lasting memories.</p>
         </div>
         <div class="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition">
-            <div class="text-5xl mb-4 animate-bounce">👁️</div>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-[#8D85EC] text-3xl shadow-sm">
+                <iconify-icon icon="solar:eye-bold"></iconify-icon>
+            </div>
             <h3 class="font-bold text-2xl mb-3 text-[#8D85EC] dark:text-[#a78df0]">Vision</h3>
             <p class="text-gray-600 dark:text-gray-300">To be the leading event management company known for creativity, precision, and impact.</p>
         </div>
         <div class="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition">
-            <div class="text-5xl mb-4 animate-bounce">💡</div>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-[#8D85EC] text-3xl shadow-sm">
+                <iconify-icon icon="solar:lightbulb-bold"></iconify-icon>
+            </div>
             <h3 class="font-bold text-2xl mb-3 text-[#8D85EC] dark:text-[#a78df0]">Values</h3>
             <p class="text-gray-600 dark:text-gray-300">Integrity, teamwork, innovation, and client satisfaction are at the heart of everything we do.</p>
         </div>
@@ -62,10 +68,10 @@
         <div>
             <h2 class="text-4xl font-bold mb-6 text-black dark:text-white">Why Choose Eventify?</h2>
             <ul class="space-y-4 text-lg text-gray-700 dark:text-gray-300">
-                <li>✔️ Experienced and creative team of professionals</li>
-                <li>✔️ Client-first approach with tailored solutions</li>
-                <li>✔️ Seamless execution and attention to detail</li>
-                <li>✔️ 24/7 support and commitment to quality</li>
+                <li class="flex items-center"><iconify-icon icon="solar:check-circle-bold" class="text-[#8D85EC] text-xl mr-3 flex-shrink-0"></iconify-icon> Experienced and creative team of professionals</li>
+                <li class="flex items-center"><iconify-icon icon="solar:check-circle-bold" class="text-[#8D85EC] text-xl mr-3 flex-shrink-0"></iconify-icon> Client-first approach with tailored solutions</li>
+                <li class="flex items-center"><iconify-icon icon="solar:check-circle-bold" class="text-[#8D85EC] text-xl mr-3 flex-shrink-0"></iconify-icon> Seamless execution and attention to detail</li>
+                <li class="flex items-center"><iconify-icon icon="solar:check-circle-bold" class="text-[#8D85EC] text-xl mr-3 flex-shrink-0"></iconify-icon> 24/7 support and commitment to quality</li>
             </ul>
         </div>
         <div class="grid grid-cols-2 gap-6 text-center">
@@ -123,7 +129,7 @@
     <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-10">
         <!-- Jane Doe -->
         <div class="text-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
-            <img src="uploads/jane1.jpg" alt="CEO" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
+            <img src="{{ asset('uploads/jane1.jpg') }}" alt="CEO" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
             <h3 class="mt-4 font-bold text-lg text-gray-900 dark:text-white">Jane Doe</h3>
             <p class="text-[#8D85EC] dark:text-[#a78df0] font-medium">CEO</p>
             <p class="text-gray-600 dark:text-gray-300 mt-2 text-sm">
@@ -133,7 +139,7 @@
 
         <!-- John Smith -->
         <div class="text-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
-            <img src="uploads/john.jpg" alt="CTO" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
+            <img src="{{ asset('uploads/john.jpg') }}" alt="CTO" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
             <h3 class="mt-4 font-bold text-lg text-gray-900 dark:text-white">John Smith</h3>
             <p class="text-[#8D85EC] dark:text-[#a78df0] font-medium">CTO</p>
             <p class="text-gray-600 dark:text-gray-300 mt-2 text-sm">
@@ -143,7 +149,7 @@
 
         <!-- Sara Lee -->
         <div class="text-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
-            <img src="uploads/Sara.jpg" alt="Marketing Manager" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
+            <img src="{{ asset('uploads/Sara.jpg') }}" alt="Marketing Manager" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
             <h3 class="mt-4 font-bold text-lg text-gray-900 dark:text-white">Sara Lee</h3>
             <p class="text-[#8D85EC] dark:text-[#a78df0] font-medium">Marketing Manager</p>
             <p class="text-gray-600 dark:text-gray-300 mt-2 text-sm">
@@ -153,7 +159,7 @@
 
         <!-- Michael Brown -->
         <div class="text-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
-            <img src="uploads/brown.webp" alt="Project Manager" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
+            <img src="{{ asset('uploads/brown.webp') }}" alt="Project Manager" class="w-full h-64 object-cover rounded-2xl shadow-lg hover:scale-105 transition">
             <h3 class="mt-4 font-bold text-lg text-gray-900 dark:text-white">Michael Brown</h3>
             <p class="text-[#8D85EC] dark:text-[#a78df0] font-medium">Project Manager</p>
             <p class="text-gray-600 dark:text-gray-300 mt-2 text-sm">
@@ -217,17 +223,20 @@
     <div id="faq-accordion" class="space-y-4">
       @php
         $faqs = [
-          ['question' => '💡 What services does Eventify provide?', 'answer' => 'We offer event planning, catering, décor, entertainment, and corporate event management.'],
-          ['question' => '📍 Where do you operate?', 'answer' => 'We currently serve clients across Nepal, expanding soon to more regions.'],
-          ['question' => '💬 How can I get in touch?', 'answer' => 'You can contact us via our website’s contact form, email, or phone number provided below.'],
-          ['question' => '📝 Do you provide custom event packages?', 'answer' => 'Yes! We customize every package according to your needs, preferences, and budget.'],
+          ['icon' => 'solar:lightbulb-bold', 'question' => 'What services does Eventify provide?', 'answer' => 'We offer event planning, catering, décor, entertainment, and corporate event management.'],
+          ['icon' => 'solar:map-point-bold', 'question' => 'Where do you operate?', 'answer' => 'We currently serve clients across Nepal, expanding soon to more regions.'],
+          ['icon' => 'solar:chat-round-dots-bold', 'question' => 'How can I get in touch?', 'answer' => 'You can contact us via our website’s contact form, email, or phone number provided below.'],
+          ['icon' => 'solar:document-text-bold', 'question' => 'Do you provide custom event packages?', 'answer' => 'Yes! We customize every package according to your needs, preferences, and budget.'],
         ];
       @endphp
 
       @foreach($faqs as $faq)
       <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
         <button class="w-full flex justify-between items-center p-4 font-medium text-left text-[#8D85EC] dark:text-[#a78df0] bg-white dark:bg-gray-700 hover:bg-purple-50 dark:hover:bg-gray-600 transition focus:outline-none focus:ring focus:ring-[#8D85EC] flex-nowrap" aria-expanded="false">
-          {{ $faq['question'] }}
+          <span class="inline-flex items-center gap-2.5">
+            <iconify-icon icon="{{ $faq['icon'] }}" class="text-xl text-[#8D85EC] flex-shrink-0"></iconify-icon>
+            <span>{{ $faq['question'] }}</span>
+          </span>
           <svg class="w-6 h-6 ml-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
           </svg>

@@ -15,10 +15,6 @@ use App\Http\Controllers\VenueBookingController;
 use App\Http\Controllers\ReviewController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 
 // Route::get('/about', function () {
 //     return view('about');
@@ -126,10 +122,6 @@ Route::get('/', function () {
 //     return "Post with Slug {$slug}";
 // })->where('slug', '[a-zA-Z0-9-]+');
 
-// fallback
-Route::fallback(function () {
-    return view('errors.404');
-});
 
 // Route::get('/posts', [PostControllercls::class, 'index'])->name('posts.index');
 // Route::get('/posts/create', [PostControllercls::class, 'create'])->name('posts.create');
@@ -168,7 +160,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // For root URL
-Route::get('/', [ChirpController::class, 'showWelcomePage']);
+Route::get('/', [ChirpController::class, 'showWelcomePage'])->name('home');
 
 // For /welcome URL
 Route::get('/welcome', [ChirpController::class, 'showWelcomePage'])->name('welcome');
@@ -176,9 +168,9 @@ Route::get('/welcome', [ChirpController::class, 'showWelcomePage'])->name('welco
 Route::get('/about',[ChirpController::class, 'about'])->name('about');
 Route::get('/contact',[ChirpController::class, 'contact'])->name('contact');
 Route::post('/contact', [ChirpController::class, 'storeContact'])->name('contact.store');
-Route::get('/events',[ChirpController::class, 'events'])->name('events');
-// Route::resource('events', ChirpController::class);
-// Route::get('/events/{id}', [ChirpController::class, 'show'])->name('events.show');
+Route::get('/events', [ChirpController::class, 'events'])->name('events');
+Route::get('/events/{event}', [ChirpController::class, 'showEvent'])->name('events.show');
+Route::post('/events/{event}/toggle-save', [ChirpController::class, 'toggleSave'])->name('events.toggleSave');
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 Route::get('/userbooking', [UserController::class, 'showReport'])->name('userbooking');
 Route::get('/usereventbook', [UserController::class, 'showUserEvent'])->name('usereventbook');
@@ -282,9 +274,8 @@ Route::get('/payment', function () {
 Route::post('/khalti/verify', [KhaltiController::class, 'verify'])
     ->name('khalti.verify')
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
-
-Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
+// Route::post('/khalti/payment/verify',[PaymentController::class,'verifyPayment'])->name('khalti.verifyPayment');
+// Route::post('/khalti/payment/store',[PaymentController::class,'storePayment'])->name('khalti.storePayment');
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/venues/book', [VenueBookingController::class, 'store'])->name('venues.book');
@@ -297,6 +288,8 @@ Route::post('/khalti/save-booking', [App\Http\Controllers\KhaltiController::clas
 Route::delete('/venue-bookings/{id}/cancel', [VenueBookingController::class, 'cancel'])->name('venueBooking.cancel');
 Route::post('/chatbot/message', [App\Http\Controllers\ChatbotController::class, 'respond'])
     ->name('chatbot.message');
+Route::post('/chatbot/clear', [App\Http\Controllers\ChatbotController::class, 'clearHistory'])
+    ->name('chatbot.clear');
 
 Route::get('/vendor/reports/eventbooking/pdf', [VendorEventController::class, 'downloadPdf'])->name('vendor.reports.eventbooking.pdf');
 Route::get('/admin/reports/admineventbooking/pdf', [UserController::class, 'downloadAdminPdf'])->name('admin.reports.admineventbooking.pdf');
@@ -310,6 +303,11 @@ Route::get('/vendor/reviews', [ReviewController::class, 'vendorIndex'])
     ->name('vendor.venue-reviews')
     ->middleware('auth');
  Route::get('/venues/{venue}/reviews', [ReviewController::class, 'getVenueReviews'])->name('venues.reviews');
+
+// Fallback route - MUST be at the end
+Route::fallback(function () {
+    return view('errors.404');
+});
 
 
 ?>

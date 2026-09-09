@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@hasSection('title')@yield('title') - {{ config('app.name', 'Eventify') }}@else{{ config('app.name', 'Eventify') }}@endif</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/eventify-logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/eventify-logo.png') }}">
     @vite('resources/css/app.css') {{-- or your CSS build setup --}}
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
     <style>
@@ -19,6 +21,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
@@ -29,16 +32,16 @@
         <header class="w-full bg-[#8D85EC]  dark:bg-gray-900 shadow-md">
         <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
             <!-- Logo + Title -->
-            <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-white  dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
-                <img src="uploads/eventicon.png" alt="E Icon" class="w-8 h-8 object-contain" />
-            </div>
-            <span class="text-black dark:text-white text-4xl brand-logo">Eventify</span>
-            </div>
+            <a href="{{ route('home') }}" class="flex items-center space-x-4 hover:opacity-90 transition focus:outline-none" title="Eventify Home">
+                <div class="w-12 h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src="{{ asset('images/eventify-logo.png') }}" alt="Eventify Logo" class="w-8 h-8 object-contain" />
+                </div>
+                <span class="text-black dark:text-white text-4xl brand-logo">Eventify</span>
+            </a>
             <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-8 py-3 shadow-md w-1/2 justify-center">
-               <a href="{{ route('welcome') }}" 
+               <a href="{{ route('home') }}" 
                     class="text-black dark:text-white font-semibold hover:underline mx-4 
-                    {{ request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
+                    {{ request()->routeIs('home') || request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
                     Home
                 </a>
 
@@ -132,23 +135,69 @@
     @endif
         <!-- Main Content -->
         <main class="flex-1 p-0">
-        @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-            class="max-w-4xl mx-auto mt-4 bg-green-100 text-green-800 p-4 rounded-lg relative transition duration-300">
-            {{ session('success') }}
-            <button @click="show = false" 
-                    class="absolute top-2 right-2 text-green-800 font-bold hover:text-green-900">&times;</button>
-        </div>
-        @endif
+      @if(session('success'))
+    <div
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-transition
+        class="fixed top-5 right-5 z-[9999]
+               w-[380px]
+               bg-green-100
+               text-green-800
+               border border-green-300
+               px-5 py-4
+               rounded-xl
+               shadow-lg"
+    >
+        <div class="flex items-center justify-between gap-4">
 
-        @if(session('error'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-            class="max-w-4xl mx-auto mt-4 bg-red-100 text-red-800 p-4 rounded-lg relative transition duration-300">
-            {{ session('error') }}
-            <button @click="show = false" 
-                    class="absolute top-2 right-2 text-red-800 font-bold hover:text-red-900">&times;</button>
+            <span class="text-sm font-medium">
+                {{ session('success') }}
+            </span>
+
+            <button
+                @click="show = false"
+                class="text-green-800 font-bold text-lg leading-none
+                       hover:text-green-900">
+                &times;
+            </button>
+
         </div>
-        @endif
+    </div>
+@endif
+
+     @if(session('error'))
+    <div
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-transition
+        class="fixed top-5 right-5 z-[9999]
+               w-[380px]
+               bg-red-100
+               text-red-800
+               border border-red-300
+               px-5 py-4
+               rounded-xl
+               shadow-lg"
+    >
+        <div class="flex items-center justify-between gap-4">
+
+            <span class="text-sm font-medium">
+                {{ session('error') }}
+            </span>
+
+            <button
+                @click="show = false"
+                class="text-red-800 font-bold text-lg leading-none
+                       hover:text-red-900">
+                &times;
+            </button>
+
+        </div>
+    </div>
+@endif
 
         @yield('content')
     </main>
@@ -198,8 +247,10 @@
         </div>
       </div>
       <!-- Bottom Footer -->
-      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
-        © 2025 Eventify. All rights reserved. Designed with ❤️ by Eventify Team.
+      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm flex items-center justify-center gap-1">
+        <span>© 2025 Eventify. All rights reserved. Designed with</span>
+        <iconify-icon icon="solar:heart-bold" class="text-rose-500 inline-block text-base"></iconify-icon>
+        <span>by Eventify Team.</span>
       </div>
     </footer>
   
@@ -245,6 +296,99 @@
                 updateIcons();
             });
         });
+
+        // Global Save / Favorite Event Handler
+        function toggleSaveEvent(e, eventId, btn) {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+
+            @guest
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endguest
+
+            const allButtons = document.querySelectorAll(`[data-save-event-id="${eventId}"]`);
+            allButtons.forEach(b => b.classList.add('scale-90', 'opacity-70'));
+
+            fetch(`/events/${eventId}/toggle-save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(async response => {
+                allButtons.forEach(b => b.classList.remove('scale-90', 'opacity-70'));
+                if (response.status === 401) {
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    allButtons.forEach(b => {
+                        updateSaveButtonVisual(b, data.saved);
+                    });
+
+                    const countBadges = document.querySelectorAll('.saved-count-badge');
+                    countBadges.forEach(el => {
+                        if (data.saved_count !== undefined) {
+                            el.textContent = data.saved_count;
+                        }
+                    });
+
+                    // If on Saved Events tab and item unsaved, animate removal
+                    if (window.location.search.includes('tab=saved') || window.location.search.includes('saved=1')) {
+                        const card = btn.closest('.event-card, .event-listing-card');
+                        if (card && !data.saved) {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                card.remove();
+                                const remaining = document.querySelectorAll('.event-listing-card');
+                                if (remaining.length === 0) {
+                                    const emptyBox = document.getElementById('saved-empty-state');
+                                    if (emptyBox) emptyBox.classList.remove('hidden');
+                                }
+                            }, 300);
+                        }
+                    }
+                } else {
+                    alert(data.message || 'Failed to update saved event.');
+                }
+            })
+            .catch(err => {
+                allButtons.forEach(b => b.classList.remove('scale-90', 'opacity-70'));
+                console.error('Save event error:', err);
+            });
+        }
+
+        function updateSaveButtonVisual(btn, isSaved) {
+            if (!btn) return;
+            const svg = btn.querySelector('svg');
+            if (isSaved) {
+                btn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                btn.classList.add('text-rose-500');
+                btn.setAttribute('title', 'Saved to favorites');
+                btn.setAttribute('aria-label', 'Remove from saved events');
+                if (svg) {
+                    svg.setAttribute('fill', 'currentColor');
+                    svg.setAttribute('stroke-width', '0');
+                }
+            } else {
+                btn.classList.remove('text-rose-500');
+                btn.classList.add('text-gray-600', 'dark:text-gray-300');
+                btn.setAttribute('title', 'Save to favorites');
+                btn.setAttribute('aria-label', 'Save this event');
+                if (svg) {
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke-width', '2');
+                }
+            }
+        }
 </script>
 @include('partials.chatbot')
 

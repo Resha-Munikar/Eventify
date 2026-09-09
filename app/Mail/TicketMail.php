@@ -13,17 +13,21 @@ class TicketMail extends Mailable
     public $event;
     public $tickets;
     public $user;
+    public $ticketType;
+    public $booking;
 
-    public function __construct($user, $event, $tickets)
+    public function __construct($user, $event, $tickets, $ticketType = null, $booking = null)
     {
         $this->user = $user;
         $this->event = $event;
         $this->tickets = $tickets;
+        $this->ticketType = $ticketType;
+        $this->booking = $booking;
     }
 
     public function build()
     {
-        return $this->subject('Your Event Ticket')
+        return $this->subject('Your Event Ticket - ' . ($this->event->event_name ?? 'Eventify'))
                     ->view('emails.ticket');
     }
 }
