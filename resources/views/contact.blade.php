@@ -21,10 +21,10 @@
     <div class="w-full md:w-1/2 flex justify-center items-center relative z-[0]">
       <div class="relative w-120 h-80">
         <div class="absolute top-0 left-0 w-120 h-80 rounded-lg shadow-lg">
-          <img src="uploads/arch.jpg" alt="Arch Image" class="w-full h-full object-cover" />
+          <img src="{{ asset('uploads/arch.jpg') }}" alt="Arch Image" class="w-full h-full object-cover" />
         </div>
         <div class="absolute bottom-0 right-0 w-48 h-48 rounded-lg border-4 border-white shadow-lg transform translate-x-4 translate-y-4">
-          <img src="uploads/circle.jpg" alt="Circle Image" class="w-full h-full object-cover" />
+          <img src="{{ asset('uploads/circle.jpg') }}" alt="Circle Image" class="w-full h-full object-cover" />
         </div>
       </div>
     </div>

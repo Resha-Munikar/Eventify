@@ -183,7 +183,7 @@ currentPasswordInput.parentNode.appendChild(currentPasswordFeedback);
 newPasswordInput.addEventListener('input', validatePassword);
 confirmPasswordInput.addEventListener('input', checkMatch);
 
-let debounceTimer; // 🕒 used for delaying the password check
+let debounceTimer; // used for delaying the password check
 
 currentPasswordInput.addEventListener('input', function() {
     clearTimeout(debounceTimer); // cancel previous timer if user keeps typing
@@ -194,53 +194,61 @@ currentPasswordInput.addEventListener('input', function() {
         currentPasswordFeedback.textContent = '';
         return;
     }
+    const currentPasswordFeedback = document.createElement('p');
+    currentPasswordFeedback.className = "mt-2 text-xs font-medium";
+    currentPasswordInput.parentNode.appendChild(currentPasswordFeedback);
 
-    // Show temporary "checking" message instantly
-    currentPasswordFeedback.textContent = "Checking...";
-    currentPasswordFeedback.className = "mt-2 text-xs font-medium text-gray-500";
+    let debounceTimer;
 
-    // Wait 500ms after user stops typing before sending the fetch request
-    debounceTimer = setTimeout(() => {
-        fetch("{{ route('vendor.password.check') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ current_password: currentPassword })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.valid) {
-                currentPasswordFeedback.textContent = "Current password is correct ✅";
-                currentPasswordFeedback.className = "mt-2 text-xs font-medium text-green-600";
-            } else {
-                currentPasswordFeedback.textContent = "Current password is incorrect ❌";
+    // Auto-check current password with debounce
+    currentPasswordInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const currentPassword = this.value;
+
+        if (currentPassword.length === 0) {
+            currentPasswordFeedback.textContent = '';
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            fetch("{{ route('vendor.password.check') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ current_password: currentPassword })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.valid) {
+                    currentPasswordFeedback.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Current password is correct';
+                    currentPasswordFeedback.className = "mt-2 text-xs font-medium text-green-600 flex items-center";
+                } else {
+                    currentPasswordFeedback.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Current password is incorrect';
+                    currentPasswordFeedback.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
+                }
+
+                validatePassword();
+            })
+            .catch(() => {
+                currentPasswordFeedback.textContent = "Error checking password.";
                 currentPasswordFeedback.className = "mt-2 text-xs font-medium text-red-600";
-            }
-
-            validatePassword(); // revalidate new password after current password check
-        })
-        .catch(() => {
-            currentPasswordFeedback.textContent = "Error checking password.";
-            currentPasswordFeedback.className = "mt-2 text-xs font-medium text-red-600";
-        });
-    }, 500); // 500ms delay after typing stops
-});
+            });
+        }, 500);
+    });
 
     function validatePassword() {
         const value = newPasswordInput.value;
 
-        // Update rules
         updateRule(rules.length, value.length >= 8);
         updateRule(rules.uppercase, /[A-Z]/.test(value));
         updateRule(rules.number, /\d/.test(value));
         updateRule(rules.special, /[!@#$%^&*(),.?":{}|<>]/.test(value));
 
-        // Check if new password is same as current
         if(currentPasswordInput.value && value === currentPasswordInput.value) {
-            matchText.textContent = "New password cannot be the same as current ❌";
-            matchText.className = "mt-2 text-xs font-medium text-red-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> New password cannot be the same as current';
+            matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
         } else {
             checkMatch();
         }
@@ -261,26 +269,25 @@ currentPasswordInput.addEventListener('input', function() {
 
     function checkMatch() {
         if (confirmPasswordInput.value === "") {
-            matchText.textContent = "";
+            matchText.innerHTML = "";
             return;
         }
 
         if(newPasswordInput.value === currentPasswordInput.value) {
-            matchText.textContent = "New password cannot be the same as current ❌";
-            matchText.className = "mt-2 text-xs font-medium text-red-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> New password cannot be the same as current';
+            matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
             return;
         }
 
         if (newPasswordInput.value === confirmPasswordInput.value) {
-            matchText.textContent = "Password match ✅";
-            matchText.className = "mt-2 text-xs font-medium text-green-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords match';
+            matchText.className = "mt-2 text-xs font-medium text-green-600 flex items-center";
         } else {
-            matchText.textContent = "Password does not match ❌";
-            matchText.className = "mt-2 text-xs font-medium text-red-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords do not match';
+            matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
         }
     }
 
-    // Prevent form submission if new password is same as current
     const changeForm = document.querySelector('form[action="{{ route('vendor.password.change') }}"]');
     changeForm.addEventListener('submit', function(e) {
         if(newPasswordInput.value === currentPasswordInput.value) {
@@ -288,54 +295,51 @@ currentPasswordInput.addEventListener('input', function() {
             alert("New password cannot be the same as current password.");
         }
     });
-const forgotForm = document.getElementById('forgotPasswordForm');
-const forgotEmail = document.getElementById('forgot_email');
-const forgotFeedback = document.getElementById('forgot-feedback');
 
-forgotForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+    const forgotForm = document.getElementById('forgotPasswordForm');
+    const forgotEmail = document.getElementById('forgot_email');
+    const forgotFeedback = document.getElementById('forgot-feedback');
 
-    // 🌟 Show immediate loading feedback
-    forgotFeedback.innerHTML = `
-        <span class="flex items-center gap-2 text-gray-500">
-            <svg class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
-            Sending reset link...
-        </span>
-    `;
-    forgotFeedback.className = "text-xs mt-1 text-gray-500";
+    forgotForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    fetch("{{ route('vendor.password.email') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
-        },
-        body: JSON.stringify({ email: forgotEmail.value })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status) {
-            // ✅ Success message
-            forgotFeedback.textContent = data.status;
-            forgotFeedback.className = "text-xs mt-1 text-green-600";
-        } else if (data.error) {
-            // ❌ Error message from backend
-            forgotFeedback.textContent = data.error;
+        forgotFeedback.innerHTML = `
+            <span class="flex items-center gap-2 text-gray-500">
+                <svg class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                Sending reset link...
+            </span>
+        `;
+        forgotFeedback.className = "text-xs mt-1 text-gray-500";
+
+        fetch("{{ route('vendor.password.email') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ email: forgotEmail.value })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status) {
+                forgotFeedback.textContent = data.status;
+                forgotFeedback.className = "text-xs mt-1 text-green-600";
+            } else if (data.error) {
+                forgotFeedback.textContent = data.error;
+                forgotFeedback.className = "text-xs mt-1 text-red-600";
+            } else if (data.errors) {
+                forgotFeedback.textContent = data.errors.email ? data.errors.email[0] : 'Error';
+                forgotFeedback.className = "text-xs mt-1 text-red-600";
+            }
+        })
+        .catch(() => {
+            forgotFeedback.textContent = 'Something went wrong!';
             forgotFeedback.className = "text-xs mt-1 text-red-600";
-        } else if (data.errors) {
-            // ⚠️ Validation errors
-            forgotFeedback.textContent = data.errors.email ? data.errors.email[0] : 'Error';
-            forgotFeedback.className = "text-xs mt-1 text-red-600";
-        }
-    })
-    .catch(() => {
-        forgotFeedback.textContent = 'Something went wrong!';
-        forgotFeedback.className = "text-xs mt-1 text-red-600";
+        });
     });
-});
 
 </script>
 

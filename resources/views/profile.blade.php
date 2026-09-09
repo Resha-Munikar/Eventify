@@ -168,6 +168,7 @@
     const newPasswordInput = document.getElementById('new_password');
     const confirmPasswordInput = document.getElementById('confirm_password');
     const currentPasswordInput = document.getElementById('current_password');
+    let debounceTimer; // used for delaying the password check
 
     const rules = {
         length: document.getElementById('rule-length'),
@@ -186,7 +187,7 @@ currentPasswordInput.parentNode.appendChild(currentPasswordFeedback);
 newPasswordInput.addEventListener('input', validatePassword);
 confirmPasswordInput.addEventListener('input', checkMatch);
 
-let debounceTimer; // 🕒 used for delaying the password check
+let debounceTimer; // used for delaying the password check
 
 currentPasswordInput.addEventListener('input', function() {
     clearTimeout(debounceTimer); // cancel previous timer if user keeps typing
@@ -215,11 +216,11 @@ currentPasswordInput.addEventListener('input', function() {
         .then(res => res.json())
         .then(data => {
             if (data.valid) {
-                currentPasswordFeedback.textContent = "Current password is correct ✅";
-                currentPasswordFeedback.className = "mt-2 text-xs font-medium text-green-600";
+                currentPasswordFeedback.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Current password is correct';
+                currentPasswordFeedback.className = "mt-2 text-xs font-medium text-green-600 flex items-center";
             } else {
-                currentPasswordFeedback.textContent = "Current password is incorrect ❌";
-                currentPasswordFeedback.className = "mt-2 text-xs font-medium text-red-600";
+                currentPasswordFeedback.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Current password is incorrect';
+                currentPasswordFeedback.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
             }
 
             validatePassword(); // revalidate new password after current password check
@@ -242,8 +243,8 @@ currentPasswordInput.addEventListener('input', function() {
 
         // Check if new password is same as current
         if(currentPasswordInput.value && value === currentPasswordInput.value) {
-            matchText.textContent = "New password cannot be the same as current ❌";
-            matchText.className = "mt-2 text-xs font-medium text-red-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> New password cannot be the same as current';
+            matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
         } else {
             checkMatch();
         }
@@ -264,22 +265,22 @@ currentPasswordInput.addEventListener('input', function() {
 
     function checkMatch() {
         if (confirmPasswordInput.value === "") {
-            matchText.textContent = "";
+            matchText.innerHTML = "";
             return;
         }
 
         if(newPasswordInput.value === currentPasswordInput.value) {
-            matchText.textContent = "New password cannot be the same as current ❌";
-            matchText.className = "mt-2 text-xs font-medium text-red-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> New password cannot be the same as current';
+            matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
             return;
         }
 
         if (newPasswordInput.value === confirmPasswordInput.value) {
-            matchText.textContent = "Password match ✅";
-            matchText.className = "mt-2 text-xs font-medium text-green-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords match';
+            matchText.className = "mt-2 text-xs font-medium text-green-600 flex items-center";
         } else {
-            matchText.textContent = "Password does not match ❌";
-            matchText.className = "mt-2 text-xs font-medium text-red-600";
+            matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords do not match';
+            matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
         }
     }
 
@@ -298,7 +299,7 @@ const forgotFeedback = document.getElementById('forgot-feedback');
 forgotForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // 🌟 Show immediate loading feedback
+    // Show immediate loading feedback
     forgotFeedback.innerHTML = `
         <span class="flex items-center gap-2 text-gray-500">
             <svg class="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -321,15 +322,15 @@ forgotForm.addEventListener('submit', function(e) {
     .then(res => res.json())
     .then(data => {
         if (data.status) {
-            // ✅ Success message
+            // Success message
             forgotFeedback.textContent = data.status;
             forgotFeedback.className = "text-xs mt-1 text-green-600";
         } else if (data.error) {
-            // ❌ Error message from backend
+            // Error message from backend
             forgotFeedback.textContent = data.error;
             forgotFeedback.className = "text-xs mt-1 text-red-600";
         } else if (data.errors) {
-            // ⚠️ Validation errors
+            // Validation errors
             forgotFeedback.textContent = data.errors.email ? data.errors.email[0] : 'Error';
             forgotFeedback.className = "text-xs mt-1 text-red-600";
         }

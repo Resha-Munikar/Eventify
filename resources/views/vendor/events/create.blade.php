@@ -86,7 +86,7 @@
                 <div class="flex items-center justify-between border-b border-purple-200 dark:border-gray-600 pb-3">
                     <div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <span>🎫</span> Ticket Types & Pricing
+                            <iconify-icon icon="solar:ticket-bold" class="text-[#8d85ec] text-2xl"></iconify-icon> Ticket Types & Pricing
                         </h3>
                         <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">
                             Add multiple ticket options (e.g. Regular, VIP, Student) with their respective prices and quantities.
@@ -105,8 +105,8 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-sm font-bold text-[#8d85ec] uppercase tracking-wider" x-text="'Ticket Option #' + (index + 1)"></span>
                                 <button type="button" @click="removeTicketType(index)" x-show="ticketTypes.length > 1"
-                                        class="text-red-500 hover:text-red-700 text-xs font-semibold px-2 py-1 bg-red-50 dark:bg-gray-700 rounded transition">
-                                    ✕ Remove
+                                        class="text-red-500 hover:text-red-700 text-xs font-semibold px-2.5 py-1 bg-red-50 dark:bg-gray-700 rounded transition inline-flex items-center gap-1">
+                                    <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon> Remove
                                 </button>
                             </div>
 
@@ -214,7 +214,9 @@
     <div class="w-full max-w-xl rounded-2xl bg-white dark:bg-gray-800 p-5 shadow-2xl sm:p-6">
         <div class="flex items-center justify-between gap-3">
             <h3 class="text-xl font-bold text-gray-900 dark:text-white">Adjust Event Cover</h3>
-            <button type="button" id="crop-modal-close" class="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white">✕</button>
+            <button type="button" id="crop-modal-close" class="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white flex items-center justify-center">
+                <iconify-icon icon="solar:close-circle-bold" class="text-2xl"></iconify-icon>
+            </button>
         </div>
 
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Adjust the image so the important content stays inside the frame.</p>

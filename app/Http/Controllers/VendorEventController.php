@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\TicketType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PDF;
@@ -27,12 +28,15 @@ class VendorEventController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $categories = Event::where('vendor_id', Auth::id())
-            ->whereNotNull('category')
-            ->where('category', '!=', '')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $vendorId = Auth::id();
+        $categories = Cache::remember('vendor_categories_' . $vendorId, 1800, function () use ($vendorId) {
+            return Event::where('vendor_id', $vendorId)
+                ->whereNotNull('category')
+                ->where('category', '!=', '')
+                ->distinct()
+                ->orderBy('category')
+                ->pluck('category');
+        });
 
         return view('vendor.events.index', compact('events', 'categories', 'category'));
     }

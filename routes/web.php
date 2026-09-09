@@ -15,10 +15,6 @@ use App\Http\Controllers\VenueBookingController;
 use App\Http\Controllers\ReviewController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 
 // Route::get('/about', function () {
 //     return view('about');
@@ -126,10 +122,6 @@ Route::get('/', function () {
 //     return "Post with Slug {$slug}";
 // })->where('slug', '[a-zA-Z0-9-]+');
 
-// fallback
-Route::fallback(function () {
-    return view('errors.404');
-});
 
 // Route::get('/posts', [PostControllercls::class, 'index'])->name('posts.index');
 // Route::get('/posts/create', [PostControllercls::class, 'create'])->name('posts.create');
@@ -168,7 +160,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // For root URL
-Route::get('/', [ChirpController::class, 'showWelcomePage']);
+Route::get('/', [ChirpController::class, 'showWelcomePage'])->name('home');
 
 // For /welcome URL
 Route::get('/welcome', [ChirpController::class, 'showWelcomePage'])->name('welcome');
@@ -311,6 +303,11 @@ Route::get('/vendor/reviews', [ReviewController::class, 'vendorIndex'])
     ->name('vendor.venue-reviews')
     ->middleware('auth');
  Route::get('/venues/{venue}/reviews', [ReviewController::class, 'getVenueReviews'])->name('venues.reviews');
+
+// Fallback route - MUST be at the end
+Route::fallback(function () {
+    return view('errors.404');
+});
 
 
 ?>

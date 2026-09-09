@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $event->event_name . ' - Tickets & Details | Eventify')
+@section('title', $event->event_name . ' - Event Details')
 
 @section('content')
 @php
@@ -148,17 +148,19 @@
                             • {{ $event->category ?? 'Event' }}
                         </span>
                         
-                        @if($totalRemaining > 0 && $totalRemaining <= 20)
-                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                🔥 Limited Tickets ({{ $totalRemaining }} left)
+                        @if($totalRemaining <= 0)
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                Sold Out
                             </span>
-                        @elseif($totalRemaining <= 0)
-                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/30">
-                                ❌ Sold Out
+                        @elseif($totalRemaining <= 20)
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                                <iconify-icon icon="solar:fire-bold" class="text-amber-400 text-xs"></iconify-icon>
+                                <span>Fast Filling (Only {{ $totalRemaining }} seats left)</span>
                             </span>
                         @else
-                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                🟢 Booking Open ({{ $totalRemaining }} seats available)
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                                <iconify-icon icon="solar:record-bold" class="text-emerald-400 text-xs"></iconify-icon>
+                                <span>Booking Open ({{ $totalRemaining }} seats available)</span>
                             </span>
                         @endif
                     </div>
@@ -173,7 +175,7 @@
                         <!-- Date & Time -->
                         <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
                             <div class="w-10 h-10 rounded-lg bg-[#8D85EC]/20 flex items-center justify-center text-xl flex-shrink-0 text-[#8D85EC]">
-                                📅
+                                <iconify-icon icon="solar:calendar-bold" class="text-xl"></iconify-icon>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Date & Time</p>
@@ -185,7 +187,7 @@
                         <!-- Venue -->
                         <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
                             <div class="w-10 h-10 rounded-lg bg-[#8D85EC]/20 flex items-center justify-center text-xl flex-shrink-0 text-[#8D85EC]">
-                                📍
+                                <iconify-icon icon="solar:map-point-bold" class="text-xl"></iconify-icon>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Venue Location</p>
@@ -246,15 +248,15 @@
                     <!-- Highlight Features Pills -->
                     <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div class="flex items-center gap-2 p-2.5 rounded-xl bg-purple-50 dark:bg-gray-700/50 text-xs font-semibold text-gray-800 dark:text-gray-200">
-                            <span>🎟️</span>
+                            <iconify-icon icon="solar:ticket-bold" class="text-base text-[#8D85EC]"></iconify-icon>
                             <span>Digital E-Ticket</span>
                         </div>
                         <div class="flex items-center gap-2 p-2.5 rounded-xl bg-purple-50 dark:bg-gray-700/50 text-xs font-semibold text-gray-800 dark:text-gray-200">
-                            <span>⚡</span>
+                            <iconify-icon icon="solar:bolt-bold" class="text-base text-amber-500"></iconify-icon>
                             <span>Instant Confirmation</span>
                         </div>
                         <div class="flex items-center gap-2 p-2.5 rounded-xl bg-purple-50 dark:bg-gray-700/50 text-xs font-semibold text-gray-800 dark:text-gray-200">
-                            <span>🛡️</span>
+                            <iconify-icon icon="solar:shield-check-bold" class="text-base text-emerald-500"></iconify-icon>
                             <span>100% Buyer Guarantee</span>
                         </div>
                     </div>
@@ -297,7 +299,7 @@
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-purple-50/60 dark:bg-gray-700/50 border border-purple-100 dark:border-gray-600">
                         <div class="flex items-center gap-3.5">
                             <div class="w-12 h-12 rounded-xl bg-[#8D85EC] text-white flex items-center justify-center text-2xl flex-shrink-0 shadow-md">
-                                📍
+                                <iconify-icon icon="solar:map-point-bold" class="text-2xl"></iconify-icon>
                             </div>
                             <div>
                                 <h3 class="font-bold text-base text-gray-900 dark:text-white">{{ $event->venue }}</h3>
@@ -319,38 +321,36 @@
                     <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3">
                         Terms & Entry Guidelines
                     </h2>
-                    <ul class="space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300 list-disc list-inside">
-                        <li>Please carry a valid digital copy or printout of the confirmed e-ticket sent to your email.</li>
-                        <li>Gates open 45 minutes prior to the scheduled start time. Early arrival is recommended.</li>
-                        <li>Outside food and beverages are strictly prohibited inside the main arena.</li>
-                        <li>Tickets once booked are non-transferable and subject to organizer terms.</li>
+                    <ul class="space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300 list-disc list-inside leading-relaxed">
+                        <li>Tickets are non-refundable once booked through Khalti.</li>
+                        <li>Please carry a valid government photo ID matching the name on your booking.</li>
+                        <li>Outside food, beverages, and recording equipment are strictly prohibited.</li>
+                        <li>Gates open 30 minutes before the scheduled showtime. Late arrivals may be delayed entry.</li>
                     </ul>
                 </div>
 
-                <!-- 5. Related Events You Might Like -->
+                <!-- 5. Related Events Carousel / Grid -->
                 @if($relatedEvents->isNotEmpty())
-                    <div class="pt-4">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">You Might Also Like</h2>
-                            <a href="{{ route('events') }}" class="text-xs font-semibold text-[#8D85EC] hover:underline">Explore all &rarr;</a>
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                                You Might Also Like
+                            </h2>
+                            <a href="{{ route('events') }}" class="text-xs font-bold text-[#8D85EC] hover:underline">View All &rarr;</a>
                         </div>
+
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             @foreach($relatedEvents as $rEvent)
                                 @php
-                                    $rImage = $rEvent->image ? (file_exists(public_path('uploads/' . $rEvent->image)) ? asset('uploads/' . $rEvent->image) : asset('uploads/concert.jpg')) : asset('uploads/concert.jpg');
-                                    $rMinPrice = $rEvent->min_price ?? $rEvent->price;
+                                    $rMinPrice = $rEvent->ticketTypes->where('status', 'active')->min('price') ?? $rEvent->price;
                                     $rIsSaved = in_array($rEvent->id, $savedEventIds ?? []);
                                 @endphp
-                                <div onclick="window.location.href='{{ route('events.show', $rEvent->slug ?: $rEvent->id) }}'" 
-                                   class="cursor-pointer bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition hover:-translate-y-1 flex flex-col justify-between group relative">
-                                    <div class="h-32 overflow-hidden bg-gray-100 dark:bg-gray-700 relative">
-                                        <img src="{{ $rImage }}" alt="{{ $rEvent->event_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                        @if($rEvent->category)
-                                            <span class="absolute top-2 left-2 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
-                                                {{ $rEvent->category }}
-                                            </span>
-                                        @endif
-
+                                <div onclick="window.location.href='{{ route('events.show', $rEvent->slug ?: $rEvent->id) }}'"
+                                     class="cursor-pointer bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition group text-left">
+                                    <div class="h-32 relative overflow-hidden bg-gray-100 dark:bg-gray-700">
+                                        <img src="{{ asset('uploads/' . $rEvent->image) }}" alt="{{ $rEvent->event_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                        
+                                        <!-- Save / Favorite Button -->
                                         <button 
                                             type="button"
                                             onclick="toggleSaveEvent(event, {{ $rEvent->id }}, this)"
@@ -370,7 +370,10 @@
                                     </div>
                                     <div class="p-3 space-y-1">
                                         <h3 class="font-bold text-xs text-gray-900 dark:text-white line-clamp-1 group-hover:text-[#8D85EC] transition">{{ $rEvent->event_name }}</h3>
-                                        <p class="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-1">📍 {{ $rEvent->venue }}</p>
+                                        <p class="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-1 flex items-center gap-1">
+                                            <iconify-icon icon="solar:map-point-linear" class="text-gray-400 text-xs shrink-0"></iconify-icon>
+                                            <span>{{ $rEvent->venue }}</span>
+                                        </p>
                                         <p class="text-xs font-extrabold text-[#8D85EC] pt-1">Rs {{ number_format($rMinPrice, 0) }}</p>
                                     </div>
                                 </div>
@@ -378,6 +381,7 @@
                         </div>
                     </div>
                 @endif
+        @endif
 
             </div>
 
@@ -546,8 +550,8 @@
                     </div>
 
                     <div class="text-center pt-2">
-                        <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
-                            <span>🔒</span> 256-Bit SSL Encrypted & Instant QR E-Ticket delivery
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1.5">
+                            <iconify-icon icon="solar:lock-bold" class="text-xs"></iconify-icon> 256-Bit SSL Encrypted & Instant QR E-Ticket delivery
                         </p>
                     </div>
 
@@ -610,8 +614,8 @@
             <!-- Right: Khalti Wallet Number & MPIN Input -->
             <div class="w-full md:w-1/3 bg-white dark:bg-gray-900 p-6 sm:p-8 flex flex-col justify-between gap-4 relative">
                 <button @click="showKhaltiPopup=false; paymentError='';" 
-                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white text-xl font-bold">
-                    ✕
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white p-1 rounded-lg">
+                    <iconify-icon icon="solar:close-circle-bold" class="text-2xl align-middle"></iconify-icon>
                 </button>
 
                 <div>
@@ -648,7 +652,7 @@
                             showKhaltiPopup = false;
                             saveBookingDetails(eventToSave, ticketTypeId, count);
                         } else {
-                            paymentError = '❌ Invalid Khalti ID or MPIN. (Use test phone 9800000000 and PIN 1111)';
+                            paymentError = 'Invalid Khalti ID or MPIN. (Use test phone 9800000000 and PIN 1111)';
                         }"
                         class="w-full py-3.5 rounded-xl text-white font-bold text-sm transition transform hover:scale-[1.02] active:scale-95 shadow-md"
                         style="background: linear-gradient(90deg, #8D85EC 0%, #6E29B0 100%);">
@@ -680,17 +684,40 @@ function saveBookingDetails(event, ticketTypeId, tickets) {
     .then(async response => {
         const data = await response.json();
         if (response.ok && data.success) {
-            alert("✅ Payment & Booking Successful! Your ticket has been emailed to you.");
+            alert("Payment & Booking Successful! Your ticket has been emailed to you.");
             window.location.href = "{{ route('usereventbook') }}";
         } else {
             console.error("Booking error:", data);
-            alert("❌ " + (data.message || "Failed to complete booking."));
+            alert(data.message || "Failed to complete booking.");
         }
     })
     .catch(err => {
         console.error("Fetch error:", err);
-        alert("⚠️ Network or server error. Please try again.");
+        alert("Network or server error. Please try again.");
     });
 }
+
+// Track recently viewed event in localStorage (small non-sensitive UI preference)
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const eventData = {
+            id: {{ $event->id }},
+            name: @json($event->event_name),
+            slug: @json($event->slug ?: (string)$event->id),
+            category: @json($event->category),
+            image: @json($imagePath),
+            price: {{ (float)$minPrice }}
+        };
+        let recents = JSON.parse(localStorage.getItem('eventify_recently_viewed') || '[]');
+        recents = recents.filter(item => item && item.id !== eventData.id);
+        recents.unshift(eventData);
+        if (recents.length > 6) {
+            recents = recents.slice(0, 6);
+        }
+        localStorage.setItem('eventify_recently_viewed', JSON.stringify(recents));
+    } catch (e) {
+        console.warn('LocalStorage error:', e);
+    }
+});
 </script>
 @endsection

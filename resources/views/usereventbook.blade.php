@@ -71,7 +71,9 @@
                     @empty
                     <tr>
                         <td colspan="9" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                            <span class="text-4xl block mb-2">🎫</span>
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-[#8D85EC] text-3xl">
+                                <iconify-icon icon="solar:ticket-bold"></iconify-icon>
+                            </div>
                             <p class="font-semibold text-base">You haven't booked any event tickets yet.</p>
                             <p class="text-xs mt-1 text-gray-400">Explore upcoming concerts, workshops, and exhibitions!</p>
                         </td>

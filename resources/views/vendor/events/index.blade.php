@@ -66,11 +66,11 @@
                             <p class="text-gray-600 dark:text-gray-300 text-xs line-clamp-2 break-words">{{ \Illuminate\Support\Str::words($event->description, 20, '...') }}</p>
                             
                             <div class="flex items-center gap-1.5 text-xs font-medium text-gray-800 dark:text-gray-400">
-                                <span>📍</span>
+                                <iconify-icon icon="solar:map-point-linear" class="text-sm text-[#8d85ec] flex-shrink-0"></iconify-icon>
                                 <span class="truncate">{{ $event->venue }}</span>
                             </div>
                             <div class="flex items-center gap-1.5 text-xs font-medium text-gray-800 dark:text-gray-400">
-                                <span>📅</span>
+                                <iconify-icon icon="solar:calendar-bold" class="text-sm text-[#8d85ec] flex-shrink-0"></iconify-icon>
                                 <span>{{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y - h:i A') }}</span>
                             </div>
                             @php
@@ -107,11 +107,13 @@
         </div>
     @else
         <div class="text-center mt-20 bg-white dark:bg-gray-800 p-12 rounded-2xl shadow-sm max-w-xl mx-auto">
-            <span class="text-5xl">🎪</span>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-[#8d85ec] text-4xl">
+                <iconify-icon icon="solar:ticket-bold"></iconify-icon>
+            </div>
             <p class="text-gray-700 dark:text-gray-200 text-lg font-semibold mt-4">No events found.</p>
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 mb-6">Start by publishing your first event with multiple ticket options.</p>
-            <a href="{{ route('vendor.events.create') }}" class="bg-[#8d85ec] hover:bg-[#7a72d6] text-white font-semibold px-6 py-2.5 rounded-full transition shadow">
-                + Add New Event
+            <a href="{{ route('vendor.events.create') }}" class="bg-[#8d85ec] hover:bg-[#7a72d6] text-white font-semibold px-6 py-2.5 rounded-full transition shadow inline-flex items-center gap-1.5">
+                <iconify-icon icon="solar:add-circle-bold" class="text-base"></iconify-icon> Add New Event
             </a>
         </div>
     @endif

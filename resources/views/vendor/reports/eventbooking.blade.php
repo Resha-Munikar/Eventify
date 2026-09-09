@@ -19,8 +19,8 @@ $noFooter = true;
             <a href="{{ route('vendor.reports.eventbooking.pdf', array_merge(request()->query(), [
                 'from_date' => request('from_date'),
                 'to_date' => request('to_date')
-            ])) }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-bold py-2.5 px-5 rounded-xl text-xs transition shadow-md flex items-center gap-1.5">
-                <span>📥</span> Download PDF Report
+            ])) }}" class="bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-bold py-2.5 px-5 rounded-xl text-xs transition shadow-md inline-flex items-center gap-2">
+                <iconify-icon icon="solar:download-bold" class="text-base"></iconify-icon> Download PDF Report
             </a>
         </div>
 

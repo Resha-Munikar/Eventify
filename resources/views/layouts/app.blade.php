@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@hasSection('title')@yield('title') - {{ config('app.name', 'Eventify') }}@else{{ config('app.name', 'Eventify') }}@endif</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/eventify-logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/eventify-logo.png') }}">
     @vite('resources/css/app.css') {{-- or your CSS build setup --}}
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
     <style>
@@ -19,6 +21,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
@@ -29,16 +32,16 @@
         <header class="w-full bg-[#8D85EC]  dark:bg-gray-900 shadow-md">
         <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
             <!-- Logo + Title -->
-            <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-white  dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
-                <img src="uploads/eventicon.png" alt="E Icon" class="w-8 h-8 object-contain" />
-            </div>
-            <span class="text-black dark:text-white text-4xl brand-logo">Eventify</span>
-            </div>
+            <a href="{{ route('home') }}" class="flex items-center space-x-4 hover:opacity-90 transition focus:outline-none" title="Eventify Home">
+                <div class="w-12 h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src="{{ asset('images/eventify-logo.png') }}" alt="Eventify Logo" class="w-8 h-8 object-contain" />
+                </div>
+                <span class="text-black dark:text-white text-4xl brand-logo">Eventify</span>
+            </a>
             <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-8 py-3 shadow-md w-1/2 justify-center">
-               <a href="{{ route('welcome') }}" 
+               <a href="{{ route('home') }}" 
                     class="text-black dark:text-white font-semibold hover:underline mx-4 
-                    {{ request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
+                    {{ request()->routeIs('home') || request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
                     Home
                 </a>
 
@@ -244,8 +247,10 @@
         </div>
       </div>
       <!-- Bottom Footer -->
-      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
-        © 2025 Eventify. All rights reserved. Designed with ❤️ by Eventify Team.
+      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm flex items-center justify-center gap-1">
+        <span>© 2025 Eventify. All rights reserved. Designed with</span>
+        <iconify-icon icon="solar:heart-bold" class="text-rose-500 inline-block text-base"></iconify-icon>
+        <span>by Eventify Team.</span>
       </div>
     </footer>
   

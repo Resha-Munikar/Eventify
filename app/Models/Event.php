@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Services\EventifyCacheService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(function (Event $event) {
+            EventifyCacheService::clearEventCaches($event->id, $event->slug, $event->vendor_id);
+        });
+
+        static::deleted(function (Event $event) {
+            EventifyCacheService::clearEventCaches($event->id, $event->slug, $event->vendor_id);
+        });
+    }
 
     protected $fillable = [
         'vendor_id',

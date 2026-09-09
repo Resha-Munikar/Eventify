@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Book Live Events & Experiences - Eventify')
+@section('title', 'Eventify')
 
 @section('content')
 <div class="bg-[#faf9ff] dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen font-sans selection:bg-[#6C5CE7] selection:text-white">
@@ -70,7 +70,7 @@
                             <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-900 object-cover" src="{{ asset('uploads/Sara.jpg') }}" alt="User 4" />
                         </div>
                         <div class="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium">
-                            <span class="text-amber-500 font-bold mr-1">4.9 ★</span>
+                            <span class="text-amber-500 font-bold mr-1 inline-flex items-center gap-0.5">4.9 <iconify-icon icon="solar:star-bold" class="text-amber-400 text-sm"></iconify-icon></span>
                             <span>from 12,000+ happy night owls</span>
                         </div>
                     </div>
@@ -329,8 +329,9 @@
                     <div class="w-56 sm:w-60 rounded-t-3xl overflow-hidden shadow-2xl border-4 border-b-0 border-gray-900 bg-white dark:bg-gray-900 p-3 space-y-3">
                         <div class="h-24 rounded-xl overflow-hidden relative">
                             <img src="{{ asset('uploads/a9e3088f2698f4b567d9a1c8e03939eaf4410e02.png') }}" alt="Event setup banner" class="w-full h-full object-cover" />
-                            <div class="absolute bottom-1 left-2 bg-[#6C5CE7] text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
-                                🎵 Music Concert
+                            <div class="absolute bottom-1 left-2 bg-[#6C5CE7] text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <iconify-icon icon="solar:music-note-bold" class="text-[10px]"></iconify-icon>
+                                <span>Music Concert</span>
                             </div>
                         </div>
                         <div class="space-y-1.5 text-left">
@@ -501,7 +502,8 @@
                                     </h3>
                                 </a>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1 line-clamp-1">
-                                    <span>📍</span> {{ $tEvent->venue }}
+                                    <iconify-icon icon="solar:map-point-linear" class="text-gray-400 text-xs shrink-0"></iconify-icon>
+                                    <span>{{ $tEvent->venue }}</span>
                                 </p>
                             </div>
                             <a href="{{ route('events.show', $tEvent->slug ?: $tEvent->id) }}" class="w-full py-2 px-4 rounded-xl bg-[#6C5CE7] hover:bg-[#5b48db] text-white text-xs font-bold text-center block transition shadow-sm">
@@ -563,10 +565,12 @@
                             Subscribe
                         </button>
                     </form>
-                    <p class="text-[11px] text-purple-200 text-center lg:text-left pl-2">
-                        🔒 No spam ever. Unsubscribe anytime with a single click.
+                    <p class="text-[11px] text-purple-200 text-center lg:text-left pl-2 flex items-center gap-1">
+                        <iconify-icon icon="solar:lock-bold" class="text-purple-200 text-xs inline-block"></iconify-icon>
+                        <span>No spam ever. Unsubscribe anytime with a single click.</span>
                     </p>
                 </div>
+
 
             </div>
         </div>

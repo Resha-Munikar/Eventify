@@ -64,7 +64,7 @@
 <body>
     <div class="ticket-container">
         <div class="ticket-header">
-            <h1>🎫 Event Ticket</h1>
+            <h1>Event Ticket</h1>
             <p>Hello {{ $user->name }}</p>
         </div>
 
