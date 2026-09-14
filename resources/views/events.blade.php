@@ -1,18 +1,41 @@
 @extends('layouts.app')
 
-@section('title', (request('tab') === 'saved' || request('saved')) ? 'Saved Events - Eventify' : 'Upcoming Events - Eventify')
+@section('title', 'Events - Eventify')
 
 @section('content')
 
-<div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 p-4 sm:p-6 items-start dark:bg-gray-900 font-sans">
+<div class="min-h-screen bg-[#f7f9fc] dark:bg-gray-900 font-sans">
+<div class="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-7 p-5 items-start">
   
   <!-- ========================================================= -->
   <!-- 1. LEFT FILTER SIDEBAR                                    -->
   <!-- ========================================================= -->
-  <aside class="w-full lg:w-64 shrink-0 bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 lg:sticky lg:top-6 z-10 h-auto">
+  <aside class="w-full md:w-[270px] lg:w-[270px] shrink-0 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:sticky md:top-6 z-10 h-auto">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold text-gray-900 dark:text-white">Filters</h2>
-      <button onclick="resetFilters()" class="text-xs text-[#8d85ec] hover:underline font-medium">Reset All</button>
+      <h2 class="text-sm font-bold text-gray-900 dark:text-white">Filters</h2>
+      <button onclick="resetFilters()" class="text-[9px] text-[#8d85ec] hover:underline font-medium">Reset All</button>
+    </div>
+
+    <!-- Categories -->
+    <div class="mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
+      <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">Categories</p>
+      <div id="categoriesFilter" class="space-y-1">
+        @php $activeCategory = request('category'); @endphp
+        <a href="{{ route('events', array_merge(request()->except('category'), [])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ !$activeCategory ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">All Categories</a>
+        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Concert'])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ $activeCategory == 'Concert' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Concert</a>
+        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Art'])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ $activeCategory == 'Art' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Exhibition / Art</a>
+        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Food & Drink'])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ $activeCategory == 'Food & Drink' || $activeCategory == 'Food and Drink' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Food & Drink</a>
+        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Technology'])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ $activeCategory == 'Technology' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Technology</a>
+        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Sports'])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ $activeCategory == 'Sports' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Sports</a>
+        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Wellness'])) }}"
+           class="block w-full text-sm py-2.5 px-3 rounded-lg transition {{ $activeCategory == 'Wellness' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Workshop / Wellness</a>
+      </div>
     </div>
 
     <!-- Quick Saved Filter in Sidebar -->
@@ -31,7 +54,7 @@
       </a>
     </div>
 
-    <!-- 1. Date Range Filter Toggle -->
+    <!-- Date Range Filter Toggle -->
     <div class="mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
       <button class="flex items-center justify-between w-full text-left font-semibold text-gray-700 dark:text-gray-200 text-xs" onclick="toggleSection('dateFilter')">
         <span>Date Range</span>
@@ -48,34 +71,7 @@
       </div>
     </div>
 
-    <!-- 2. Categories Filter Toggle -->
-    <div class="mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
-      <button class="flex items-center justify-between w-full text-left font-semibold text-gray-700 dark:text-gray-200 text-xs" onclick="toggleSection('categoriesFilter')">
-        <span>Categories</span>
-        <svg id="icon-categoriesFilter" class="w-3.5 h-3.5 text-gray-400 transform transition-transform duration-200 {{ request('category') ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      <div id="categoriesFilter" class="mt-3 {{ request('category') ? '' : 'hidden' }} space-y-1">
-        @php $activeCategory = request('category'); @endphp
-        <a href="{{ route('events', array_merge(request()->except('category'), [])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ !$activeCategory ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">All Categories</a>
-        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Concert'])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ $activeCategory == 'Concert' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Concert</a>
-        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Art'])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ $activeCategory == 'Art' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Exhibition / Art</a>
-        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Food & Drink'])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ $activeCategory == 'Food & Drink' || $activeCategory == 'Food and Drink' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Food & Drink</a>
-        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Technology'])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ $activeCategory == 'Technology' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Technology</a>
-        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Sports'])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ $activeCategory == 'Sports' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Sports</a>
-        <a href="{{ route('events', array_merge(request()->except('category'), ['category' => 'Wellness'])) }}"
-           class="block text-xs py-1 px-2 rounded-lg transition {{ $activeCategory == 'Wellness' ? 'bg-purple-100 text-[#8d85ec] font-bold dark:bg-purple-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/60' }}">Workshop / Wellness</a>
-      </div>
-    </div>
-
-    <!-- 3. Price Filter Toggle -->
+    <!-- Price Filter Toggle -->
     <div class="mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
       <button class="flex items-center justify-between w-full text-left font-semibold text-gray-700 dark:text-gray-200 text-xs" onclick="toggleSection('priceFilter')">
         <span>Max Budget</span>
@@ -194,38 +190,58 @@
   }" class="flex-1 min-w-0 w-full">
     
     <!-- Top Header Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          {{ (request('tab') === 'saved' || request('saved')) ? 'Saved Events' : 'Upcoming Events' }}
-        </h1>
-        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-          {{ (request('tab') === 'saved' || request('saved')) ? 'Events you have bookmarked to your wishlist.' : 'Discover and book tickets for top events in Nepal.' }}
+    <div class="mb-6">
+      <!-- Title -->
+      <div class="mb-5">
+        <h1 class="text-2xl sm:text-[27px] leading-none font-extrabold text-gray-900 dark:text-white tracking-tight">Events</h1>
+        <p class="text-xs sm:text-[13px] text-gray-500 dark:text-gray-400 mt-1.5">
+          Discover and book tickets for top events in Nepal.
         </p>
       </div>
 
-      <!-- Quick View Tabs: All Events vs Saved Events + Counter Pill -->
-      <div class="flex items-center gap-2">
-        <div class="inline-flex p-1 bg-gray-100 dark:bg-gray-800 rounded-full border border-gray-200/80 dark:border-gray-700 shadow-xs">
-          <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), [])) }}" 
-             class="px-4 py-1.5 rounded-full text-xs font-bold transition {{ !(request('tab') === 'saved' || request('saved')) ? 'bg-[#8D85EC] text-white shadow-xs' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white' }}">
-            All Events
-          </a>
-          <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), ['tab' => 'saved'])) }}" 
-             class="px-4 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 {{ (request('tab') === 'saved' || request('saved')) ? 'bg-[#8D85EC] text-white shadow-xs' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white' }}">
-            <iconify-icon icon="solar:heart-bold" class="text-rose-500 text-xs"></iconify-icon>
-            <span>Saved</span>
-            @auth
-              <span class="saved-count-badge text-[10px] {{ (request('tab') === 'saved' || request('saved')) ? 'bg-white/25 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200' }} px-1.5 py-0.2 rounded-full font-bold">
-                {{ count($savedEventIds ?? []) }}
-              </span>
-            @endauth
-          </a>
-        </div>
+      <!-- Search + Location -->
+      <div class="flex flex-col sm:flex-row items-stretch gap-2.5 mb-3">
+       <form action="{{ route('events') }}" method="GET"
+      class="relative w-full sm:w-[400px] lg:w-[430px] shrink-0">
+          <input type="hidden" name="tab" value="{{ $tab }}">
+          <input type="search" name="query" value="{{ $searchTerm }}" placeholder="Search by events, venue and location"
+                 class="w-full h-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-10 pr-3 text-xs sm:text-sm text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-200">
+          <iconify-icon icon="solar:magnifer-linear" class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base"></iconify-icon>
+        </form>
 
-        <span class="text-xs bg-purple-100 text-[#8d85ec] font-bold px-3 py-1.5 rounded-full dark:bg-purple-950/50 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40 hidden md:inline-block">
-          {{ $events->count() }} Event(s)
-        </span>
+     <div class="relative w-full sm:w-[190px] shrink-0">
+          <iconify-icon icon="solar:map-point-linear" class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base"></iconify-icon>
+          <select onchange="window.location.href = this.value"
+                  class="w-full h-10 appearance-none rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 pl-10 pr-8 py-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300 outline-none focus:ring-2 focus:ring-purple-200">
+            @foreach($availableLocations as $availableLocation)
+              <option value="{{ route('events', array_merge(request()->except(['location', 'page']), ['location' => $availableLocation === 'All Locations' ? null : $availableLocation])) }}" {{ ($location ?: 'All Locations') === $availableLocation ? 'selected' : '' }}>
+                {{ $availableLocation }}
+              </option>
+            @endforeach
+          </select>
+          <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Event Type / Quick View Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+        <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), [])) }}"
+           class="px-3.5 py-2 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap transition {{ $tab === 'hot' ? 'bg-[#8D85EC] text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700' }}">
+          Hot's and Happening
+        </a>
+
+        <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), ['tab' => 'upcoming'])) }}"
+           class="px-3.5 py-2 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap transition {{ $tab === 'upcoming' ? 'bg-[#8D85EC] text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700' }}">
+          Upcoming Events ({{ $totalEvents }})
+        </a>
+
+        <a href="{{ route('events', array_merge(request()->except(['tab', 'saved']), ['tab' => 'saved'])) }}"
+           class="px-3.5 py-2 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap transition flex items-center gap-1.5 {{ $tab === 'saved' ? 'bg-[#8D85EC] text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700' }}">
+          <iconify-icon icon="solar:heart-bold" class="text-rose-500 text-xs"></iconify-icon>
+          <span>Saved ({{ count($savedEventIds ?? []) }})</span>
+        </a>
       </div>
     </div>
 
@@ -241,7 +257,7 @@
 
     <!-- Event Cards Grid (Exactly matching reference image layout) -->
     @if($events->count() > 0)
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @foreach($events as $event)
           @php
             $activeTickets = $event->ticketTypes ? $event->ticketTypes->where('status', 'active') : collect();
@@ -253,15 +269,15 @@
 
           <!-- Event Card -->
           <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" 
-               class="event-listing-card cursor-pointer rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition transform hover:-translate-y-1 w-full bg-white dark:bg-gray-800 flex flex-col justify-between border border-gray-100 dark:border-gray-700 group">
+               class="event-listing-card cursor-pointer rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition transform hover:-translate-y-1 w-full bg-white dark:bg-gray-800 flex flex-col justify-between border border-gray-100 dark:border-gray-200 group">
               <div>
                   <!-- Card Image Container -->
-                  <div class="w-full h-48 sm:h-52 overflow-hidden rounded-t-2xl relative bg-gray-100 dark:bg-gray-900">
-                      <img src="{{ asset('uploads/' . $event->image) }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <div class="w-full h-40 overflow-hidden rounded-t-2xl relative bg-gray-100 dark:bg-gray-900">
+                      <img src="{{ $event->image ? asset('uploads/' . $event->image) : asset('uploads/concert.jpg') }}" alt="{{ $event->event_name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                       
                       <!-- Category Badge (Top-Left) -->
                       @if($event->category)
-                          <span class="absolute top-3 left-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-[11px] font-bold px-3 py-1 rounded-full shadow-xs z-10">
+                          <span class="absolute top-3 left-3 bg-white/90 dark:bg-gray-900/90 text-purple-700 dark:text-purple-300 text-[10px] font-bold px-3 py-1 rounded-full shadow-xs z-10">
                               {{ $event->category }}
                           </span>
                       @endif
@@ -284,19 +300,18 @@
                           </svg>
                       </button>
                   </div>
-
                   <!-- Card Body -->
-                  <div class="p-4 sm:p-5 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
-                      <h3 class="text-base sm:text-lg font-bold truncate text-gray-900 dark:text-white group-hover:text-[#8D85EC] transition">{{ $event->event_name }}</h3>
+                  <div class="p-4 flex flex-col gap-2 text-gray-900 dark:text-gray-200">
+                      <h3 class="text-sm font-bold truncate text-gray-900 dark:text-white group-hover:text-[#8D85EC] transition">{{ $event->event_name }}</h3>
                       
                       <!-- Location -->
-                      <p class="text-xs text-gray-800 dark:text-gray-400 truncate flex items-center gap-1.5">
+                      <p class="text-[11px] text-gray-600 dark:text-gray-400 truncate flex items-center gap-1">
                           <iconify-icon icon="solar:map-point-linear" class="text-rose-500 text-xs shrink-0"></iconify-icon>
                           <span class="truncate">{{ $event->venue }}</span>
                       </p>
 
                       <!-- Date & Time -->
-                      <p class="text-xs text-gray-800 dark:text-gray-400 flex items-center gap-1.5">
+                      <p class="text-[11px] text-gray-600 dark:text-gray-400 flex items-center gap-1">
                           <iconify-icon icon="solar:calendar-linear" class="text-blue-500 text-xs shrink-0"></iconify-icon>
                           <span>{{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y - h:i A') }}</span>
                       </p>
@@ -304,9 +319,9 @@
               
                       
                       <!-- Pricing, Seat Scarcity & Ticket Badges -->
-                      <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                      <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
                           <div class="flex justify-between items-center mb-1.5">
-                              <span class="text-xs font-bold text-[#8d85ec]">
+                              <span class="text-[10px] font-bold text-[#8d85ec]">
                                   @if((float)$minPrice <= 0)
                                       Free
                                   @elseif($minPrice == $maxPrice)
@@ -315,7 +330,7 @@
                                       From Rs {{ number_format($minPrice, 0) }}
                                   @endif
                               </span>
-                              <span class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                              <span class="text-[9px] text-gray-500 dark:text-gray-400 font-medium">
                                   @if($totalRemaining <= 0)
                                       <span class="text-rose-500 font-semibold">Sold Out</span>
                                   @else
@@ -331,15 +346,24 @@
               </div>
 
               <!-- CTA Button -->
-              <div class="p-4 sm:p-5 pt-0">
+              <div class="p-4 pt-0">
                   <a href="{{ route('events.show', $event->slug ?: $event->id) }}"
-                    class="block text-center w-full bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-xs sm:text-sm py-2.5 px-4 rounded-xl transition shadow-xs hover:shadow-md transform active:scale-95">
+                    class="block text-center w-full bg-[#8D85EC] hover:bg-[#7b76e4] text-white font-semibold text-[10px] sm:text-xs py-2 px-3 rounded-lg transition shadow-xs hover:shadow-md transform active:scale-95">
                       Book Tickets
                   </a>
               </div>
           </div>
         @endforeach
       </div>
+      @if($totalPages > 1)
+        <nav class="flex items-center justify-center gap-1.5 mt-6" aria-label="Event pages">
+          <a href="{{ request()->fullUrlWithQuery(['page' => max(1, $currentPage - 1)]) }}" class="px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs {{ $currentPage === 1 ? 'pointer-events-none opacity-40' : 'hover:bg-gray-50 dark:hover:bg-gray-700' }}">Previous</a>
+          @for($page = 1; $page <= $totalPages; $page++)
+            <a href="{{ request()->fullUrlWithQuery(['page' => $page]) }}" class="min-w-8 text-center px-2 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 text-xs {{ $page === $currentPage ? 'bg-[#8D85EC] text-white border-[#8D85EC]' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' }}">{{ $page }}</a>
+          @endfor
+          <a href="{{ request()->fullUrlWithQuery(['page' => min($totalPages, $currentPage + 1)]) }}" class="px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs {{ $currentPage === $totalPages ? 'pointer-events-none opacity-40' : 'hover:bg-gray-50 dark:hover:bg-gray-700' }}">Next</a>
+        </nav>
+      @endif
     @else
       <!-- Empty State -->
       @if(request('tab') === 'saved' || request('saved'))
@@ -619,6 +643,7 @@
     </div>
 
   </main>
+</div>
 </div>
 
 <script>

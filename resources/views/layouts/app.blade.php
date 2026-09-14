@@ -30,44 +30,44 @@
     @if (!isset($noNavbar) || !$noNavbar)
         <!-- Navbar -->
         <header x-data="{ mobileMenuOpen: false }" class="w-full bg-[#8D85EC] dark:bg-gray-900 shadow-md">
-        <div class="max-w-7xl mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center gap-2 px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
             <!-- Logo + Title -->
-            <a href="{{ route('home') }}" class="flex items-center space-x-2 sm:space-x-4 hover:opacity-90 transition focus:outline-none" title="Eventify Home">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
-                    <img src="{{ asset('images/eventify-logo.png') }}" alt="Eventify Logo" class="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+            <a href="{{ route('home') }}" class="flex items-center space-x-2 sm:space-x-4 hover:opacity-90 transition focus:outline-none shrink-0" title="Eventify Home">
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src="{{ asset('images/eventify-logo.png') }}" alt="Eventify Logo" class="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
                 </div>
-                <span class="text-black dark:text-white text-3xl sm:text-4xl brand-logo">Eventify</span>
+                <span class="text-black dark:text-white text-2xl sm:text-4xl brand-logo">Eventify</span>
             </a>
-            <nav class="hidden lg:flex bg-white dark:bg-gray-700 rounded-full px-6 xl:px-8 py-3 shadow-md justify-center">
+            <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-2 sm:px-6 xl:px-8 py-2 sm:py-3 shadow-md justify-center min-w-0">
                <a href="{{ route('home') }}" 
-                    class="text-black dark:text-white font-semibold hover:underline mx-4 
+                    class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 
                     {{ request()->routeIs('home') || request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
                     Home
                 </a>
 
                 <a href="{{ route('about') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">
+                class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">
                 About Us
                 </a>
 
                 <a href="{{ route('events') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('events') ? 'active' : '' }}">
+                class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 {{ request()->routeIs('events') ? 'active' : '' }}">
                 Events
                 </a>
                 <a href="{{ route('contact') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('contact') ? 'active' : '' }}">
+                class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 {{ request()->routeIs('contact') ? 'active' : '' }}">
                 Contact
                 </a>
             </nav>
 
             <!-- Navbar Right Section -->
-            <div class="flex items-center space-x-2 sm:space-x-4 relative">
+            <div class="flex items-center space-x-1 sm:space-x-4 relative shrink-0">
                 <button
                     type="button"
                     @click="mobileMenuOpen = !mobileMenuOpen"
                     :aria-expanded="mobileMenuOpen.toString()"
                     aria-label="Toggle navigation menu"
-                    class="lg:hidden p-2 rounded-lg bg-white/90 text-gray-800 hover:bg-white focus:outline-none focus:ring-2 focus:ring-white"
+                    class="md:hidden p-2 rounded-lg bg-white/90 text-gray-800 hover:bg-white focus:outline-none focus:ring-2 focus:ring-white"
                 >
                     <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -78,8 +78,8 @@
                 </button>
                 @guest
                     <!-- When user is NOT logged in -->
-                    <a href="{{ route('login') }}" class="bg-white dark:bg-gray-700 text-[#8D85EC] dark:text-white font-semibold px-5 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"> Login </a> 
-                    <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white dark:bg-gray-700 font-semibold px-5 py-2 rounded-full hover:bg-[#6f69d9] transition"> Sign Up </a>
+                    <a href="{{ route('login') }}" class="bg-white dark:bg-gray-700 text-[#8D85EC] dark:text-white font-semibold px-3 sm:px-5 py-2 rounded-full text-xs sm:text-base hover:bg-gray-100 dark:hover:bg-gray-600 transition"> Login </a> 
+                    <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white dark:bg-gray-700 font-semibold px-3 sm:px-5 py-2 rounded-full text-xs sm:text-base hover:bg-[#6f69d9] transition"> Sign Up </a>
                 @endguest
 
                 @auth
@@ -140,7 +140,7 @@
                 </button>
             </div>
         </div>
-        <nav x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false" class="lg:hidden border-t border-white/20 px-4 pb-4 pt-3">
+        <nav x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false" class="md:hidden border-t border-white/20 px-4 pb-4 pt-3">
             <div class="flex flex-col gap-1 rounded-xl bg-white dark:bg-gray-800 p-2 shadow-lg">
                 <a href="{{ route('home') }}" class="rounded-lg px-4 py-3 font-semibold text-gray-800 dark:text-white hover:bg-purple-100 dark:hover:bg-gray-700">Home</a>
                 <a href="{{ route('about') }}" class="rounded-lg px-4 py-3 font-semibold text-gray-800 dark:text-white hover:bg-purple-100 dark:hover:bg-gray-700">About Us</a>

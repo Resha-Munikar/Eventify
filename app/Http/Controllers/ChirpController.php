@@ -266,6 +266,12 @@ public function events(Request $request)
     }
 
     $availableLocations = ['All Locations', 'Kathmandu', 'Lalitpur', 'Bhaktapur', 'Pokhara'];
+    $currentPage = max(1, (int) $request->query('page', 1));
+    $perPage = 9;
+    $totalEvents = $events->count();
+    $totalPages = max(1, (int) ceil($totalEvents / $perPage));
+    $currentPage = min($currentPage, $totalPages);
+    $events = $events->forPage($currentPage, $perPage)->values();
 
     return view('events', compact(
         'events',
@@ -280,7 +286,10 @@ public function events(Request $request)
         'tab',
         'activeFilterCount',
         'savedEventIds',
-        'availableLocations'
+        'availableLocations',
+        'currentPage',
+        'totalPages',
+        'totalEvents'
     ));
 }
 
