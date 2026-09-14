@@ -3,6 +3,127 @@
 @section('title', 'Eventify')
 
 @section('content')
+<style>
+    .hero-slide {
+        width: 88vw;
+        min-height: 210px;
+    }
+
+    @media (min-width: 640px) {
+        .hero-slide {
+            width: 78vw;
+            min-height: 280px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .hero-slide {
+            width: 72vw;
+            min-height: 340px;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .hero-slide {
+            width: 70vw;
+        }
+    }
+
+    #hero-dots .hero-dot {
+        display: block;
+        width: 6px;
+        height: 6px;
+        flex: 0 0 6px;
+        border-radius: 9999px;
+        background: #d1d5db;
+    }
+
+    #hero-dots .hero-dot:first-child {
+        width: 24px;
+        flex-basis: 24px;
+        background: #6c5ce7;
+    }
+
+    #hero-prev,
+    #hero-next,
+    #upcoming-events-prev,
+    #upcoming-events-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        width: 42px;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(17, 24, 39, 0.78);
+        color: white;
+        border-radius: 9999px;
+        z-index: 40;
+    }
+
+    #hero-prev:hover,
+    #hero-next:hover,
+    #upcoming-events-prev:hover,
+    #upcoming-events-next:hover {
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    #events-grid .event-card {
+        width: calc((100% - 3.75rem) / 4);
+    }
+
+    .hero-info {
+        position: absolute;
+        left: 20px;
+        right: 80px;
+        bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+        .hero-info {
+            left: 32px;
+            bottom: 28px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .hero-info {
+            left: 40px;
+            bottom: 32px;
+        }
+    }
+
+    .hero-info .hero-category,
+    .hero-info .hero-title {
+        display: block;
+        margin: 0;
+    }
+
+    .hero-info .hero-category {
+        line-height: 1.25;
+    }
+
+    .hero-info .hero-title {
+        line-height: 1.15;
+    }
+
+    @media (max-width: 1023px) {
+        #events-grid .event-card {
+            width: calc((100% - 1.25rem) / 2);
+        }
+    }
+
+    @media (max-width: 639px) {
+        #events-grid .event-card {
+            width: 85vw;
+        }
+    }
+</style>
 <div class="bg-[#faf9ff] dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen font-sans selection:bg-[#6C5CE7] selection:text-white">
 <!-- ========================================== -->
 <!-- 1. HERO SECTION — WIDE EVENT CAROUSEL     -->
@@ -130,11 +251,11 @@
                     @endphp
 
                     <article
-                        class="hero-slide relative flex-none
+                        class="hero-slide relative shrink-0
                                w-[88vw] sm:w-[78vw] lg:w-[72vw] xl:w-[70vw]
                                max-w-[1400px]
-                               aspect-[2.8/1]
-                               min-h-[180px] sm:min-h-[240px] lg:min-h-[300px]
+                               aspect-[2.6/1]
+                               min-h-[210px] sm:min-h-[280px] lg:min-h-[340px]
                                snap-center overflow-hidden
                                rounded-xl sm:rounded-2xl
                                cursor-pointer group"
@@ -244,27 +365,28 @@
                             class="absolute left-5 bottom-5
                                    sm:left-8 sm:bottom-7
                                    lg:left-10 lg:bottom-8
-                                   right-20 text-white"
+                                   right-20 text-white
+                                   hero-info"
                         >
 
-                            <p class="text-[10px] sm:text-xs
+                            <p class="hero-category text-[10px] sm:text-xs
                                       font-bold uppercase tracking-[0.15em]
-                                      text-white/80 mb-1.5">
+                                      text-white/80">
                                 {{ $heroCategory }}
                             </p>
 
                             <h2
-                                class="text-xl sm:text-2xl lg:text-4xl
-                                       font-extrabold leading-tight
+                                class="hero-title text-xl sm:text-2xl lg:text-4xl
+                                       font-extrabold
                                        tracking-tight line-clamp-2
-                                       drop-shadow-lg"
+                                       drop-shadow-lg max-w-full"
                             >
                                 {{ $event->event_name }}
                             </h2>
 
                             <div
                                 class="flex flex-wrap items-center
-                                       gap-x-4 gap-y-1 mt-2
+                                       gap-x-4 gap-y-1 mt-3
                                        text-[10px] sm:text-xs lg:text-sm
                                        text-white/90"
                             >
@@ -317,11 +439,7 @@
                             type="button"
                             data-dot="{{ $index }}"
                             aria-label="Go to event {{ $index + 1 }}"
-                            class="hero-dot h-1.5 rounded-full transition-all duration-300
-                                   {{ $index === 0
-                                        ? 'w-6 bg-[#6C5CE7]'
-                                        : 'w-1.5 bg-gray-300 dark:bg-gray-700'
-                                   }}"
+                                    class="hero-dot transition-all duration-300"
                         ></button>
 
                     @endforeach
@@ -385,7 +503,7 @@
             </div>
 
             @php
-                $upcomingDisplayEvents = $upcomingEvents->take(8);
+                $upcomingDisplayEvents = $upcomingEvents->values()->take(8);
                 $upcomingCategories = $upcomingDisplayEvents
                     ->pluck('category')
                     ->filter()
@@ -428,7 +546,7 @@
                     </svg>
                 </button>
 
-                <div class="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-3 px-1" id="events-grid">
+                <div class="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-3 px-1" id="events-grid" data-max-events="8">
                 @forelse($upcomingDisplayEvents as $event)
                     @php
                         $catColor = match($event->category) {
@@ -444,7 +562,7 @@
                         $minPrice = $event->min_price ?? $event->price;
                     @endphp
 
-                    <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer event-card flex-none w-[85vw] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3.75rem)/4)] snap-start bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-category="{{ $event->category }}">
+                    <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer event-card shrink-0 snap-start bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-category="{{ $event->category }}">
                         
                         <!-- Event Image -->
                         <div class="relative h-52 sm:h-56 overflow-hidden bg-gray-100 dark:bg-gray-700">
@@ -870,11 +988,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const updateDots = function () {
         dots.forEach(function (dot, index) {
-            dot.classList.toggle('w-6', index === activeIndex);
-            dot.classList.toggle('bg-[#6C5CE7]', index === activeIndex);
-            dot.classList.toggle('w-1.5', index !== activeIndex);
-            dot.classList.toggle('bg-gray-300', index !== activeIndex);
-            dot.classList.toggle('dark:bg-gray-700', index !== activeIndex);
+            const isActive = index === activeIndex;
+            dot.style.width = isActive ? '24px' : '6px';
+            dot.style.flexBasis = isActive ? '24px' : '6px';
+            dot.style.backgroundColor = isActive ? '#6C5CE7' : '#D1D5DB';
         });
     };
 
@@ -947,6 +1064,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!eventsCarousel || !previousButton || !nextButton) {
         return;
     }
+
+    const maxEvents = Number(eventsCarousel.dataset.maxEvents || 8);
+    Array.from(eventsCarousel.querySelectorAll('.event-card'))
+        .slice(maxEvents)
+        .forEach(function (card) {
+            card.remove();
+        });
 
     const scrollEvents = function (direction) {
         const firstVisibleCard = Array.from(eventsCarousel.querySelectorAll('.event-card'))
