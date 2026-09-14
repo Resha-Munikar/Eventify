@@ -4,121 +4,372 @@
 
 @section('content')
 <div class="bg-[#faf9ff] dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen font-sans selection:bg-[#6C5CE7] selection:text-white">
+<!-- ========================================== -->
+<!-- 1. HERO SECTION — WIDE EVENT CAROUSEL     -->
+<!-- ========================================== -->
+<section class="relative pt-4 pb-10 md:pt-6 md:pb-12 overflow-hidden bg-[#faf9ff] dark:bg-gray-950">
 
-    <!-- ========================================== -->
-    <!-- 1. HERO SECTION                            -->
-    <!-- ========================================== -->
-    <section class="relative pt-8 pb-16 md:pt-14 md:pb-24 overflow-hidden">
-        <!-- Background subtle glow -->
-        <div class="absolute top-10 left-1/4 w-96 h-96 bg-[#8D85EC]/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
-        <div class="absolute top-20 right-10 w-96 h-96 bg-[#c4b5fd]/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-5 text-left">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+            Hot and Happening Events
+        </h1>
+        <p class="mt-1 text-sm sm:text-base text-gray-500 dark:text-gray-400">
+            Discover the experiences everyone is talking about and find your next unforgettable outing.
+        </p>
+    </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-                
-                <!-- Left Hero Content -->
-                <div class="lg:col-span-6 space-y-6 text-left">
-                    
-                    <!-- Live events badge -->
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 tracking-wide">Live events near you</span>
-                    </div>
+    @php
+        $today = \Carbon\Carbon::today();
 
-                    <!-- Main Hero Title -->
-                    <h1 class="text-4xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.12]">
-                        Book your seat for<br/>
-                        <span class="text-[#6C5CE7] italic font-serif font-normal">every</span> kind of night<br/>
-                        out
-                    </h1>
+        $heroEvents = $upcomingEvents
+            ->filter(function ($event) use ($today) {
+                return $event->event_date &&
+                    \Carbon\Carbon::parse($event->event_date)
+                        ->startOfDay()
+                        ->gte($today);
+            })
+            ->sortBy(function ($event) {
+                return \Carbon\Carbon::parse($event->event_date)->timestamp;
+            })
+            ->take(6)
+            ->values();
+    @endphp
 
-                    <!-- Hero Subtitle -->
-                    <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-lg leading-relaxed">
-                        Discover concerts, theatre, stand-up comedy, sports, festivals & more. Book fast & safe, get instant e-tickets delivered to your phone.
-                    </p>
+    @if($heroEvents->isNotEmpty())
 
-                    <!-- Search Input Pill (No outlines, fully functional) -->
-                    <form action="{{ route('events') }}" method="GET" class="relative max-w-lg">
-                        <div class="flex items-center bg-white dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 shadow-lg shadow-purple-500/5 p-1.5 transition-all">
-                            <div class="pl-4 pr-2 text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                            <input 
-                                type="text" 
-                                name="query"
-                                placeholder="Search by artist, event or venue..." 
-                                class="w-full bg-transparent text-sm sm:text-base text-gray-800 dark:text-gray-100 placeholder-gray-400 border-0 border-none outline-none focus:outline-none focus:ring-0 focus:border-none shadow-none ring-0 pr-2 py-2"
-                                style="border: none !important; outline: none !important; box-shadow: none !important;"
-                            />
-                            <button 
-                                type="submit" 
-                                class="bg-[#6C5CE7] hover:bg-[#5b48db] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-200 shadow-md shadow-[#6C5CE7]/25 hover:shadow-lg hover:shadow-[#6C5CE7]/35 flex-shrink-0"
+        <div class="relative w-full">
+
+            <!-- Previous Button -->
+            <button
+                type="button"
+                id="hero-prev"
+                aria-label="Previous event"
+                class="absolute left-3 sm:left-5 lg:left-8 top-1/2 -translate-y-1/2 z-30
+                       w-10 h-10 sm:w-12 sm:h-12
+                       rounded-full bg-black/45 hover:bg-black/65
+                       backdrop-blur-sm text-white
+                       flex items-center justify-center
+                       transition-all duration-200
+                       hover:scale-105 shadow-lg"
+            >
+                <svg
+                    class="w-5 h-5 sm:w-6 sm:h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"
+                    />
+                </svg>
+            </button>
+
+            <!-- Next Button -->
+            <button
+                type="button"
+                id="hero-next"
+                aria-label="Next event"
+                class="absolute right-3 sm:right-5 lg:right-8 top-1/2 -translate-y-1/2 z-30
+                       w-10 h-10 sm:w-12 sm:h-12
+                       rounded-full bg-black/45 hover:bg-black/65
+                       backdrop-blur-sm text-white
+                       flex items-center justify-center
+                       transition-all duration-200
+                       hover:scale-105 shadow-lg"
+            >
+                <svg
+                    class="w-5 h-5 sm:w-6 sm:h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                    />
+                </svg>
+            </button>
+
+            <!-- Banner Carousel -->
+            <div
+                id="hero-carousel"
+                class="flex items-center gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-0"
+                style="
+                    scroll-behavior: smooth;
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                "
+            >
+
+                @foreach($heroEvents as $index => $event)
+
+                    @php
+                        $heroDate = \Carbon\Carbon::parse($event->event_date);
+
+                        $heroImage = $event->image
+                            ? (
+                                file_exists(public_path('uploads/' . $event->image))
+                                    ? asset('uploads/' . $event->image)
+                                    : asset('uploads/concert.jpg')
+                            )
+                            : asset('uploads/concert.jpg');
+
+                        $isToday = $heroDate->isToday();
+                        $isTomorrow = $heroDate->isTomorrow();
+                        $heroCategory = $event->category ?? 'Event';
+
+                        $heroIsSaved = in_array(
+                            $event->id,
+                            $savedEventIds ?? []
+                        );
+                    @endphp
+
+                    <article
+                        class="hero-slide relative flex-none
+                               w-[88vw] sm:w-[78vw] lg:w-[72vw] xl:w-[70vw]
+                               max-w-[1400px]
+                               aspect-[2.8/1]
+                               min-h-[180px] sm:min-h-[240px] lg:min-h-[300px]
+                               snap-center overflow-hidden
+                               rounded-xl sm:rounded-2xl
+                               cursor-pointer group"
+                        data-index="{{ $index }}"
+                        onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'"
+                    >
+
+                        <!-- Event Image -->
+                        <img
+                            src="{{ $heroImage }}"
+                            alt="{{ $event->event_name }}"
+                            class="absolute inset-0 w-full h-full object-cover
+                                   transition-transform duration-700
+                                   group-hover:scale-[1.02]"
+                        >
+
+                        <!-- Gradients -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/15 to-transparent"></div>
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10"></div>
+
+                        <!-- Date Badge -->
+                        <div class="absolute top-4 left-4 sm:top-6 sm:left-6 z-10">
+
+                            @if($isToday)
+
+                                <span class="inline-flex items-center gap-1.5
+                                             px-3 py-1.5 rounded-md
+                                             bg-red-500 text-white
+                                             text-[10px] sm:text-xs
+                                             font-bold uppercase tracking-wide
+                                             shadow-lg">
+
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+
+                                    Happening Today
+                                </span>
+
+                            @elseif($isTomorrow)
+
+                                <span class="inline-flex items-center
+                                             px-3 py-1.5 rounded-md
+                                             bg-[#6C5CE7] text-white
+                                             text-[10px] sm:text-xs
+                                             font-bold uppercase tracking-wide
+                                             shadow-lg">
+
+                                    Tomorrow
+
+                                </span>
+
+                            @else
+
+                                <span class="inline-flex items-center
+                                             px-3 py-1.5 rounded-md
+                                             bg-white/95 text-gray-900
+                                             text-[10px] sm:text-xs
+                                             font-bold shadow-lg">
+
+                                    {{ $heroDate->format('D, M j') }}
+
+                                </span>
+
+                            @endif
+
+                        </div>
+
+                        <!-- Save Button -->
+                        <button
+                            type="button"
+                            onclick="event.stopPropagation(); toggleSaveEvent(event, {{ $event->id }}, this)"
+                            data-save-event-id="{{ $event->id }}"
+                            aria-label="{{ $heroIsSaved ? 'Remove from saved events' : 'Save this event' }}"
+                            class="save-event-btn
+                                   absolute top-4 right-4 sm:top-6 sm:right-6
+                                   z-20
+                                   w-9 h-9 sm:w-10 sm:h-10
+                                   rounded-full
+                                   bg-white/90 hover:bg-white
+                                   backdrop-blur-sm
+                                   flex items-center justify-center
+                                   shadow-md
+                                   transition-all duration-200
+                                   hover:scale-110 active:scale-90
+                                   {{ $heroIsSaved
+                                        ? 'text-rose-500'
+                                        : 'text-gray-700 hover:text-rose-500'
+                                   }}"
+                        >
+                            <svg
+                                class="w-4 h-4 sm:w-5 sm:h-5"
+                                fill="{{ $heroIsSaved ? 'currentColor' : 'none' }}"
+                                stroke="currentColor"
+                                stroke-width="{{ $heroIsSaved ? '0' : '1.8' }}"
+                                viewBox="0 0 24 24"
                             >
-                                Search
-                            </button>
-                        </div>
-                    </form>
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364l-1.318 1.318-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
+                            </svg>
+                        </button>
 
-                    <!-- Social Proof / Reviews -->
-                    <div class="flex items-center gap-3 pt-2">
-                        <div class="flex -space-x-2 overflow-hidden">
-                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-900 object-cover" src="{{ asset('uploads/avatar.jpg') }}" alt="User 1" />
-                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-900 object-cover" src="{{ asset('uploads/jane1.jpg') }}" alt="User 2" />
-                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-900 object-cover" src="{{ asset('uploads/john.jpg') }}" alt="User 3" />
-                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-900 object-cover" src="{{ asset('uploads/Sara.jpg') }}" alt="User 4" />
-                        </div>
-                        <div class="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium">
-                            <span class="text-amber-500 font-bold mr-1 inline-flex items-center gap-0.5">4.9 <iconify-icon icon="solar:star-bold" class="text-amber-400 text-sm"></iconify-icon></span>
-                            <span>from 12,000+ happy night owls</span>
-                        </div>
-                    </div>
+                        <!-- Event Information -->
+                        <div
+                            class="absolute left-5 bottom-5
+                                   sm:left-8 sm:bottom-7
+                                   lg:left-10 lg:bottom-8
+                                   right-20 text-white"
+                        >
 
-                </div>
+                            <p class="text-[10px] sm:text-xs
+                                      font-bold uppercase tracking-[0.15em]
+                                      text-white/80 mb-1.5">
+                                {{ $heroCategory }}
+                            </p>
 
-                <!-- Right Hero Visuals: Polaroid Collage -->
-                <div class="lg:col-span-6 relative flex justify-center items-center py-4">
-                    <div class="relative w-full max-w-[480px] h-[380px] sm:h-[440px]">
-                        
-                        <!-- Polaroid 1: Top Left - Arena Concert -->
-                        <div class="absolute top-0 left-2 sm:left-4 w-40 sm:w-48 bg-white dark:bg-gray-800 p-2 sm:p-2.5 pb-6 sm:pb-7 rounded-sm shadow-xl shadow-gray-900/10 dark:shadow-black/40 transform -rotate-6 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 cursor-pointer">
-                            <div class="w-full h-32 sm:h-40 overflow-hidden rounded-[2px] bg-gray-100">
-                                <img src="{{ asset('uploads/a9e3088f2698f4b567d9a1c8e03939eaf4410e02.png') }}" alt="Concert Arena" class="w-full h-full object-cover" />
+                            <h2
+                                class="text-xl sm:text-2xl lg:text-4xl
+                                       font-extrabold leading-tight
+                                       tracking-tight line-clamp-2
+                                       drop-shadow-lg"
+                            >
+                                {{ $event->event_name }}
+                            </h2>
+
+                            <div
+                                class="flex flex-wrap items-center
+                                       gap-x-4 gap-y-1 mt-2
+                                       text-[10px] sm:text-xs lg:text-sm
+                                       text-white/90"
+                            >
+
+                                <span class="inline-flex items-center gap-1.5">
+                                    <iconify-icon
+                                        icon="solar:map-point-linear"
+                                        class="text-sm sm:text-base"
+                                    ></iconify-icon>
+
+                                    <span class="truncate max-w-[180px] sm:max-w-[280px]">
+                                        {{ $event->venue }}
+                                    </span>
+                                </span>
+
+                                <span class="hidden sm:inline text-white/50">
+                                    •
+                                </span>
+
+                                <span class="inline-flex items-center gap-1.5">
+                                    <iconify-icon
+                                        icon="solar:calendar-linear"
+                                        class="text-sm sm:text-base"
+                                    ></iconify-icon>
+
+                                    {{ $heroDate->format('M j, Y') }}
+                                </span>
+
                             </div>
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400 font-mono text-center mt-2 tracking-tight">Arena Vibes '26</p>
+
                         </div>
 
-                        <!-- Polaroid 2: Top Middle - Candlelit Club -->
-                        <div class="absolute top-6 left-32 sm:left-40 w-36 sm:w-44 bg-white dark:bg-gray-800 p-2 sm:p-2.5 pb-6 sm:pb-7 rounded-sm shadow-xl shadow-gray-900/15 dark:shadow-black/50 transform rotate-3 z-10 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 cursor-pointer">
-                            <div class="w-full h-28 sm:h-36 overflow-hidden rounded-[2px] bg-gray-100">
-                                <img src="{{ asset('uploads/f792d70df342043677282fd39c4e21b974490b9f.png') }}" alt="Acoustic Night" class="w-full h-full object-cover" />
-                            </div>
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400 font-mono text-center mt-2 tracking-tight">Candlelight Jazz</p>
-                        </div>
+                    </article>
 
-                        <!-- Polaroid 3: Top Right Vertical - Park Summer Fest -->
-                        <div class="absolute top-2 right-0 sm:right-2 w-40 sm:w-48 bg-white dark:bg-gray-800 p-2 sm:p-2.5 pb-6 sm:pb-7 rounded-sm shadow-xl shadow-gray-900/10 dark:shadow-black/40 transform rotate-6 z-0 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 cursor-pointer">
-                            <div class="w-full h-40 sm:h-48 overflow-hidden rounded-[2px] bg-gray-100">
-                                <img src="{{ asset('uploads/8e86b4ab3ce200dcba28708915e47705130c5b95.png') }}" alt="Summer Fest" class="w-full h-full object-cover" />
-                            </div>
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400 font-mono text-center mt-2 tracking-tight">Summer Festival</p>
-                        </div>
-
-                        <!-- Polaroid 4: Bottom Left - Bookstore Gathering -->
-                        <div class="absolute bottom-0 left-8 sm:left-14 w-40 sm:w-48 bg-white dark:bg-gray-800 p-2 sm:p-2.5 pb-6 sm:pb-7 rounded-sm shadow-2xl shadow-gray-900/20 dark:shadow-black/60 transform -rotate-3 z-20 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-300 cursor-pointer">
-                            <div class="w-full h-32 sm:h-40 overflow-hidden rounded-[2px] bg-gray-100">
-                                <img src="{{ asset('uploads/37938ebd6daa31a9a624343ed5c5f9a1ab08b240.png') }}" alt="Book Club" class="w-full h-full object-cover" />
-                            </div>
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400 font-mono text-center mt-2 tracking-tight">Storytellers Night</p>
-                        </div>
-
-                    </div>
-                </div>
+                @endforeach
 
             </div>
+
+            <!-- Dots -->
+            @if($heroEvents->count() > 1)
+
+                <div
+                    id="hero-dots"
+                    class="flex items-center justify-center gap-1.5 mt-4"
+                >
+
+                    @foreach($heroEvents as $index => $event)
+
+                        <button
+                            type="button"
+                            data-dot="{{ $index }}"
+                            aria-label="Go to event {{ $index + 1 }}"
+                            class="hero-dot h-1.5 rounded-full transition-all duration-300
+                                   {{ $index === 0
+                                        ? 'w-6 bg-[#6C5CE7]'
+                                        : 'w-1.5 bg-gray-300 dark:bg-gray-700'
+                                   }}"
+                        ></button>
+
+                    @endforeach
+
+                </div>
+
+            @endif
+
         </div>
-    </section>
+
+    @else
+
+        <!-- Empty State -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div
+                class="rounded-2xl bg-white dark:bg-gray-900
+                       border border-gray-200 dark:border-gray-800
+                       py-16 text-center"
+            >
+
+                <div
+                    class="w-14 h-14 mx-auto rounded-full
+                           bg-purple-100 dark:bg-purple-900/30
+                           text-[#6C5CE7]
+                           flex items-center justify-center mb-4"
+                >
+                    <iconify-icon
+                        icon="solar:calendar-linear"
+                        class="text-2xl"
+                    ></iconify-icon>
+                </div>
+
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+                    No upcoming events yet
+                </h2>
+
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Check back soon for new experiences.
+                </p>
+
+            </div>
+
+        </div>
+
+    @endif
+
+</section>
 
 
     <!-- ========================================== -->
@@ -133,31 +384,52 @@
                 <p class="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">Hand-picked live experiences happening this week and beyond</p>
             </div>
 
+            @php
+                $upcomingDisplayEvents = $upcomingEvents->take(8);
+                $upcomingCategories = $upcomingDisplayEvents
+                    ->pluck('category')
+                    ->filter()
+                    ->unique()
+                    ->values();
+            @endphp
+
             <!-- Category Filter Pills (Interactive JS Filtering) -->
             <div class="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide text-sm font-medium" id="event-filters">
                 <button type="button" onclick="filterEvents('all', this)" class="event-filter-btn px-5 py-2 rounded-full bg-[#6C5CE7] text-white shadow-sm transition whitespace-nowrap">
                     All events
                 </button>
-                <button type="button" onclick="filterEvents('Concert', this)" class="event-filter-btn px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition whitespace-nowrap">
-                    Concerts
-                </button>
-                <button type="button" onclick="filterEvents('Comedy', this)" class="event-filter-btn px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition whitespace-nowrap">
-                    Comedy
-                </button>
-                <button type="button" onclick="filterEvents('Sports', this)" class="event-filter-btn px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition whitespace-nowrap">
-                    Sports
-                </button>
-                <button type="button" onclick="filterEvents('Theatre', this)" class="event-filter-btn px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition whitespace-nowrap">
-                    Theatre
-                </button>
-                <button type="button" onclick="filterEvents('Festival', this)" class="event-filter-btn px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition whitespace-nowrap">
-                    Festivals
-                </button>
+                @foreach($upcomingCategories as $category)
+                    <button type="button" onclick="filterEvents(@js($category), this)" class="event-filter-btn px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition whitespace-nowrap">
+                        {{ $category }}
+                    </button>
+                @endforeach
             </div>
 
-            <!-- Dynamic Event Cards Grid (Iterating Real Events from DB) -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-6" id="events-grid">
-                @forelse($upcomingEvents->take(6) as $event)
+            <!-- Dynamic Event Cards Carousel (show up to 8 events) -->
+            <div class="relative mt-6">
+                <button
+                    type="button"
+                    id="upcoming-events-prev"
+                    aria-label="Previous upcoming events"
+                    class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/65 hover:bg-black/80 text-white flex items-center justify-center shadow-lg transition"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    id="upcoming-events-next"
+                    aria-label="Next upcoming events"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/65 hover:bg-black/80 text-white flex items-center justify-center shadow-lg transition"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+
+                <div class="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-3 px-1" id="events-grid">
+                @forelse($upcomingDisplayEvents as $event)
                     @php
                         $catColor = match($event->category) {
                             'Concert' => 'bg-purple-50 dark:bg-purple-900/40 text-[#6C5CE7] dark:text-purple-300',
@@ -172,7 +444,7 @@
                         $minPrice = $event->min_price ?? $event->price;
                     @endphp
 
-                    <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer event-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-category="{{ $event->category }}">
+                    <div onclick="window.location.href='{{ route('events.show', $event->slug ?: $event->id) }}'" class="cursor-pointer event-card flex-none w-[85vw] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3.75rem)/4)] snap-start bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group" data-category="{{ $event->category }}">
                         
                         <!-- Event Image -->
                         <div class="relative h-52 sm:h-56 overflow-hidden bg-gray-100 dark:bg-gray-700">
@@ -241,10 +513,11 @@
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-3 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <div class="w-full py-12 text-center text-gray-500 dark:text-gray-400">
                         No events found in the database.
                     </div>
                 @endforelse
+                </div>
             </div>
 
             <!-- View all events CTA -->
@@ -580,6 +853,127 @@
 
 <!-- Interactive Category Filter Script -->
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const carousel = document.getElementById('hero-carousel');
+    const slides = carousel ? Array.from(carousel.querySelectorAll('.hero-slide')) : [];
+    const previousButton = document.getElementById('hero-prev');
+    const nextButton = document.getElementById('hero-next');
+    const dots = Array.from(document.querySelectorAll('.hero-dot'));
+    const carouselContainer = carousel ? carousel.parentElement : null;
+
+    if (!carousel || slides.length < 2 || !previousButton || !nextButton) {
+        return;
+    }
+
+    let activeIndex = 0;
+    let autoAdvanceTimer;
+
+    const updateDots = function () {
+        dots.forEach(function (dot, index) {
+            dot.classList.toggle('w-6', index === activeIndex);
+            dot.classList.toggle('bg-[#6C5CE7]', index === activeIndex);
+            dot.classList.toggle('w-1.5', index !== activeIndex);
+            dot.classList.toggle('bg-gray-300', index !== activeIndex);
+            dot.classList.toggle('dark:bg-gray-700', index !== activeIndex);
+        });
+    };
+
+    const showSlide = function (index) {
+        activeIndex = (index + slides.length) % slides.length;
+        carousel.scrollTo({
+            left: slides[activeIndex].offsetLeft,
+            behavior: 'smooth'
+        });
+        updateDots();
+    };
+
+    const restartAutoAdvance = function () {
+        window.clearInterval(autoAdvanceTimer);
+        autoAdvanceTimer = window.setInterval(function () {
+            showSlide(activeIndex + 1);
+        }, 5000);
+    };
+
+    previousButton.addEventListener('click', function () {
+        showSlide(activeIndex - 1);
+        restartAutoAdvance();
+    });
+
+    nextButton.addEventListener('click', function () {
+        showSlide(activeIndex + 1);
+        restartAutoAdvance();
+    });
+
+    dots.forEach(function (dot, index) {
+        dot.addEventListener('click', function () {
+            showSlide(index);
+            restartAutoAdvance();
+        });
+    });
+
+    carousel.addEventListener('scroll', function () {
+        const closestSlide = slides.reduce(function (closest, slide, index) {
+            const currentDistance = Math.abs(slide.offsetLeft - carousel.scrollLeft);
+            const closestDistance = Math.abs(closest.offsetLeft - carousel.scrollLeft);
+            return currentDistance < closestDistance ? { offsetLeft: slide.offsetLeft, index: index } : closest;
+        }, { offsetLeft: slides[0].offsetLeft, index: 0 });
+
+        if (closestSlide.index !== activeIndex) {
+            activeIndex = closestSlide.index;
+            updateDots();
+        }
+    });
+
+    if (carouselContainer) {
+        carouselContainer.addEventListener('mouseenter', function () {
+            window.clearInterval(autoAdvanceTimer);
+        });
+        carouselContainer.addEventListener('mouseleave', restartAutoAdvance);
+        carouselContainer.addEventListener('focusin', function () {
+            window.clearInterval(autoAdvanceTimer);
+        });
+        carouselContainer.addEventListener('focusout', restartAutoAdvance);
+    }
+
+    updateDots();
+    restartAutoAdvance();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const eventsCarousel = document.getElementById('events-grid');
+    const previousButton = document.getElementById('upcoming-events-prev');
+    const nextButton = document.getElementById('upcoming-events-next');
+
+    if (!eventsCarousel || !previousButton || !nextButton) {
+        return;
+    }
+
+    const scrollEvents = function (direction) {
+        const firstVisibleCard = Array.from(eventsCarousel.querySelectorAll('.event-card'))
+            .find(function (card) {
+                return card.style.display !== 'none';
+            });
+
+        if (!firstVisibleCard) {
+            return;
+        }
+
+        const cardGap = parseFloat(window.getComputedStyle(eventsCarousel).columnGap) || 0;
+        eventsCarousel.scrollBy({
+            left: direction * (firstVisibleCard.offsetWidth + cardGap),
+            behavior: 'smooth'
+        });
+    };
+
+    previousButton.addEventListener('click', function () {
+        scrollEvents(-1);
+    });
+
+    nextButton.addEventListener('click', function () {
+        scrollEvents(1);
+    });
+});
+
 function filterEvents(category, btnElement) {
     // Update active filter button styling
     const buttons = document.querySelectorAll('.event-filter-btn');
