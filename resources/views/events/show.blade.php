@@ -65,164 +65,305 @@
         }
      }">
 
-    <!-- ========================================== -->
-    <!-- 1. BREADCRUMBS & TOP NAV                  -->
-    <!-- ========================================== -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-3">
-        <div class="flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
-            <a href="{{ route('events') }}" class="inline-flex items-center gap-1.5 font-semibold text-[#8D85EC] hover:text-[#746cd4] transition group">
-                <span class="group-hover:-translate-x-1 transition-transform">←</span>
-                <span>Back to Events</span>
-            </a>
-
-            <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                <a href="{{ route('welcome') }}" class="hover:text-gray-900 dark:hover:text-white transition">Home</a>
-                <span>/</span>
-                <a href="{{ route('events') }}" class="hover:text-gray-900 dark:hover:text-white transition">Events</a>
-                <span>/</span>
-                <span class="text-gray-800 dark:text-gray-200 font-medium truncate max-w-[200px] sm:max-w-none">{{ $event->event_name }}</span>
-            </div>
-        </div>
-    </div>
 
 
-    <!-- ========================================== -->
-    <!-- 2. HERO BANNER SECTION (BOOKMYSHOW STYLE) -->
-    <!-- ========================================== -->
-    <section class="relative bg-gray-900 text-white overflow-hidden py-10 lg:py-14 my-2">
-        <!-- Blurred Backdrop Background -->
-        <div class="absolute inset-0 bg-cover bg-center opacity-25 blur-2xl scale-110 pointer-events-none"
-             style="background-image: url('{{ $imagePath }}');">
-        </div>
-        <!-- Gradient Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/90 to-gray-900/80"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-                
-                <!-- Event Poster (Left) -->
-                <div class="lg:col-span-4 flex justify-center lg:justify-start">
-                    <div class="relative w-64 sm:w-72 md:w-80 lg:w-full rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10 group bg-gray-800 aspect-[3/4]">
-                        <img src="{{ $imagePath }}" 
-                             alt="{{ $event->event_name }}" 
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        
-                        @if($event->category)
-                            <span class="absolute top-3.5 left-3.5 bg-black/75 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20 z-10">
-                                {{ $event->category }}
-                            </span>
-                        @endif
+   <!-- ========================================== -->
+<!-- 2. HERO EVENT DETAILS                     -->
+<!-- ========================================== -->
+<section class="relative overflow-hidden
+               bg-gradient-to-br from-[#f7f6ff] via-white to-[#f1efff]
+               dark:from-gray-950 dark:via-gray-900 dark:to-gray-950
+               py-8 lg:py-12">
 
-                        <!-- Save / Favorite Button on Poster -->
-                        <button 
-                            type="button"
-                            onclick="toggleSaveEvent(event, {{ $event->id }}, this)"
-                            data-save-event-id="{{ $event->id }}"
-                            aria-label="{{ ($isSaved ?? false) ? 'Remove from saved events' : 'Save this event' }}"
-                            title="{{ ($isSaved ?? false) ? 'Saved to favorites' : 'Save to favorites' }}"
-                            class="save-event-btn absolute top-3.5 right-3.5 w-10 h-10 bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-lg transition-all duration-200 hover:scale-110 active:scale-90 z-20 group/btn {{ ($isSaved ?? false) ? 'text-rose-500' : 'text-white hover:text-rose-400' }}"
-                        >
-                            <svg class="w-5 h-5 transition-transform duration-200" 
-                                 fill="{{ ($isSaved ?? false) ? 'currentColor' : 'none' }}" 
-                                 stroke="currentColor" 
-                                 stroke-width="{{ ($isSaved ?? false) ? '0' : '2' }}" 
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                            </svg>
-                        </button>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 text-center">
-                            <span class="text-xs font-semibold text-purple-200 uppercase tracking-wider">
-                                Live In {{ $event->venue }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
 
-                <!-- Event Key Details (Right) -->
-                <div class="lg:col-span-8 space-y-5 text-left">
-                    
-                    <!-- Badges Row -->
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <span class="px-3 py-1 rounded-full text-xs font-bold border {{ $catColor }}">
-                            • {{ $event->category ?? 'Event' }}
+            <!-- ================================= -->
+            <!-- EVENT POSTER                      -->
+            <!-- ================================= -->
+            <div class="lg:col-span-4 flex justify-center lg:justify-start">
+
+                <div class="relative w-64 sm:w-72 md:w-80 lg:w-full
+                            rounded-2xl overflow-hidden
+                            shadow-xl
+                            border border-gray-200 dark:border-gray-700
+                            group bg-gray-100 dark:bg-gray-800
+                            aspect-[3/4]">
+
+                    <img src="{{ $imagePath }}"
+                         alt="{{ $event->event_name }}"
+                         class="w-full h-full object-cover
+                                group-hover:scale-105
+                                transition-transform duration-500" />
+
+                    @if($event->category)
+                        <span class="absolute top-3.5 left-3.5
+                                     bg-gray-900/80 backdrop-blur-md
+                                     text-white text-xs font-bold
+                                     px-3 py-1.5 rounded-full
+                                     shadow-sm">
+                            {{ $event->category }}
                         </span>
-                        
-                        @if($totalRemaining <= 0)
-                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                Sold Out
-                            </span>
-                        @elseif($totalRemaining <= 20)
-                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                                <iconify-icon icon="solar:fire-bold" class="text-amber-400 text-xs"></iconify-icon>
-                                <span>Fast Filling (Only {{ $totalRemaining }} seats left)</span>
-                            </span>
-                        @else
-                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                                <iconify-icon icon="solar:record-bold" class="text-emerald-400 text-xs"></iconify-icon>
-                                <span>Booking Open ({{ $totalRemaining }} seats available)</span>
-                            </span>
-                        @endif
-                    </div>
+                    @endif
 
-                    <!-- Title -->
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-                        {{ $event->event_name }}
-                    </h1>
+                    <!-- Save / Favorite Button -->
+                    <button
+                        type="button"
+                        onclick="toggleSaveEvent(event, {{ $event->id }}, this)"
+                        data-save-event-id="{{ $event->id }}"
+                        aria-label="{{ ($isSaved ?? false) ? 'Remove from saved events' : 'Save this event' }}"
+                        title="{{ ($isSaved ?? false) ? 'Saved to favorites' : 'Save to favorites' }}"
+                        class="save-event-btn absolute top-3.5 right-3.5
+                               w-10 h-10
+                               bg-white/95 dark:bg-gray-900/90
+                               backdrop-blur-md
+                               rounded-full
+                               flex items-center justify-center
+                               border border-gray-200 dark:border-gray-700
+                               shadow-md
+                               transition-all duration-200
+                               hover:scale-110 active:scale-90 z-20
+                               {{ ($isSaved ?? false)
+                                    ? 'text-rose-500'
+                                    : 'text-gray-700 dark:text-white hover:text-rose-500' }}">
 
-                    <!-- Key Metadata Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <!-- Date & Time -->
-                        <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
-                            <div class="w-10 h-10 rounded-lg bg-[#8D85EC]/20 flex items-center justify-center text-xl flex-shrink-0 text-[#8D85EC]">
-                                <iconify-icon icon="solar:calendar-bold" class="text-xl"></iconify-icon>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Date & Time</p>
-                                <p class="text-sm font-bold text-white">{{ $eventDate->format('D, d M Y') }}</p>
-                                <p class="text-xs text-purple-300">{{ $eventDate->format('h:i A') }} onwards</p>
-                            </div>
+                        <svg class="w-5 h-5 transition-transform duration-200"
+                             fill="{{ ($isSaved ?? false) ? 'currentColor' : 'none' }}"
+                             stroke="currentColor"
+                             stroke-width="{{ ($isSaved ?? false) ? '0' : '2' }}"
+                             viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+
+
+            <!-- ================================= -->
+            <!-- EVENT INFORMATION                 -->
+            <!-- ================================= -->
+            <div class="lg:col-span-8 space-y-5 text-left">
+
+                <!-- Badges -->
+                <div class="flex flex-wrap items-center gap-2.5">
+
+                    <span class="px-3.5 py-1.5 rounded-full
+                                 text-xs font-bold border
+                                 {{ $catColor }}">
+                        • {{ $event->category ?? 'Event' }}
+                    </span>
+
+                    @if($totalRemaining <= 0)
+
+                        <span class="px-3.5 py-1.5 rounded-full
+                                     text-xs font-bold
+                                     bg-rose-50 text-rose-600
+                                     border border-rose-200
+                                     dark:bg-rose-900/30 dark:text-rose-300
+                                     dark:border-rose-800">
+                            Sold Out
+                        </span>
+
+                    @elseif($totalRemaining <= 20)
+
+                        <span class="px-3.5 py-1.5 rounded-full
+                                     text-xs font-bold
+                                     bg-amber-50 text-amber-700
+                                     border border-amber-200
+                                     dark:bg-amber-900/30 dark:text-amber-300
+                                     dark:border-amber-800
+                                     flex items-center gap-1">
+
+                            <iconify-icon
+                                icon="solar:fire-bold"
+                                class="text-amber-500 text-xs">
+                            </iconify-icon>
+
+                            <span>
+                                Fast Filling (Only {{ $totalRemaining }} seats left)
+                            </span>
+                        </span>
+
+                    @else
+
+                        <span class="px-3.5 py-1.5 rounded-full
+                                     text-xs font-bold
+                                     bg-emerald-50 text-emerald-700
+                                     border border-emerald-200
+                                     dark:bg-emerald-900/30 dark:text-emerald-300
+                                     dark:border-emerald-800
+                                     flex items-center gap-1">
+
+                            <iconify-icon
+                                icon="solar:record-bold"
+                                class="text-emerald-500 text-xs">
+                            </iconify-icon>
+
+                            <span>
+                                Booking Open ({{ $totalRemaining }} seats available)
+                            </span>
+                        </span>
+
+                    @endif
+                </div>
+
+
+                <!-- Event Title -->
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl
+                           font-black tracking-tight
+                           text-gray-900 dark:text-white
+                           leading-tight max-w-4xl">
+                    {{ $event->event_name }}
+                </h1>
+
+
+                <!-- Date & Venue -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+
+                    <!-- Date & Time -->
+                    <div class="flex items-start gap-3
+                                bg-white/80 dark:bg-gray-800/80
+                                backdrop-blur-sm
+                                p-4 rounded-2xl
+                                border border-gray-200 dark:border-gray-700
+                                shadow-sm">
+
+                        <div class="w-11 h-11 rounded-xl
+                                    bg-[#8D85EC]/10
+                                    flex items-center justify-center
+                                    flex-shrink-0
+                                    text-[#8D85EC]">
+
+                            <iconify-icon
+                                icon="solar:calendar-bold"
+                                class="text-xl">
+                            </iconify-icon>
                         </div>
 
-                        <!-- Venue -->
-                        <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm p-3.5 rounded-xl border border-white/10">
-                            <div class="w-10 h-10 rounded-lg bg-[#8D85EC]/20 flex items-center justify-center text-xl flex-shrink-0 text-[#8D85EC]">
-                                <iconify-icon icon="solar:map-point-bold" class="text-xl"></iconify-icon>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Venue Location</p>
-                                <p class="text-sm font-bold text-white line-clamp-1">{{ $event->venue }}</p>
-                                <p class="text-xs text-purple-300">Kathmandu, Nepal</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Price & Quick CTA -->
-                    <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
                         <div>
-                            <span class="text-xs text-gray-400 block">Starting from</span>
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-2xl sm:text-3xl font-extrabold text-[#8D85EC]">
-                                    Rs {{ number_format($minPrice, 2) }}
-                                </span>
-                                @if($minPrice != $maxPrice)
-                                    <span class="text-xs text-gray-400">up to Rs {{ number_format($maxPrice, 0) }}</span>
-                                @endif
-                            </div>
+                            <p class="text-xs text-gray-400
+                                      dark:text-gray-400
+                                      font-semibold uppercase tracking-wider">
+                                Date & Time
+                            </p>
+
+                            <p class="text-sm font-bold
+                                      text-gray-900 dark:text-white">
+                                {{ $eventDate->format('D, d M Y') }}
+                            </p>
+
+                            <p class="text-xs text-[#8D85EC]">
+                                {{ $eventDate->format('h:i A') }} onwards
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <!-- Venue -->
+                    <div class="flex items-start gap-3
+                                bg-white/80 dark:bg-gray-800/80
+                                backdrop-blur-sm
+                                p-4 rounded-2xl
+                                border border-gray-200 dark:border-gray-700
+                                shadow-sm">
+
+                        <div class="w-11 h-11 rounded-xl
+                                    bg-[#8D85EC]/10
+                                    flex items-center justify-center
+                                    flex-shrink-0
+                                    text-[#8D85EC]">
+
+                            <iconify-icon
+                                icon="solar:map-point-bold"
+                                class="text-xl">
+                            </iconify-icon>
                         </div>
 
-                        <a href="#ticket-selection-section" 
-                           class="bg-[#8D85EC] hover:bg-[#7a72d6] text-white font-bold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg shadow-[#8D85EC]/30 hover:shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2">
-                            <span>Select Tickets</span>
-                            <span>↓</span>
-                        </a>
+                        <div class="min-w-0">
+                            <p class="text-xs text-gray-400
+                                      dark:text-gray-400
+                                      font-semibold uppercase tracking-wider">
+                                Venue Location
+                            </p>
+
+                            <p class="text-sm font-bold
+                                      text-gray-900 dark:text-white
+                                      line-clamp-1">
+                                {{ $event->venue }}
+                            </p>
+
+                            <p class="text-xs text-[#8D85EC]">
+                                Kathmandu, Nepal
+                            </p>
+                        </div>
                     </div>
 
                 </div>
 
+
+                <!-- Price + CTA -->
+                <div class="flex flex-wrap items-center
+                            justify-between gap-5 pt-5
+                            border-t border-gray-200 dark:border-gray-700">
+
+                    <div>
+                        <span class="text-xs text-gray-500
+                                     dark:text-gray-400 block mb-0.5">
+                            Starting from
+                        </span>
+
+                        <div class="flex items-baseline gap-2">
+
+                            <span class="text-2xl sm:text-3xl
+                                         font-extrabold
+                                         text-[#8D85EC]">
+                                Rs {{ number_format($minPrice, 2) }}
+                            </span>
+
+                            @if($minPrice != $maxPrice)
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    up to Rs {{ number_format($maxPrice, 0) }}
+                                </span>
+                            @endif
+
+                        </div>
+                    </div>
+
+
+                    <a href="#ticket-selection-section"
+                       class="bg-[#8D85EC]
+                              hover:bg-[#7a72d6]
+                              text-white
+                              font-bold
+                              text-sm sm:text-base
+                              px-8 py-3.5
+                              rounded-full
+                              shadow-lg shadow-[#8D85EC]/25
+                              hover:shadow-xl
+                              transition
+                              transform hover:scale-105
+                              active:scale-95
+                              flex items-center gap-2">
+
+                        <span>Select Tickets</span>
+                        <span>↓</span>
+
+                    </a>
+
+                </div>
+
             </div>
+
         </div>
-    </section>
+
+    </div>
+</section>
 
 
     <!-- ========================================== -->
@@ -289,32 +430,59 @@
                     </div>
                 </div>
 
-                <!-- 3. Venue & Location Information -->
-                <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2.5">
-                        <span class="w-2.5 h-6 bg-[#8D85EC] rounded-full"></span>
-                        <span>Venue & Location</span>
-                    </h2>
+         <!-- 3. Venue & Location Information -->
+<div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
 
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-purple-50/60 dark:bg-gray-700/50 border border-purple-100 dark:border-gray-600">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-xl bg-[#8D85EC] text-white flex items-center justify-center text-2xl flex-shrink-0 shadow-md">
-                                <iconify-icon icon="solar:map-point-bold" class="text-2xl"></iconify-icon>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-base text-gray-900 dark:text-white">{{ $event->venue }}</h3>
-                                <p class="text-xs text-gray-600 dark:text-gray-300">Full address and entry gates open 30 mins prior to showtime</p>
-                            </div>
-                        </div>
-                        
-                        <a href="https://maps.google.com/?q={{ urlencode($event->venue) }}" 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
-                           class="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs font-bold text-[#8D85EC] hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm whitespace-nowrap">
-                            View on Google Maps ↗
-                        </a>
-                    </div>
-                </div>
+    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2.5">
+        <span class="w-2.5 h-6 bg-[#8D85EC] rounded-full"></span>
+        <span>Venue & Location</span>
+    </h2>
+
+    <!-- Venue Information -->
+    <div class="flex items-center gap-3.5 mb-5">
+
+        <div class="w-12 h-12 rounded-xl bg-[#8D85EC] text-white
+                    flex items-center justify-center
+                    text-2xl flex-shrink-0 shadow-md">
+
+            <iconify-icon
+                icon="solar:map-point-bold"
+                class="text-2xl">
+            </iconify-icon>
+
+        </div>
+
+        <div>
+            <h3 class="font-bold text-base text-gray-900 dark:text-white">
+                {{ $event->venue }}
+            </h3>
+
+            <p class="text-xs text-gray-600 dark:text-gray-300">
+                Kathmandu, Nepal
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Google Map -->
+    <div class="w-full h-64 sm:h-72 rounded-2xl overflow-hidden
+                border border-gray-200 dark:border-gray-700
+                shadow-sm">
+
+        <iframe
+            src="https://www.google.com/maps?q={{ urlencode($event->venue . ', Kathmandu, Nepal') }}&output=embed"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+    </div>
+
+</div>
 
                 <!-- 4. Important Terms & Guidelines -->
                 <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">

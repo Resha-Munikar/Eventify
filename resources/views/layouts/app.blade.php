@@ -21,7 +21,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" defer></script>
 
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
