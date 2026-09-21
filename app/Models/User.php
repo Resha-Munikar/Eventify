@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'email_verified_at',
     ];
 
     /**
@@ -64,6 +65,16 @@ class User extends Authenticatable
     public function savedEvents()
     {
         return $this->belongsToMany(Event::class, 'saved_events', 'user_id', 'event_id')->withTimestamps();
+    }
+
+    public function emailOtps()
+    {
+        return $this->hasMany(EmailOtp::class);
+    }
+
+    public function latestEmailOtp()
+    {
+        return $this->hasOne(EmailOtp::class)->latestOfMany();
     }
 
     public function scopeRoles($query, array $roles)
