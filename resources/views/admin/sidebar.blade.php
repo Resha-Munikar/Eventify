@@ -51,6 +51,20 @@
                 </a>
             </li>
 
+            <!-- Event Management -->
+            <li>
+                <a href="{{ route('admin.events.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('admin.events.*') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Event Management</span>
+                </a>
+            </li>
+
             <!-- Review -->
             <li>
                 <a href="{{ route('admin.reports.review') }}" 

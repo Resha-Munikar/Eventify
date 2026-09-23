@@ -14,6 +14,7 @@ use App\Http\Controllers\KhaltiController;
 use App\Http\Controllers\VenueBookingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AdminEventController;
 
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 
@@ -71,6 +72,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin/reports/booking', [VenueBookingController::class, 'showReport'])->name('admin.reports.adminbooking');
     Route::get('/admin/reports/admineventbooking', [UserController::class, 'showAllEvents'])->name('admin.reports.admineventbooking');
     Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activityLogs.index');
+    Route::get('/admin/events', [AdminEventController::class, 'index'])->name('admin.events.index');
+    Route::get('/admin/events/{event}', [AdminEventController::class, 'show'])->name('admin.events.show');
 });
 
 // Vendor Dashboard & Report Routes (Auth, Verified, Vendor)

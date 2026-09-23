@@ -38,6 +38,7 @@ class ActivityLogger
         'profile_photo_deleted'   => 'Deleted profile photo',
         'user_updated'            => 'Admin updated user',
         'user_deleted'            => 'Admin deleted user',
+        'event_viewed'            => 'Viewed event',
     ];
 
     /**
