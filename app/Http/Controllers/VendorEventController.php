@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Event;
 use App\Models\TicketType;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -103,7 +104,7 @@ class VendorEventController extends Controller
         $minPrice = min(array_column($request->ticket_types, 'price'));
         $totalSeats = array_sum(array_column($request->ticket_types, 'quantity'));
 
-        DB::transaction(function () use ($request, $imagePath, $minPrice, $totalSeats) {
+        $createdEvent = DB::transaction(function () use ($request, $imagePath, $minPrice, $totalSeats) {
             $event = Event::create([
                 'vendor_id' => Auth::id(),
                 'event_name' => $request->event_name,
@@ -129,7 +130,11 @@ class VendorEventController extends Controller
                     'status' => 'active',
                 ]);
             }
+
+            return $event;
         });
+
+        ActivityLogger::log('event_created', 'Created event "' . $request->event_name . '"', $createdEvent);
 
         return redirect()->route('vendor.events.index')->with('success', 'Event and ticket types created successfully!');
     }
@@ -282,6 +287,8 @@ class VendorEventController extends Controller
             ]);
         });
 
+        ActivityLogger::log('event_updated', 'Updated event "' . $request->event_name . '"', $event);
+
         return redirect()->route('vendor.events.index')->with('success', 'Event and ticket types updated successfully!');
     }
 
@@ -292,12 +299,16 @@ class VendorEventController extends Controller
             abort(403);
         }
 
+        $eventName = $event->event_name;
+
         // Delete image file
         if ($event->image && file_exists(public_path('uploads/' . $event->image))) {
             @unlink(public_path('uploads/' . $event->image));
         }
 
         $event->delete();
+
+        ActivityLogger::log('event_deleted', 'Deleted event "' . $eventName . '"');
 
         return redirect()->route('vendor.events.index')->with('success', 'Event deleted successfully!');
     }

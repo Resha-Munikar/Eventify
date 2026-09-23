@@ -77,6 +77,11 @@ class User extends Authenticatable
         return $this->hasOne(EmailOtp::class)->latestOfMany();
     }
 
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
     public function scopeRoles($query, array $roles)
     {
         return $query->whereIn('role', $roles);

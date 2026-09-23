@@ -65,6 +65,20 @@
                 </a>
             </li>
 
+            <!-- Activity Log -->
+            <li>
+                <a href="{{ route('admin.activityLogs.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('admin.activityLogs.*') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">Activity Log</span>
+                </a>
+            </li>
+
             <!-- Reports Dropdown -->
             <li class="relative" x-data="{ open: {{ request()->routeIs('admin.reports.admineventbooking') || request()->routeIs('admin.reports.adminbooking') ? 'true' : 'false' }} }">
                 <button 

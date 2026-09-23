@@ -13,6 +13,7 @@ use App\Http\Controllers\VendorForgotPasswordController;
 use App\Http\Controllers\KhaltiController;
 use App\Http\Controllers\VenueBookingController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ActivityLogController;
 
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 
@@ -69,6 +70,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/profile/bookings', [UserController::class, 'bookings'])->name('profile.bookings');
     Route::get('/admin/reports/booking', [VenueBookingController::class, 'showReport'])->name('admin.reports.adminbooking');
     Route::get('/admin/reports/admineventbooking', [UserController::class, 'showAllEvents'])->name('admin.reports.admineventbooking');
+    Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activityLogs.index');
 });
 
 // Vendor Dashboard & Report Routes (Auth, Verified, Vendor)

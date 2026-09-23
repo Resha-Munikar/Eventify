@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\Venue;
 use App\Models\Review;
+use App\Services\ActivityLogger;
 use App\Services\EventifyCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -375,10 +376,12 @@ public function toggleSave(Request $request, $eventId)
         $user->savedEvents()->detach($event->id);
         $saved = false;
         $message = 'Event removed from saved events.';
+        ActivityLogger::log('event_saved', 'Removed event "' . $event->event_name . '" from saved events', $event, $user);
     } else {
         $user->savedEvents()->attach($event->id);
         $saved = true;
         $message = 'Event saved to your favorites!';
+        ActivityLogger::log('event_saved', 'Saved event "' . $event->event_name . '" to favorites', $event, $user);
     }
 
     return response()->json([
@@ -552,6 +555,11 @@ public function storeContact(Request $request)
     }
 
     $message = 'Message sent successfully!';
+
+    if (Auth::check()) {
+        ActivityLogger::log('inquiry_sent', 'Sent contact message to ' . $recipientEmail . ' regarding "' . $validated['subject'] . '"', null, Auth::user());
+    }
+
     return redirect()->route('contact')->with('success', $message);
 }
 

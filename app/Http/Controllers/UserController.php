@@ -9,6 +9,7 @@ use App\Models\Booking;
 use App\Models\Event;
 use App\Models\TicketType;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\DB;
 use PDF;
 
@@ -42,6 +43,8 @@ class UserController extends Controller
 
         $user->update($request->only('name', 'email', 'role'));
 
+        ActivityLogger::log('user_updated', 'Admin updated user account "' . $user->name . '" (' . $user->email . ')', $user);
+
         return redirect()->route('chirps.user')
                          ->with('success', 'User updated successfully.');
     }
@@ -56,7 +59,12 @@ class UserController extends Controller
                             ->with('error', 'You cannot delete your own account.');
         }
 
+        $userName = $user->name;
+        $userEmail = $user->email;
+
         $user->delete();
+
+        ActivityLogger::log('user_deleted', 'Admin deleted user account "' . $userName . '" (' . $userEmail . ')');
 
         return redirect()->route('chirps.user')
                         ->with('success', 'User deleted successfully.');
@@ -97,6 +105,8 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->save();
 
+        ActivityLogger::log('profile_updated', 'Updated profile information', $user, $user);
+
         return redirect()->route('profile')->with('success', 'Profile updated successfully!');
     }
 
@@ -120,6 +130,8 @@ class UserController extends Controller
 
         $user->profile_photo = null;
         $user->save();
+
+        ActivityLogger::log('profile_photo_deleted', 'Removed profile photo', $user, $user);
 
         return redirect()->route('profile')->with('success', 'Profile photo deleted successfully!');
     }
@@ -233,6 +245,9 @@ public function showReport()
                 }
             }
         });
+
+        $eventName = $booking->event ? $booking->event->event_name : 'Event #' . $booking->event_id;
+        ActivityLogger::log('event_booking_cancelled', 'Cancelled booking for event "' . $eventName . '" (' . $booking->tickets . ' tickets)', $booking, $user);
 
         return redirect()->back()->with('success', 'Event booking cancelled successfully! ' . $booking->tickets . ' seat(s) have been restored.');
     }

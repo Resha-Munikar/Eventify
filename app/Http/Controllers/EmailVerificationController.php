@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\EmailOtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -91,6 +92,8 @@ class EmailVerificationController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
         }
+
+        ActivityLogger::log('email_verified', 'Verified email address with OTP code', $user, $user);
 
         return $this->redirectVerifiedUser($user, 'Your email has been verified successfully.');
     }

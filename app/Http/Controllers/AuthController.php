@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\EmailOtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,8 @@ class AuthController extends Controller
             'role' => $request->role,
         ]);
 
+        ActivityLogger::log('registered', 'Registered an account as ' . ucfirst($user->role), $user, $user);
+
         // Keep auth and session state for immediate OTP verification
         Auth::login($user);
         $request->session()->put('verify_user_id', $user->id);
@@ -71,6 +74,8 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
+            ActivityLogger::log('logged_in', 'Logged in to the system', $user, $user);
+
             // Intercept unverified users and redirect to OTP verification
             if ($user->email_verified_at === null) {
                 $request->session()->put('verify_user_id', $user->id);
@@ -100,6 +105,11 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        if ($user) {
+            ActivityLogger::log('logged_out', 'Logged out of the system', $user, $user);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
