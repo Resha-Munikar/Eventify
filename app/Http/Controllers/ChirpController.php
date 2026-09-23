@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Chirp;
 use App\Models\Contact;
+use App\Models\Inquiry;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\Venue;
@@ -481,6 +482,7 @@ public function storeContact(Request $request)
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
         'phone' => 'nullable|string|max:20',
+        'subject' => 'nullable|string|max:255',
         'message' => 'required|string',
         'type' => 'required|string|in:general,vendor,event,venue',
         'vendor_id' => 'nullable|exists:users,id',
@@ -488,79 +490,112 @@ public function storeContact(Request $request)
         'venue_id' => 'nullable|exists:venues,id',
     ]);
 
-    // Handle vendor_id validation
+    // Handle vendor_id validation for direct vendor inquiry
     if ($validated['type'] === 'vendor' && empty($validated['vendor_id'])) {
         return redirect()->back()->withErrors(['vendor_id' => 'Please select a vendor.'])->withInput();
     }
 
-    // Save contact info in database
-    Contact::create($validated);
+    // Resolve respective vendor based on inquiry type
+    $vendorId = null;
+    $event = null;
+    $venue = null;
+    $vendorUser = null;
 
-    // Determine email recipient based on inquiry type
-    if ($validated['type'] === 'general') {
-        $recipientEmail = 'mah.bristiofficial@gmail.com'; // Your admin/support email
-    } elseif ($validated['type'] === 'vendor') {
-        // Find user with id equal to vendor_id and role 'vendor'
-        $vendorUser = User::where('id', $validated['vendor_id'])->where('role', 'vendor')->first();
-        $recipientEmail = $vendorUser ? $vendorUser->email : 'support@yourdomain.com';
-        \Log::info('Vendor type: Vendor, Email: ' . $recipientEmail);
+    if ($validated['type'] === 'vendor') {
+        $vendorId = $validated['vendor_id'] ?? null;
+        if ($vendorId) {
+            $vendorUser = User::where('id', $vendorId)->where('role', 'vendor')->first();
+        }
     } elseif ($validated['type'] === 'event') {
-        // Fetch the event and get the related vendor's email
-        $event = Event::find($request->input('event_id'));
+        $event = !empty($validated['event_id']) ? Event::find($validated['event_id']) : null;
         if ($event && $event->vendor_id) {
-            $vendor = User::where('id', $event->vendor_id)->where('role', 'vendor')->first();
-            $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
-            \Log::info('Event type: Event, Vendor email: ' . $recipientEmail);
-        } else {
-            $recipientEmail = 'mah.bristiofficial@gmail.com'; // fallback if no vendor linked
-            \Log::info('Event type: Event, No vendor linked');
+            $vendorId = $event->vendor_id;
+            $vendorUser = User::where('id', $vendorId)->where('role', 'vendor')->first();
         }
     } elseif ($validated['type'] === 'venue') {
-        // Fetch the venue and get the related vendor's email
-        $venue = Venue::find($request->input('venue_id'));
-        \Log::info('Venue ID: ' . ($request->input('venue_id') ?? 'null'));
+        $venue = !empty($validated['venue_id']) ? Venue::find($validated['venue_id']) : null;
         if ($venue && $venue->vendor_id) {
-            $vendor = User::where('id', $venue->vendor_id)->where('role', 'vendor')->first();
-            $recipientEmail = $vendor ? $vendor->email : 'support@yourdomain.com';
-            \Log::info('Venue type: Venue, Vendor email: ' . $recipientEmail);
-        } else {
-            $recipientEmail = 'mah.bristiofficial@gmail.com'; // fallback if no vendor linked
-            \Log::info('Venue type: Venue, No vendor linked');
+            $vendorId = $venue->vendor_id;
+            $vendorUser = User::where('id', $vendorId)->where('role', 'vendor')->first();
         }
-    } else {
-        $recipientEmail = 'support@yourdomain.com';
-        \Log::info('Default fallback email');
     }
 
-    // Prepare email data
+    // Determine default subject if not provided
+    $subjectTitle = $validated['subject'] ?? match($validated['type']) {
+        'event'  => $event ? 'Inquiry for Event: ' . $event->event_name : 'Event Inquiry',
+        'venue'  => $venue ? 'Inquiry for Venue: ' . $venue->venue_name : 'Venue Inquiry',
+        'vendor' => $vendorUser ? 'Inquiry for Vendor: ' . $vendorUser->name : 'Vendor Inquiry',
+        default  => 'General Contact Inquiry',
+    };
+
+    // 1. Save to inquiries table
+    $inquiry = Inquiry::create([
+        'user_id'     => Auth::id(),
+        'name'        => $validated['name'],
+        'email'       => $validated['email'],
+        'phone'       => $validated['phone'] ?? null,
+        'type'        => $validated['type'],
+        'vendor_id'   => $vendorId,
+        'event_id'    => $validated['event_id'] ?? null,
+        'venue_id'    => $validated['venue_id'] ?? null,
+        'subject'     => $subjectTitle,
+        'message'     => $validated['message'],
+        'status'      => 'unread',
+    ]);
+
+    // Also save to legacy contacts table to preserve backwards compatibility
+    Contact::create([
+        'name'    => $validated['name'],
+        'email'   => $validated['email'],
+        'phone'   => $validated['phone'] ?? '',
+        'message' => $validated['message'],
+    ]);
+
+    // 2. Prepare email data
     $emailData = [
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'phone' => $validated['phone'],
+        'name'        => $validated['name'],
+        'email'       => $validated['email'],
+        'phone'       => $validated['phone'] ?? '',
         'bodymessage' => $validated['message'],
-        'type' => $validated['type'],
+        'type'        => $validated['type'],
+        'subject'     => $subjectTitle,
     ];
 
-    // Send email with error handling
+    $adminEmail = 'mah.bristiofficial@gmail.com';
+    $vendorEmail = $vendorUser ? $vendorUser->email : null;
+
+    // Send email to Admin
     try {
-        \Log::info('Attempting to send email to: ' . $recipientEmail);
-        Mail::send('emails.contact', $emailData, function ($message) use ($recipientEmail, $validated) {
-            $message->to($recipientEmail)
-                ->subject('New Contact Inquiry');
+        \Log::info('Sending inquiry email to Admin: ' . $adminEmail);
+        Mail::send('emails.contact', $emailData, function ($message) use ($adminEmail, $validated, $subjectTitle) {
+            $message->to($adminEmail)
+                ->subject('New Contact Inquiry: ' . $subjectTitle);
             $message->replyTo($validated['email'], $validated['name']);
         });
-        \Log::info('Email sent successfully to: ' . $recipientEmail);
     } catch (\Exception $e) {
-        \Log::error('Mail send error: ' . $e->getMessage());
+        \Log::error('Admin Mail send error: ' . $e->getMessage());
     }
 
-    $message = 'Message sent successfully!';
+    // Send email to Respective Vendor if applicable
+    if ($vendorEmail && strtolower($vendorEmail) !== strtolower($adminEmail)) {
+        try {
+            \Log::info('Sending inquiry email to Vendor: ' . $vendorEmail);
+            Mail::send('emails.contact', $emailData, function ($message) use ($vendorEmail, $validated, $subjectTitle) {
+                $message->to($vendorEmail)
+                    ->subject('New Customer Inquiry: ' . $subjectTitle);
+                $message->replyTo($validated['email'], $validated['name']);
+            });
+        } catch (\Exception $e) {
+            \Log::error('Vendor Mail send error: ' . $e->getMessage());
+        }
+    }
 
+    // 3. Activity Logging
     if (Auth::check()) {
-        ActivityLogger::log('inquiry_sent', 'Sent contact message to ' . $recipientEmail . ' regarding "' . $validated['subject'] . '"', null, Auth::user());
+        ActivityLogger::log('inquiry_sent', 'Sent contact message / inquiry regarding "' . $subjectTitle . '"', $inquiry, Auth::user());
     }
 
-    return redirect()->route('contact')->with('success', $message);
+    return redirect()->route('contact')->with('success', 'Message sent successfully! Our team and the organizer will get in touch with you shortly.');
 }
 
     public function book(Request $request, $eventId)

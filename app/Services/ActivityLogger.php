@@ -34,6 +34,8 @@ class ActivityLogger
         'review_submitted'        => 'Submitted review',
         'review_deleted'          => 'Deleted review',
         'inquiry_sent'            => 'Sent inquiry',
+        'inquiry_viewed'          => 'Viewed inquiry',
+        'inquiry_status_updated'  => 'Updated inquiry status',
         'profile_updated'         => 'Updated profile',
         'profile_photo_deleted'   => 'Deleted profile photo',
         'user_updated'            => 'Admin updated user',

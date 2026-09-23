@@ -52,6 +52,11 @@ class Event extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function inquiries()
+    {
+        return $this->hasMany(Inquiry::class);
+    }
+
     public function savedByUsers()
     {
         return $this->belongsToMany(User::class, 'saved_events', 'event_id', 'user_id')->withTimestamps();

@@ -82,6 +82,16 @@ class User extends Authenticatable
         return $this->hasMany(ActivityLog::class);
     }
 
+    public function inquiries()
+    {
+        return $this->hasMany(Inquiry::class, 'user_id');
+    }
+
+    public function vendorInquiries()
+    {
+        return $this->hasMany(Inquiry::class, 'vendor_id');
+    }
+
     public function scopeRoles($query, array $roles)
     {
         return $query->whereIn('role', $roles);

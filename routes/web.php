@@ -15,6 +15,8 @@ use App\Http\Controllers\VenueBookingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AdminEventController;
+use App\Http\Controllers\AdminInquiryController;
+use App\Http\Controllers\VendorInquiryController;
 
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 
@@ -74,6 +76,10 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activityLogs.index');
     Route::get('/admin/events', [AdminEventController::class, 'index'])->name('admin.events.index');
     Route::get('/admin/events/{event}', [AdminEventController::class, 'show'])->name('admin.events.show');
+    Route::get('/admin/inquiries', [AdminInquiryController::class, 'index'])->name('admin.inquiries.index');
+    Route::get('/admin/inquiries/{inquiry}', [AdminInquiryController::class, 'show'])->name('admin.inquiries.show');
+    Route::patch('/admin/inquiries/{inquiry}/status', [AdminInquiryController::class, 'updateStatus'])->name('admin.inquiries.updateStatus');
+    Route::delete('/admin/inquiries/{inquiry}', [AdminInquiryController::class, 'destroy'])->name('admin.inquiries.destroy');
 });
 
 // Vendor Dashboard & Report Routes (Auth, Verified, Vendor)
@@ -84,6 +90,9 @@ Route::middleware(['auth', 'verified', 'vendor'])->group(function () {
     Route::get('vendor/eventbooking', [VendorEventController::class, 'showEvents'])->name('vendor.eventbooking');
     Route::get('/vendor/reports/booking', [VenueBookingController::class, 'bookingReport'])->name('vendor.reports.booking');
     Route::get('/vendor/reports/eventbooking', [VendorEventController::class, 'EventbookingReport'])->name('vendor.reports.eventbooking');
+    Route::get('/vendor/inquiries', [VendorInquiryController::class, 'index'])->name('vendor.inquiries.index');
+    Route::get('/vendor/inquiries/{inquiry}', [VendorInquiryController::class, 'show'])->name('vendor.inquiries.show');
+    Route::patch('/vendor/inquiries/{inquiry}/status', [VendorInquiryController::class, 'updateStatus'])->name('vendor.inquiries.updateStatus');
 });
 
 Route::prefix('vendor/venues')->middleware(['auth', 'verified', 'vendor'])->group(function() {

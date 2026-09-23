@@ -51,10 +51,10 @@
         <div>
           <label for="type" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Inquiry Type:</label>
           <select id="type" name="type" class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required>
-            <option value="general">General Inquiry (Admin)</option>
-            <option value="vendor">Vendor Inquiry</option>
-            <option value="event">Event Inquiry</option>
-            <option value="venue">Venue Inquiry</option>
+            <option value="general" {{ (old('type', request('type')) === 'general') ? 'selected' : '' }}>General Inquiry (Admin)</option>
+            <option value="vendor" {{ (old('type', request('type')) === 'vendor') ? 'selected' : '' }}>Vendor Inquiry</option>
+            <option value="event" {{ (old('type', request('type')) === 'event') ? 'selected' : '' }}>Event Inquiry</option>
+            <option value="venue" {{ (old('type', request('type')) === 'venue') ? 'selected' : '' }}>Venue Inquiry</option>
           </select>
         </div>
 
@@ -64,7 +64,7 @@
           <select id="vendor_id" name="vendor_id" class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]">
             <option value="">-- Select Vendor --</option>
             @foreach($vendors ?? [] as $vendor)
-              <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
+              <option value="{{ $vendor->id }}" {{ (old('vendor_id', request('vendor_id')) == $vendor->id) ? 'selected' : '' }}>{{ $vendor->name }}</option>
             @endforeach
           </select>
         </div>
@@ -74,7 +74,7 @@
   <select id="event_id" name="event_id" class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]">
     <option value="">-- Select Event --</option>
     @foreach($events ?? [] as $event)
-      <option value="{{ $event->id }}">{{ $event->event_name }}</option>
+      <option value="{{ $event->id }}" {{ (old('event_id', request('event_id')) == $event->id) ? 'selected' : '' }}>{{ $event->event_name }}</option>
     @endforeach
   </select>
 </div>
@@ -84,7 +84,7 @@
   <select id="venue_id" name="venue_id" class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]">
     <option value="">-- Select Venue --</option>
     @foreach($venues ?? [] as $venue)
-      <option value="{{ $venue->id }}">{{ $venue->venue_name }}</option>
+      <option value="{{ $venue->id }}" {{ (old('venue_id', request('venue_id')) == $venue->id) ? 'selected' : '' }}>{{ $venue->venue_name }}</option>
     @endforeach
   </select>
 </div>
@@ -92,21 +92,21 @@
         <!-- Name -->
         <div>
           <label for="name" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Name:</label>
-          <input type="text" id="name" name="name" placeholder="Your Name"
+          <input type="text" id="name" name="name" value="{{ old('name', Auth::check() ? Auth::user()->name : '') }}" placeholder="Your Name"
             class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
         </div>
 
         <!-- Email -->
         <div>
           <label for="email" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Your Email:</label>
-          <input type="email" id="email" name="email" placeholder="name@example.com"
+          <input type="email" id="email" name="email" value="{{ old('email', Auth::check() ? Auth::user()->email : '') }}" placeholder="name@example.com"
             class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" required />
         </div>
 
         <!-- Phone -->
         <div>
           <label for="phone" class="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-200">Phone Number:</label>
-          <input type="tel" id="phone" name="phone" placeholder="(+977) 9841266514"
+          <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="(+977) 9841266514"
             class="w-full p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#8D85EC]" />
         </div>
 
@@ -206,45 +206,22 @@
 </script>
 
 <script>
-  // Script to toggle vendor dropdown
   document.addEventListener('DOMContentLoaded', function() {
     const typeSelect = document.getElementById('type');
     const vendorDiv = document.getElementById('vendorDiv');
+    const eventDiv = document.getElementById('eventDiv');
+    const venueDiv = document.getElementById('venueDiv');
 
-    function toggleVendor() {
-      if (typeSelect.value === 'vendor') {
-        vendorDiv.classList.remove('hidden');
-      } else {
-        vendorDiv.classList.add('hidden');
-        document.getElementById('vendor_id').value = '';
-      }
+    function updateInquiryFormVisibility() {
+      const type = typeSelect.value;
+      if (vendorDiv) vendorDiv.classList.toggle('hidden', type !== 'vendor');
+      if (eventDiv) eventDiv.classList.toggle('hidden', type !== 'event');
+      if (venueDiv) venueDiv.classList.toggle('hidden', type !== 'venue');
     }
 
-    // Initialize on page load
-    toggleVendor();
-
-    // Add event listener
-    typeSelect.addEventListener('change', toggleVendor);
-
+    typeSelect.addEventListener('change', updateInquiryFormVisibility);
+    updateInquiryFormVisibility();
   });
-  function toggleInquiryFields() {
-  const type = document.getElementById('type').value;
-  document.getElementById('eventDiv').classList.toggle('hidden', type !== 'event');
-  document.getElementById('venueDiv').classList.toggle('hidden', type !== 'venue');
-
-  if (type !== 'event') {
-    document.getElementById('event_id').value = '';
-  }
-  if (type !== 'venue') {
-    document.getElementById('venue_id').value = '';
-  }
-}
-
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('type').addEventListener('change', toggleInquiryFields);
-  toggleInquiryFields();
-});
 </script>
 
 @endsection

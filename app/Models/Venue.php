@@ -45,4 +45,8 @@ class Venue extends Model
     {
         return $this->hasMany(\App\Models\Review::class);
     }
+    public function inquiries()
+    {
+        return $this->hasMany(\App\Models\Inquiry::class);
+    }
 }
