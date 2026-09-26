@@ -16,10 +16,22 @@ class VendorMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role === 'vendor') {
+        if (!Auth::check()) {
+            session(['url.intended' => $request->fullUrl()]);
+            return redirect()->route('login.form');
+        }
+
+        if (Auth::user()->role === 'vendor') {
             return $next($request);
         }
 
+        if (Auth::user()->role === 'admin') {
+            if (str_contains($request->path(), 'kyc')) {
+                return redirect()->route('admin.kyc.index')
+                    ->with('warning', 'You are currently logged in as Administrator. To view the vendor resubmission form, please log in with the vendor account.');
+            }
+            return redirect()->route('chirps.adminIndex')->with('error', 'Unauthorized access.');
+        }
 
         return redirect('/')->with('error', 'Unauthorized access.');
     }

@@ -57,8 +57,11 @@ class AuthController extends Controller
             ->with('success', $flashMessage);
     }
 
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
+        if ($request->has('redirect')) {
+            session(['url.intended' => $request->query('redirect')]);
+        }
         return view('auth.login');
     }
 
@@ -87,6 +90,29 @@ class AuthController extends Controller
                 return redirect()
                     ->route('verification.notice')
                     ->with('warning', 'Please verify your email address to complete sign in.');
+            }
+
+            // 1. If explicit redirect query is provided, redirect there
+            if ($request->filled('redirect')) {
+                return redirect($request->input('redirect'));
+            }
+
+            // 2. If vendor KYC is currently rejected, ALWAYS prioritize taking them straight to KYC Resubmission!
+            if ($user->role === 'vendor') {
+                $user->load('kyc');
+                if ($user->kyc && $user->kyc->isRejected()) {
+                    session()->forget('url.intended');
+                    return redirect()->route('vendor.kyc.resubmit')
+                        ->with('warning', 'Your KYC verification was rejected. Please review feedback and resubmit your documents below.');
+                }
+            }
+
+            // 3. Handle intended destination
+            $intended = session('url.intended');
+            session()->forget('url.intended');
+
+            if ($intended) {
+                return redirect($intended);
             }
 
             if ($user->role === 'admin') {

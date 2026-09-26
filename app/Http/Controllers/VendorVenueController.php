@@ -23,6 +23,12 @@ class VendorVenueController extends Controller
         return view('vendor.venues.index', compact('venues'));
     }
 
+    // Show form to create a new venue
+    public function create()
+    {
+        return view('vendor.venues.create');
+    }
+
     // Store new venue
     public function store(Request $request)
     {

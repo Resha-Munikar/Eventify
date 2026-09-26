@@ -41,6 +41,10 @@ class ActivityLogger
         'user_updated'            => 'Admin updated user',
         'user_deleted'            => 'Admin deleted user',
         'event_viewed'            => 'Viewed event',
+        'kyc_submitted'           => 'Submitted KYC verification',
+        'kyc_resubmitted'         => 'Resubmitted KYC verification',
+        'kyc_approved'            => 'Approved KYC verification',
+        'kyc_rejected'            => 'Rejected KYC verification',
     ];
 
     /**

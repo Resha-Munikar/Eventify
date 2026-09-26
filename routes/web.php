@@ -16,7 +16,9 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminInquiryController;
+use App\Http\Controllers\AdminKycController;
 use App\Http\Controllers\VendorInquiryController;
+use App\Http\Controllers\VendorKycController;
 
 Route::get('/venues', [ChirpController::class, 'venues'])->name('venues');
 
@@ -80,6 +82,10 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin/inquiries/{inquiry}', [AdminInquiryController::class, 'show'])->name('admin.inquiries.show');
     Route::patch('/admin/inquiries/{inquiry}/status', [AdminInquiryController::class, 'updateStatus'])->name('admin.inquiries.updateStatus');
     Route::delete('/admin/inquiries/{inquiry}', [AdminInquiryController::class, 'destroy'])->name('admin.inquiries.destroy');
+    Route::get('/admin/kyc-requests', [AdminKycController::class, 'index'])->name('admin.kyc.index');
+    Route::get('/admin/kyc-requests/{kyc}', [AdminKycController::class, 'show'])->name('admin.kyc.show');
+    Route::post('/admin/kyc-requests/{kyc}/approve', [AdminKycController::class, 'approve'])->name('admin.kyc.approve');
+    Route::post('/admin/kyc-requests/{kyc}/reject', [AdminKycController::class, 'reject'])->name('admin.kyc.reject');
 });
 
 // Vendor Dashboard & Report Routes (Auth, Verified, Vendor)
@@ -93,12 +99,20 @@ Route::middleware(['auth', 'verified', 'vendor'])->group(function () {
     Route::get('/vendor/inquiries', [VendorInquiryController::class, 'index'])->name('vendor.inquiries.index');
     Route::get('/vendor/inquiries/{inquiry}', [VendorInquiryController::class, 'show'])->name('vendor.inquiries.show');
     Route::patch('/vendor/inquiries/{inquiry}/status', [VendorInquiryController::class, 'updateStatus'])->name('vendor.inquiries.updateStatus');
+
+    // Vendor KYC Management
+    Route::get('/vendor/kyc', [VendorKycController::class, 'index'])->name('vendor.kyc.index');
+    Route::post('/vendor/kyc', [VendorKycController::class, 'store'])->name('vendor.kyc.store');
+    Route::get('/vendor/kyc/resubmit', [VendorKycController::class, 'resubmitForm'])->name('vendor.kyc.resubmit');
+    Route::post('/vendor/kyc/resubmit', [VendorKycController::class, 'processResubmit'])->name('vendor.kyc.resubmit.process');
+    Route::get('/vendor/kyc/success', [VendorKycController::class, 'success'])->name('vendor.kyc.success');
+    Route::get('/vendor/kyc/document/{kyc}/{type}', [VendorKycController::class, 'downloadDocument'])->name('vendor.kyc.document');
 });
 
 Route::prefix('vendor/venues')->middleware(['auth', 'verified', 'vendor'])->group(function() {
     Route::get('/', [VendorVenueController::class, 'index'])->name('vendor.venues.index');
-    Route::get('/create', [VendorVenueController::class, 'create'])->name('vendor.venues.create');
-    Route::post('/', [VendorVenueController::class, 'store'])->name('vendor.venues.store');
+    Route::get('/create', [VendorVenueController::class, 'create'])->name('vendor.venues.create')->middleware('kyc.approved');
+    Route::post('/', [VendorVenueController::class, 'store'])->name('vendor.venues.store')->middleware('kyc.approved');
     Route::get('/{venue}/edit', [VendorVenueController::class, 'edit'])->name('vendor.venues.edit');
     Route::put('/{venue}', [VendorVenueController::class, 'update'])->name('vendor.venues.update');
     Route::delete('/{venue}', [VendorVenueController::class, 'destroy'])->name('vendor.venues.destroy');
@@ -106,8 +120,8 @@ Route::prefix('vendor/venues')->middleware(['auth', 'verified', 'vendor'])->grou
 
 Route::prefix('vendor/events')->middleware(['auth', 'verified', 'vendor'])->group(function() {
     Route::get('/', [VendorEventController::class, 'index'])->name('vendor.events.index');
-    Route::get('/create', [VendorEventController::class, 'create'])->name('vendor.events.create');
-    Route::post('/', [VendorEventController::class, 'store'])->name('vendor.events.store');
+    Route::get('/create', [VendorEventController::class, 'create'])->name('vendor.events.create')->middleware('kyc.approved');
+    Route::post('/', [VendorEventController::class, 'store'])->name('vendor.events.store')->middleware('kyc.approved');
     Route::get('/{event}/edit', [VendorEventController::class, 'edit'])->name('vendor.events.edit');
     Route::put('/{event}', [VendorEventController::class, 'update'])->name('vendor.events.update');
     Route::delete('/{event}', [VendorEventController::class, 'destroy'])->name('vendor.events.destroy');

@@ -92,6 +92,35 @@ class User extends Authenticatable
         return $this->hasMany(Inquiry::class, 'vendor_id');
     }
 
+    public function kyc()
+    {
+        return $this->hasOne(VendorKyc::class, 'user_id');
+    }
+
+    /**
+     * Check if KYC is approved (non-vendors always return true).
+     */
+    public function isKycApproved(): bool
+    {
+        if ($this->role !== 'vendor') {
+            return true;
+        }
+
+        return $this->kyc !== null && $this->kyc->status === 'approved';
+    }
+
+    /**
+     * Get the current KYC status string.
+     */
+    public function kycStatus(): string
+    {
+        if ($this->role !== 'vendor') {
+            return 'not_required';
+        }
+
+        return $this->kyc ? $this->kyc->status : 'not_submitted';
+    }
+
     public function scopeRoles($query, array $roles)
     {
         return $query->whereIn('role', $roles);

@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\EnsureEmailIsVerified;
+use App\Http\Middleware\EnsureKycIsApproved;
 use App\Http\Middleware\VendorMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => AdminMiddleware::class,
             'vendor' => VendorMiddleware::class,
             'verified' => EnsureEmailIsVerified::class,
+            'kyc.approved' => EnsureKycIsApproved::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
