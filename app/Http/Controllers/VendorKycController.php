@@ -35,6 +35,7 @@ class VendorKycController extends Controller
         $existingKyc = $user->kyc;
 
         $hasExistingFront = $existingKyc && !empty($existingKyc->document_front);
+        $hasExistingBack = $existingKyc && !empty($existingKyc->document_back);
 
         $request->validate([
             'business_name' => 'required|string|max:255',
@@ -46,12 +47,18 @@ class VendorKycController extends Controller
                 'mimes:jpeg,png,jpg,pdf',
                 'max:5120',
             ],
-            'document_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'document_back' => [
+                $hasExistingBack ? 'nullable' : 'required',
+                'file',
+                'mimes:jpeg,png,jpg,pdf',
+                'max:5120',
+            ],
             'company_registration_doc' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
         ], [
             'document_front.required' => 'Please upload the front page of your identity or business document.',
             'document_front.mimes' => 'Document front must be an image (JPEG, PNG) or PDF.',
             'document_front.max' => 'Document front cannot exceed 5MB.',
+            'document_back.required' => 'Please upload the back page of your identity or business document.',
             'document_back.mimes' => 'Document back must be an image (JPEG, PNG) or PDF.',
             'document_back.max' => 'Document back cannot exceed 5MB.',
             'company_registration_doc.mimes' => 'Company registration document must be an image (JPEG, PNG) or PDF.',
@@ -142,7 +149,7 @@ class VendorKycController extends Controller
                 ->with('success', 'Your KYC verification is already approved.');
         }
 
-        // Check if user is removing existing documents or replacing
+        // Check if user is retaining existing documents or replacing
         $hasExistingFront = !empty($kyc->document_front);
         $replaceFront = $request->hasFile('document_front');
         
@@ -153,16 +160,37 @@ class VendorKycController extends Controller
             ])->withInput();
         }
 
+        $hasExistingBack = !empty($kyc->document_back);
+        $replaceBack = $request->hasFile('document_back');
+
+        if (!$hasExistingBack && !$replaceBack) {
+            return back()->withErrors([
+                'document_back' => 'Please upload a valid back page of your identity or business document.'
+            ])->withInput();
+        }
+
         $request->validate([
             'business_name' => 'required|string|max:255',
             'pan_vat_number' => 'nullable|string|max:50',
             'document_type' => 'required|string|in:Citizenship,Passport,Business Registration,National ID,Driving License',
-            'document_front' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
-            'document_back' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'document_front' => [
+                $hasExistingFront ? 'nullable' : 'required',
+                'file',
+                'mimes:jpeg,png,jpg,pdf',
+                'max:5120',
+            ],
+            'document_back' => [
+                $hasExistingBack ? 'nullable' : 'required',
+                'file',
+                'mimes:jpeg,png,jpg,pdf',
+                'max:5120',
+            ],
             'company_registration_doc' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
         ], [
+            'document_front.required' => 'Please upload the front page of your identity or business document.',
             'document_front.mimes' => 'Document front must be a valid image (JPG, PNG) or PDF.',
             'document_front.max' => 'Document front may not be greater than 5MB.',
+            'document_back.required' => 'Please upload the back page of your identity or business document.',
             'document_back.mimes' => 'Document back must be a valid image (JPG, PNG) or PDF.',
             'document_back.max' => 'Document back may not be greater than 5MB.',
             'company_registration_doc.mimes' => 'Company registration document must be a valid image (JPG, PNG) or PDF.',
@@ -190,13 +218,8 @@ class VendorKycController extends Controller
             $data['document_front'] = $request->file('document_front')->store('kyc_documents', 'public');
         }
 
-        // 2. Replace or Remove Back Document
-        if ($request->boolean('remove_document_back')) {
-            if ($kyc->document_back && Storage::disk('public')->exists($kyc->document_back)) {
-                Storage::disk('public')->delete($kyc->document_back);
-            }
-            $data['document_back'] = null;
-        } elseif ($request->hasFile('document_back')) {
+        // 2. Replace Back Document (Compulsory)
+        if ($request->hasFile('document_back')) {
             if ($kyc->document_back && Storage::disk('public')->exists($kyc->document_back)) {
                 Storage::disk('public')->delete($kyc->document_back);
             }

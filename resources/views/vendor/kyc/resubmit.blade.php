@@ -235,20 +235,17 @@
                             @enderror
                         </div>
 
-                        <!-- CARD 2: DOCUMENT BACK (Optional) -->
+                        <!-- CARD 2: DOCUMENT BACK (Required) -->
                         <div class="border rounded-2xl p-4 bg-gray-50/70 dark:bg-gray-700/30 flex flex-col justify-between"
                              :class="newFiles.back ? 'border-purple-300 dark:border-purple-700' : 'border-gray-200 dark:border-gray-700'">
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-xs font-bold text-gray-800 dark:text-gray-200">2. Document Back <span class="text-gray-400 font-normal">(Optional)</span></span>
+                                    <span class="text-xs font-bold text-gray-800 dark:text-gray-200">2. Document Back <span class="text-red-500">*</span></span>
                                     <template x-if="newFiles.back">
                                         <span class="text-[10px] font-bold text-purple-700 bg-purple-100 dark:bg-purple-900/60 dark:text-purple-300 px-2 py-0.5 rounded-full">New File</span>
                                     </template>
-                                    <template x-if="!newFiles.back && existing.back && !removed.back">
+                                    <template x-if="!newFiles.back && existing.back">
                                         <span class="text-[10px] font-bold text-green-700 bg-green-100 dark:bg-green-900/60 dark:text-green-300 px-2 py-0.5 rounded-full">Retained</span>
-                                    </template>
-                                    <template x-if="removed.back">
-                                        <span class="text-[10px] font-bold text-rose-700 bg-rose-100 dark:bg-rose-900/60 dark:text-rose-300 px-2 py-0.5 rounded-full">Removed</span>
                                     </template>
                                 </div>
 
@@ -266,7 +263,7 @@
                                         </div>
                                     </template>
 
-                                    <template x-if="!newFiles.back && existing.back && !removed.back">
+                                    <template x-if="!newFiles.back && existing.back">
                                         <div>
                                             <template x-if="existing.back.is_pdf">
                                                 <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs mx-auto mb-1">PDF</div>
@@ -280,10 +277,10 @@
                                         </div>
                                     </template>
 
-                                    <template x-if="(!newFiles.back && !existing.back) || removed.back">
+                                    <template x-if="!newFiles.back && !existing.back">
                                         <div class="text-gray-400 text-xs">
                                             <svg class="w-8 h-8 mx-auto mb-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                            No back page attached
+                                            Upload Back Page
                                         </div>
                                     </template>
                                 </div>
@@ -291,7 +288,6 @@
 
                             <!-- Actions -->
                             <div class="mt-3 space-y-1.5">
-                                <input type="hidden" name="remove_document_back" :value="removed.back ? '1' : '0'">
                                 <input type="file" 
                                        name="document_back" 
                                        x-ref="backInput" 
@@ -305,11 +301,11 @@
                                     <span x-text="existing.back || newFiles.back ? 'Replace Back Document' : 'Upload Back Document'"></span>
                                 </button>
 
-                                <template x-if="newFiles.back">
+                                <template x-if="newFiles.back && existing.back">
                                     <button type="button" 
                                             @click="cancelReplacement('back')"
                                             class="w-full py-1 text-[11px] text-gray-500 hover:text-rose-600 transition text-center font-medium">
-                                        Cancel New File
+                                        Keep Previous File
                                     </button>
                                 </template>
                             </div>
@@ -458,7 +454,6 @@ function kycResubmitManager() {
             company: null,
         },
         removed: {
-            back: false,
             company: false,
         },
         handleFileSelected(event, type) {

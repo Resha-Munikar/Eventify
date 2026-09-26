@@ -362,7 +362,7 @@
                     <!-- 2. Document Back -->
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                            Document Back Page <span class="text-gray-400 font-normal">(Optional)</span>
+                            Document Back Page <span class="text-red-500">*</span>
                         </label>
                         <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-[#8d85ec] dark:hover:border-[#8d85ec] rounded-2xl p-4 text-center cursor-pointer transition bg-gray-50/50 dark:bg-gray-700/30 group min-h-[170px] flex flex-col items-center justify-center"
                              @click="$refs.backInput.click()">
