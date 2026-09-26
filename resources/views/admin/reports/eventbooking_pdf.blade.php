@@ -49,7 +49,7 @@
     </style>
 </head>
 <body>
-    <h2>🎪 Admin - Platform Event Booking & Ticket Report</h2>
+    <h2>Admin - Platform Event Booking & Ticket Report</h2>
     <p style="text-align: center; font-size: 11px; color: #666; margin-top: -15px;">Generated on {{ now()->format('d M, Y - h:i A') }}</p>
 
     <table>

@@ -51,6 +51,42 @@
                 </a>
             </li>
 
+            <!-- Vendor KYC Requests -->
+            @php
+                $adminPendingKycs = \App\Models\VendorKyc::where('status', 'pending')->count();
+            @endphp
+            <li>
+                <a href="{{ route('admin.kyc.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('admin.kyc.*') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap">KYC Requests</span>
+                    @if($adminPendingKycs > 0)
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-white bg-[#8d85ec] rounded-full animate-pulse">
+                            {{ $adminPendingKycs }}
+                        </span>
+                    @endif
+                </a>
+            </li>
+
+            <!-- Event Management -->
+            <li>
+                <a href="{{ route('admin.events.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('admin.events.*') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Event Management</span>
+                </a>
+            </li>
+
             <!-- Review -->
             <li>
                 <a href="{{ route('admin.reports.review') }}" 
@@ -62,6 +98,42 @@
                         <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5z"/>
                     </svg>
                     <span class="ms-3 flex-1 whitespace-nowrap">Review</span>
+                </a>
+            </li>
+
+            <!-- Activity Log -->
+            <li>
+                <a href="{{ route('admin.activityLogs.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('admin.activityLogs.*') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">Activity Log</span>
+                </a>
+            </li>
+
+            <!-- Contact & Inquiries -->
+            @php
+                $adminUnreadInquiries = \App\Models\Inquiry::where('status', 'unread')->count();
+            @endphp
+            <li>
+                <a href="{{ route('admin.inquiries.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('admin.inquiries.*') 
+                                ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' 
+                                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">Contact & Inquiries</span>
+                    @if($adminUnreadInquiries > 0)
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-white bg-[#8d85ec] rounded-full">
+                            {{ $adminUnreadInquiries }}
+                        </span>
+                    @endif
                 </a>
             </li>
 

@@ -128,6 +128,26 @@
             </li>
 
 
+            <!-- Inquiries -->
+            @php
+                $vendorUnreadInquiries = \App\Models\Inquiry::where('vendor_id', Auth::id())->where('status', 'unread')->count();
+            @endphp
+            <li>
+                <a href="{{ route('vendor.inquiries.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('vendor.inquiries.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">Inquiries</span>
+                    @if($vendorUnreadInquiries > 0)
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-white bg-[#8d85ec] rounded-full">
+                            {{ $vendorUnreadInquiries }}
+                        </span>
+                    @endif
+                </a>
+            </li>
+
             <!-- Reviews -->
             <li>
                 <a href="{{ route('vendor.venue-reviews') }}" 
@@ -137,6 +157,39 @@
                         <path d="M3 21V3h18v18H3zm2-16v14h14V5H5zm2 2h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
                     </svg>
                     <span class="ms-3 flex-1 whitespace-nowrap">Reviews</span>
+                </a>
+            </li>
+
+            <!-- KYC Verification -->
+            @php
+                $sidebarKyc = Auth::user()->kyc;
+                $sidebarKycStatus = $sidebarKyc ? $sidebarKyc->status : 'not_submitted';
+            @endphp
+            <li>
+                <a href="{{ route('vendor.kyc.index') }}" 
+                   class="flex items-center p-2 rounded-lg group transition-colors duration-200 ease-in-out
+                          {{ request()->routeIs('vendor.kyc.*') ? 'bg-gray-300 dark:bg-gray-700 text-[#8d85ec]' : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                    <svg class="w-5 h-5 text-[#8d85ec]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span class="ms-3 flex-1 whitespace-nowrap">KYC Verification</span>
+                    @if($sidebarKycStatus === 'approved')
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-green-700 bg-green-100 dark:bg-green-900/60 dark:text-green-300 rounded-full">
+                            Verified
+                        </span>
+                    @elseif($sidebarKycStatus === 'pending')
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-blue-700 bg-blue-100 dark:bg-blue-900/60 dark:text-blue-300 rounded-full">
+                            Pending
+                        </span>
+                    @elseif($sidebarKycStatus === 'rejected')
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-rose-700 bg-rose-100 dark:bg-rose-900/60 dark:text-rose-300 rounded-full">
+                            Action
+                        </span>
+                    @else
+                        <span class="inline-flex items-center justify-center px-2 py-0.5 ms-2 text-[10px] font-bold text-amber-700 bg-amber-100 dark:bg-amber-900/60 dark:text-amber-300 rounded-full">
+                            Required
+                        </span>
+                    @endif
                 </a>
             </li>
 

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@hasSection('title')@yield('title') - {{ config('app.name', 'Eventify') }}@else{{ config('app.name', 'Eventify') }}@endif</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/eventify-logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/eventify-logo.png') }}">
     @vite('resources/css/app.css') {{-- or your CSS build setup --}}
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
     <style>
@@ -19,6 +21,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" defer></script>
 
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
@@ -26,48 +29,57 @@
     {{-- Navbar only shows if $noNavbar is not set or false --}}
     @if (!isset($noNavbar) || !$noNavbar)
         <!-- Navbar -->
-        <header class="w-full bg-[#8D85EC] dark:bg-gray-900 shadow-md relative z-20">
-        <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
+        <header x-data="{ mobileMenuOpen: false }" class="w-full bg-[#8D85EC] dark:bg-gray-900 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center gap-2 px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
             <!-- Logo + Title -->
-            <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-white  dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
-                <img src="uploads/eventicon.png" alt="E Icon" class="w-8 h-8 object-contain" />
-            </div>
-            <span class="text-black dark:text-white text-4xl brand-logo">Eventify</span>
-            </div>
-            <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-8 py-3 shadow-md w-1/2 justify-center">
-               <a href="{{ route('welcome') }}" 
-                    class="text-black dark:text-white font-semibold hover:underline mx-4 
-                    {{ request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
+            <a href="{{ route('home') }}" class="flex items-center space-x-2 sm:space-x-4 hover:opacity-90 transition focus:outline-none shrink-0" title="Eventify Home">
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src="{{ asset('images/eventify-logo.png') }}" alt="Eventify Logo" class="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
+                </div>
+                <span class="text-black dark:text-white text-2xl sm:text-4xl brand-logo">Eventify</span>
+            </a>
+            <nav class="hidden md:flex bg-white dark:bg-gray-700 rounded-full px-2 sm:px-6 xl:px-8 py-2 sm:py-3 shadow-md justify-center min-w-0">
+               <a href="{{ route('home') }}" 
+                    class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 
+                    {{ request()->routeIs('home') || request()->routeIs('welcome') || request()->is('/') ? 'active' : '' }}">
                     Home
                 </a>
 
                 <a href="{{ route('about') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">
+                class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 {{ request()->routeIs('about') ? 'active' : '' }}">
                 About Us
                 </a>
 
                 <a href="{{ route('events') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('events') ? 'active' : '' }}">
+                class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 {{ request()->routeIs('events') ? 'active' : '' }}">
                 Events
                 </a>
-                 <a href="{{ route('venues') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('venues') ? 'active' : '' }}">
-                Venues
-                </a>
-
                 <a href="{{ route('contact') }}" 
-                class="text-black dark:text-white font-semibold hover:underline mx-4 {{ request()->routeIs('contact') ? 'active' : '' }}">
+                class="text-black dark:text-white text-[10px] sm:text-base font-semibold hover:underline mx-2 sm:mx-4 {{ request()->routeIs('contact') ? 'active' : '' }}">
                 Contact
                 </a>
             </nav>
 
             <!-- Navbar Right Section -->
-            <div class="flex items-center space-x-4 relative">
+            <div class="flex items-center space-x-1 sm:space-x-4 relative shrink-0">
+                <button
+                    type="button"
+                    @click="mobileMenuOpen = !mobileMenuOpen"
+                    :aria-expanded="mobileMenuOpen.toString()"
+                    aria-label="Toggle navigation menu"
+                    class="md:hidden p-2 rounded-lg bg-white/90 text-gray-800 hover:bg-white focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                    <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 @guest
                     <!-- When user is NOT logged in -->
-                    <a href="{{ route('login') }}" class="bg-white dark:bg-gray-700 text-[#8D85EC] dark:text-white font-semibold px-5 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"> Login </a> 
-                    <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white dark:bg-gray-700 font-semibold px-5 py-2 rounded-full hover:bg-[#6f69d9] transition"> Sign Up </a>
+                    <a href="{{ route('login') }}" class="bg-white dark:bg-gray-700 text-[#8D85EC] dark:text-white font-semibold px-3 sm:px-5 py-2 rounded-full text-xs sm:text-base hover:bg-gray-100 dark:hover:bg-gray-600 transition"> Login </a> 
+                    <a href="{{ route('register') }}" class="bg-[#7b76e4] text-white dark:bg-gray-700 font-semibold px-3 sm:px-5 py-2 rounded-full text-xs sm:text-base hover:bg-[#6f69d9] transition"> Sign Up </a>
                 @endguest
 
                 @auth
@@ -128,78 +140,129 @@
                 </button>
             </div>
         </div>
+        <nav x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false" class="md:hidden border-t border-white/20 px-4 pb-4 pt-3">
+            <div class="flex flex-col gap-1 rounded-xl bg-white dark:bg-gray-800 p-2 shadow-lg">
+                <a href="{{ route('home') }}" class="rounded-lg px-4 py-3 font-semibold text-gray-800 dark:text-white hover:bg-purple-100 dark:hover:bg-gray-700">Home</a>
+                <a href="{{ route('about') }}" class="rounded-lg px-4 py-3 font-semibold text-gray-800 dark:text-white hover:bg-purple-100 dark:hover:bg-gray-700">About Us</a>
+                <a href="{{ route('events') }}" class="rounded-lg px-4 py-3 font-semibold text-gray-800 dark:text-white hover:bg-purple-100 dark:hover:bg-gray-700">Events</a>
+                <a href="{{ route('contact') }}" class="rounded-lg px-4 py-3 font-semibold text-gray-800 dark:text-white hover:bg-purple-100 dark:hover:bg-gray-700">Contact</a>
+            </div>
+        </nav>
         </header>
     @endif
         <!-- Main Content -->
         <main class="flex-1 p-0">
-        @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-            class="max-w-4xl mx-auto mt-4 bg-green-100 text-green-800 p-4 rounded-lg relative transition duration-300">
-            {{ session('success') }}
-            <button @click="show = false" 
-                    class="absolute top-2 right-2 text-green-800 font-bold hover:text-green-900">&times;</button>
-        </div>
-        @endif
+      @if(session('success'))
+    <div
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-transition
+        class="fixed top-5 right-5 z-[9999]
+               w-[380px]
+               bg-green-100
+               text-green-800
+               border border-green-300
+               px-5 py-4
+               rounded-xl
+               shadow-lg"
+    >
+        <div class="flex items-center justify-between gap-4">
 
-        @if(session('error'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-            class="max-w-4xl mx-auto mt-4 bg-red-100 text-red-800 p-4 rounded-lg relative transition duration-300">
-            {{ session('error') }}
-            <button @click="show = false" 
-                    class="absolute top-2 right-2 text-red-800 font-bold hover:text-red-900">&times;</button>
+            <span class="text-sm font-medium">
+                {{ session('success') }}
+            </span>
+
+            <button
+                @click="show = false"
+                class="text-green-800 font-bold text-lg leading-none
+                       hover:text-green-900">
+                &times;
+            </button>
+
         </div>
-        @endif
+    </div>
+@endif
+
+     @if(session('error'))
+    <div
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-transition
+        class="fixed top-5 right-5 z-[9999]
+               w-[380px]
+               bg-red-100
+               text-red-800
+               border border-red-300
+               px-5 py-4
+               rounded-xl
+               shadow-lg"
+    >
+        <div class="flex items-center justify-between gap-4">
+
+            <span class="text-sm font-medium">
+                {{ session('error') }}
+            </span>
+
+            <button
+                @click="show = false"
+                class="text-red-800 font-bold text-lg leading-none
+                       hover:text-red-900">
+                &times;
+            </button>
+
+        </div>
+    </div>
+@endif
 
         @yield('content')
     </main>
     @if (!isset($noFooter) || !$noFooter)
     
       <!-- Footer -->
-    <footer class="bg-gray-700 dark:bg-gray-800 text-white py-16 px-4">
-      <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8 text-left">
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-12 sm:py-16 px-4">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-left">
         <!-- Logo & About -->
         <div>
           <h2 class="text-2xl font-bold mb-4">Eventify</h2>
-          <p class="text-gray-400 mb-4">
-            Eventify is your trusted partner for creating unforgettable weddings, corporate events, and live concerts with personalized planning, catering, and entertainment.
+          <p class="text-gray-400 mb-4 leading-relaxed">
+            Discover upcoming events, compare ticket options, and book memorable experiences through Eventify.
           </p>
-          <div class="flex gap-4 mt-4">
-            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-facebook-f"></i>Facebook</a>
-            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-instagram"></i>Instagram</a>
-            <a href="#" class="hover:text-[#8D85EC]"><i class="fab fa-linkedin-in"></i>LinkedIn</a>
-          </div>
         </div>
         <!-- Quick Links -->
         <div>
           <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#8D85EC]">Home</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Services</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Events</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Contact</a></li>
+            <li><a href="{{ route('home') }}" class="text-gray-300 hover:text-[#8D85EC]">Home</a></li>
+            <li><a href="{{ route('about') }}" class="text-gray-300 hover:text-[#8D85EC]">About Us</a></li>
+            <li><a href="{{ route('events') }}" class="text-gray-300 hover:text-[#8D85EC]">Browse Events</a></li>
+            <li><a href="{{ route('contact') }}" class="text-gray-300 hover:text-[#8D85EC]">Contact</a></li>
           </ul>
         </div>
-        <!-- Services -->
+        <!-- For users and organizers -->
         <div>
-          <h3 class="text-xl font-semibold mb-4">Our Services</h3>
+          <h3 class="text-xl font-semibold mb-4">Eventify</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#8D85EC]">Event Planning</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Catering & Decor</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Entertainment</a></li>
-            <li><a href="#" class="hover:text-[#8D85EC]">Corporate Events</a></li>
+            <li><a href="{{ route('register') }}" class="text-gray-300 hover:text-[#8D85EC]">Create an account</a></li>
+            <li><a href="{{ route('login') }}" class="text-gray-300 hover:text-[#8D85EC]">Sign in</a></li>
+            <li><a href="{{ route('events') }}" class="text-gray-300 hover:text-[#8D85EC]">Find tickets</a></li>
           </ul>
         </div>
-        <!-- Contact & Newsletter -->
+        <!-- Contact -->
         <div>
           <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
-          <p class="text-gray-400 mb-2">123 Event Street, Kathmandu, Nepal</p>
-          <p class="text-gray-400 mb-2">Email: info@eventify.com</p>
-          <p class="text-gray-400 mb-4">Phone: +977 9812345678</p>
+          <p class="text-gray-400 mb-4 leading-relaxed">
+            Have a question about an event or booking? Our contact page is the best way to reach the Eventify team.
+          </p>
+          <a href="{{ route('contact') }}" class="inline-flex items-center rounded-full bg-[#8D85EC] px-4 py-2 text-sm font-semibold hover:bg-[#7b76e4] transition">
+            Get in touch
+          </a>
         </div>
       </div>
       <!-- Bottom Footer -->
-      <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
-        © 2025 Eventify. All rights reserved. Designed with ❤️ by Eventify Team.
+      <div class="mt-10 border-t border-gray-700 pt-6 text-center text-gray-400 text-sm">
+        <span>&copy; {{ date('Y') }} Eventify. All rights reserved.</span>
       </div>
     </footer>
   
@@ -245,9 +308,101 @@
                 updateIcons();
             });
         });
+
+        // Global Save / Favorite Event Handler
+        function toggleSaveEvent(e, eventId, btn) {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+
+            @guest
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endguest
+
+            const allButtons = document.querySelectorAll(`[data-save-event-id="${eventId}"]`);
+            allButtons.forEach(b => b.classList.add('scale-90', 'opacity-70'));
+
+            fetch(`/events/${eventId}/toggle-save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(async response => {
+                allButtons.forEach(b => b.classList.remove('scale-90', 'opacity-70'));
+                if (response.status === 401) {
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    allButtons.forEach(b => {
+                        updateSaveButtonVisual(b, data.saved);
+                    });
+
+                    const countBadges = document.querySelectorAll('.saved-count-badge');
+                    countBadges.forEach(el => {
+                        if (data.saved_count !== undefined) {
+                            el.textContent = data.saved_count;
+                        }
+                    });
+
+                    // If on Saved Events tab and item unsaved, animate removal
+                    if (window.location.search.includes('tab=saved') || window.location.search.includes('saved=1')) {
+                        const card = btn.closest('.event-card, .event-listing-card');
+                        if (card && !data.saved) {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                card.remove();
+                                const remaining = document.querySelectorAll('.event-listing-card');
+                                if (remaining.length === 0) {
+                                    const emptyBox = document.getElementById('saved-empty-state');
+                                    if (emptyBox) emptyBox.classList.remove('hidden');
+                                }
+                            }, 300);
+                        }
+                    }
+                } else {
+                    alert(data.message || 'Failed to update saved event.');
+                }
+            })
+            .catch(err => {
+                allButtons.forEach(b => b.classList.remove('scale-90', 'opacity-70'));
+                console.error('Save event error:', err);
+            });
+        }
+
+        function updateSaveButtonVisual(btn, isSaved) {
+            if (!btn) return;
+            const svg = btn.querySelector('svg');
+            if (isSaved) {
+                btn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                btn.classList.add('text-rose-500');
+                btn.setAttribute('title', 'Saved to favorites');
+                btn.setAttribute('aria-label', 'Remove from saved events');
+                if (svg) {
+                    svg.setAttribute('fill', 'currentColor');
+                    svg.setAttribute('stroke-width', '0');
+                }
+            } else {
+                btn.classList.remove('text-rose-500');
+                btn.classList.add('text-gray-600', 'dark:text-gray-300');
+                btn.setAttribute('title', 'Save to favorites');
+                btn.setAttribute('aria-label', 'Save this event');
+                if (svg) {
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke-width', '2');
+                }
+            }
+        }
 </script>
 @include('partials.chatbot')
 
 </body>
 </html>
-

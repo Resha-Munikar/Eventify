@@ -12,6 +12,7 @@ use App\Models\Booking;
 use App\Models\Event;
 use App\Models\TicketType;
 use App\Mail\TicketMail;
+use App\Services\ActivityLogger;
 use Illuminate\Support\Str;
 
 class KhaltiController extends Controller
@@ -114,6 +115,14 @@ class KhaltiController extends Controller
                     'event' => $event,
                 ];
             });
+
+            // Log activity
+            ActivityLogger::log(
+                'event_booked',
+                'Booked event "' . $booking['event']->event_name . '" (' . $requestedTickets . ' ticket(s) - ' . $booking['ticketType']->name . ')',
+                $booking['booking'],
+                $user
+            );
 
             // Send confirmation email
             try {

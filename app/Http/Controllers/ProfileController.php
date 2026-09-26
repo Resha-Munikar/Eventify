@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use App\Services\ActivityLogger;
 
 class ProfileController extends Controller
 {
@@ -46,6 +47,8 @@ class ProfileController extends Controller
 
         $user->save();
 
+        ActivityLogger::log('profile_updated', 'Updated vendor profile details', $user, $user);
+
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully.');
     }
     public function updatePassword(Request $request)
@@ -66,6 +69,8 @@ class ProfileController extends Controller
         // Update password
         $user->password = Hash::make($request->password);
         $user->save();
+
+        ActivityLogger::log('password_changed', 'Changed account password', $user, $user);
 
         return back()->with('success', 'Password changed successfully.');
     }

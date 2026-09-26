@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Services\EventifyCacheService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(function (Event $event) {
+            EventifyCacheService::clearEventCaches($event->id, $event->slug, $event->vendor_id);
+        });
+
+        static::deleted(function (Event $event) {
+            EventifyCacheService::clearEventCaches($event->id, $event->slug, $event->vendor_id);
+        });
+    }
 
     protected $fillable = [
         'vendor_id',
@@ -40,6 +52,22 @@ class Event extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function inquiries()
+    {
+        return $this->hasMany(Inquiry::class);
+    }
+
+    public function savedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'saved_events', 'event_id', 'user_id')->withTimestamps();
+    }
+
+    public function isSavedBy(?User $user): bool
+    {
+        if (!$user) return false;
+        return $this->savedByUsers()->where('users.id', $user->id)->exists();
+    }
+
     public function getMinPriceAttribute(): float
     {
         $min = $this->ticketTypes->where('status', 'active')->min('price');
@@ -66,4 +94,14 @@ class Event extends Model
     {
         return (int)$this->ticketTypes->sum('sold_quantity');
     }
+
+    protected $appends = [
+        'slug',
+    ];
+
+    public function getSlugAttribute(): string
+    {
+        return \Illuminate\Support\Str::slug($this->event_name);
+    }
 }
+

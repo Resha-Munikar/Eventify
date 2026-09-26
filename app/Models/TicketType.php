@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Services\EventifyCacheService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TicketType extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(function (TicketType $ticketType) {
+            EventifyCacheService::clearEventCaches($ticketType->event_id);
+        });
+
+        static::deleted(function (TicketType $ticketType) {
+            EventifyCacheService::clearEventCaches($ticketType->event_id);
+        });
+    }
 
     protected $table = 'ticket_types';
 

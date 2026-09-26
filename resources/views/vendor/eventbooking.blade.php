@@ -17,8 +17,8 @@ $noFooter = true;
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Manage ticket sales, attendee records, and ticket tiers for your events.</p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ route('vendor.reports.eventbooking') }}" class="bg-[#8d85ec] hover:bg-[#7b76e4] text-white px-4 py-2 rounded-xl text-xs font-semibold transition shadow-sm flex items-center gap-1">
-                    <span>📊</span> View Detailed Report
+                <a href="{{ route('vendor.reports.eventbooking') }}" class="bg-[#8d85ec] hover:bg-[#7b76e4] text-white px-4 py-2 rounded-xl text-xs font-semibold transition shadow-sm inline-flex items-center gap-1.5">
+                    <iconify-icon icon="solar:chart-square-bold" class="text-base"></iconify-icon> View Detailed Report
                 </a>
             </div>
         </div>
@@ -74,7 +74,9 @@ $noFooter = true;
                     @empty
                     <tr>
                         <td colspan="9" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                            <span class="text-4xl block mb-2">📋</span>
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-[#8D85EC] text-3xl">
+                                <iconify-icon icon="solar:clipboard-list-bold"></iconify-icon>
+                            </div>
                             <p class="font-semibold text-base">No attendee bookings found for your events yet.</p>
                         </td>
                     </tr>
