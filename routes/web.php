@@ -109,6 +109,9 @@ Route::middleware(['auth', 'verified', 'vendor'])->group(function () {
     Route::get('/vendor/kyc/document/{kyc}/{type}', [VendorKycController::class, 'downloadDocument'])->name('vendor.kyc.document');
 });
 
+// Direct email access route (authenticates vendor and opens vendor dashboard)
+Route::get('/vendor/kyc/email-access/{user}', [VendorKycController::class, 'emailAccess'])->name('vendor.kyc.emailAccess');
+
 Route::prefix('vendor/venues')->middleware(['auth', 'verified', 'vendor'])->group(function() {
     Route::get('/', [VendorVenueController::class, 'index'])->name('vendor.venues.index');
     Route::get('/create', [VendorVenueController::class, 'create'])->name('vendor.venues.create')->middleware('kyc.approved');

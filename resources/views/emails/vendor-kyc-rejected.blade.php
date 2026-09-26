@@ -128,7 +128,7 @@
                 <p class="instructions">Don't worry! You can easily update your information or upload clearer, valid documents directly from your vendor dashboard.</p>
 
                 <div class="btn-container">
-                    <a href="{{ route('vendor.kyc.resubmit') }}" class="btn">Resubmit KYC Documents</a>
+                    <a href="{{ route('vendor.kyc.emailAccess', $user->id) }}" class="btn">Resubmit KYC Documents</a>
                 </div>
             </div>
             <div class="footer">

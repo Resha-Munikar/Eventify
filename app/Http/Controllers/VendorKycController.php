@@ -265,4 +265,17 @@ class VendorKycController extends Controller
 
         return Storage::disk('public')->response($filePath);
     }
+
+    /**
+     * Direct 1-click email access for rejected KYC to vendor dashboard.
+     */
+    public function emailAccess(Request $request, \App\Models\User $user)
+    {
+        // Authenticate the vendor immediately
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('vendor.dashboard')
+            ->with('warning', 'Your KYC verification requires correction. Please review the feedback and click Resubmit KYC.');
+    }
 }
