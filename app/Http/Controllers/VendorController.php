@@ -11,6 +11,7 @@ class VendorController extends Controller
     public function dashboard()
     {
         $vendor = Auth::user();
+        $vendor->load('kyc');
         
         return view('vendor.dashboard', compact('vendor'));
     }

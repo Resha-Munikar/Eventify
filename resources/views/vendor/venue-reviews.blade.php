@@ -37,10 +37,14 @@ $noFooter = true;
                                     <img src="{{ asset('uploads/' . ($review->venue->image ?? 'default.jpg')) }}" 
                                         alt="Venue Photo" class="w-20 h-20 object-cover rounded-lg border">
 
-                                    <div class="flex flex-col justify-start">
+                                    <div class="flex flex-col justify-start gap-0.5">
                                         <span class="font-semibold text-gray-900 text-md">{{ $review->venue->venue_name ?? 'N/A' }}</span>
-                                        <span class="text-gray-600 text-xs">📍 {{ $review->venue->location ?? '-' }}</span>
-                                        <span class="text-gray-600 text-xs">💰 Rs. {{ number_format($review->venueBooking->total_price ?? 0, 2) }}</span>
+                                        <span class="text-gray-600 text-xs inline-flex items-center gap-1">
+                                            <iconify-icon icon="solar:map-point-linear" class="text-purple-600"></iconify-icon> {{ $review->venue->location ?? '-' }}
+                                        </span>
+                                        <span class="text-gray-600 text-xs inline-flex items-center gap-1">
+                                            <iconify-icon icon="solar:wallet-money-bold" class="text-emerald-600"></iconify-icon> Rs. {{ number_format($review->venueBooking->total_price ?? 0, 2) }}
+                                        </span>
                                     </div>
                                 </div>
                             </td>
@@ -52,9 +56,12 @@ $noFooter = true;
 
                             <!-- Rating -->
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex gap-1">
+                                <span class="inline-flex gap-0.5 text-amber-400">
                                     @for ($i = 0; $i < $review->rating; $i++)
-                                        ⭐
+                                        <iconify-icon icon="solar:star-bold" class="text-sm"></iconify-icon>
+                                    @endfor
+                                    @for ($i = $review->rating; $i < 5; $i++)
+                                        <iconify-icon icon="solar:star-linear" class="text-gray-300 text-sm"></iconify-icon>
                                     @endfor
                                 </span>
                             </td>

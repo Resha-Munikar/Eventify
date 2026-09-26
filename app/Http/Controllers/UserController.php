@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\VenueBooking;
 use App\Models\Booking;
-
+use App\Models\Event;
+use App\Models\TicketType;
 use App\Models\User;
+use App\Services\ActivityLogger;
+use Illuminate\Support\Facades\DB;
 use PDF;
 
 class UserController extends Controller
@@ -40,6 +43,8 @@ class UserController extends Controller
 
         $user->update($request->only('name', 'email', 'role'));
 
+        ActivityLogger::log('user_updated', 'Admin updated user account "' . $user->name . '" (' . $user->email . ')', $user);
+
         return redirect()->route('chirps.user')
                          ->with('success', 'User updated successfully.');
     }
@@ -54,7 +59,12 @@ class UserController extends Controller
                             ->with('error', 'You cannot delete your own account.');
         }
 
+        $userName = $user->name;
+        $userEmail = $user->email;
+
         $user->delete();
+
+        ActivityLogger::log('user_deleted', 'Admin deleted user account "' . $userName . '" (' . $userEmail . ')');
 
         return redirect()->route('chirps.user')
                         ->with('success', 'User deleted successfully.');
@@ -95,6 +105,8 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->save();
 
+        ActivityLogger::log('profile_updated', 'Updated profile information', $user, $user);
+
         return redirect()->route('profile')->with('success', 'Profile updated successfully!');
     }
 
@@ -102,8 +114,8 @@ class UserController extends Controller
     // Show bookings
     public function bookings() {
         $user = Auth::user();
-        $eventBookings = Booking::where('user_id', $user->id)->with('event')->get();
-        $venueBookings = VenueBooking::where('user_id', $user->id)->with('venue')->get();
+        $eventBookings = Booking::where('user_id', $user->id)->with(['event', 'ticketType'])->latest()->get();
+        $venueBookings = VenueBooking::where('user_id', $user->id)->with('venue')->latest()->get();
 
         return view('profile-bookings', compact('eventBookings', 'venueBookings'));
     }
@@ -119,6 +131,8 @@ class UserController extends Controller
         $user->profile_photo = null;
         $user->save();
 
+        ActivityLogger::log('profile_photo_deleted', 'Removed profile photo', $user, $user);
+
         return redirect()->route('profile')->with('success', 'Profile photo deleted successfully!');
     }
     
@@ -132,6 +146,7 @@ public function showReport()
     // Fetch venue bookings related to the logged-in user with related user and venue info
     $venueBookings = VenueBooking::with(['user', 'venue'])
         ->where('user_id', $user->id)
+        ->latest()
         ->get();
 
     // Pass the bookings to the view
@@ -142,8 +157,9 @@ public function showReport()
 {
    $user = Auth::user();
 
-     $eventBookings = Booking::with(['user', 'event'])
+     $eventBookings = Booking::with(['user', 'event', 'ticketType'])
         ->where('user_id', $user->id)
+        ->latest()
         ->get();
 
     // Pass the bookings to the view
@@ -152,7 +168,7 @@ public function showReport()
  public function downloadAdminPdf(Request $request)
 {
     // Build the query
-    $query = Booking::with(['user', 'event']);
+    $query = Booking::with(['user', 'event', 'ticketType']);
 
     // Apply date filters if provided
     if ($request->filled('from_date')) {
@@ -163,7 +179,7 @@ public function showReport()
     }
 
     // Fetch filtered bookings
-    $eventBookings = $query->get();
+    $eventBookings = $query->latest()->get();
 
     // Generate PDF
     $pdf = PDF::loadView('admin.reports.eventbooking_pdf', compact('eventBookings'));
@@ -173,7 +189,7 @@ public function showReport()
  public function showAllEvents(Request $request)
 {
     // Build the query
-    $query = Booking::with(['user', 'event']);
+    $query = Booking::with(['user', 'event', 'ticketType']);
 
     // Apply date filters if provided
     if ($request->filled('from_date')) {
@@ -184,11 +200,56 @@ public function showReport()
     }
 
     // Fetch filtered bookings
-    $eventBookings = $query->get();
+    $eventBookings = $query->latest()->get();
 
     // Pass data to the view
     return view('admin.reports.admineventbooking', compact('eventBookings'));
 }
 
+    /**
+     * Cancel an event ticket booking and restore seats/quantities
+     */
+    public function cancelEventBooking($id)
+    {
+        $user = Auth::user();
+        $booking = Booking::with(['event', 'ticketType'])
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        if ($booking->booking_status === 'cancelled') {
+            return redirect()->back()->with('error', 'This event booking has already been cancelled.');
+        }
+
+        DB::transaction(function () use ($booking) {
+            // 1. Mark booking as cancelled
+            $booking->booking_status = 'cancelled';
+            $booking->payment_status = 'cancelled';
+            $booking->save();
+
+            // 2. Adjust Ticket Type sold_quantity
+            if ($booking->ticket_type_id) {
+                $ticketType = TicketType::where('id', $booking->ticket_type_id)->lockForUpdate()->first();
+                if ($ticketType) {
+                    $ticketType->sold_quantity = max(0, (int)$ticketType->sold_quantity - (int)$booking->tickets);
+                    $ticketType->save();
+                }
+            }
+
+            // 3. Adjust Event aggregate available seats
+            if ($booking->event_id) {
+                $event = Event::where('id', $booking->event_id)->lockForUpdate()->first();
+                if ($event) {
+                    $event->available_seats = (int)$event->available_seats + (int)$booking->tickets;
+                    $event->save();
+                }
+            }
+        });
+
+        $eventName = $booking->event ? $booking->event->event_name : 'Event #' . $booking->event_id;
+        ActivityLogger::log('event_booking_cancelled', 'Cancelled booking for event "' . $eventName . '" (' . $booking->tickets . ' tickets)', $booking, $user);
+
+        return redirect()->back()->with('success', 'Event booking cancelled successfully! ' . $booking->tickets . ' seat(s) have been restored.');
+    }
 
 }

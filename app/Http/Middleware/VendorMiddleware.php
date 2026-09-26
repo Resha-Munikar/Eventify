@@ -14,13 +14,34 @@ class VendorMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role === 'vendor') {
+        // 1. If not logged in at all, remember intended target and redirect to login
+        if (!Auth::check()) {
+            session(['url.intended' => $request->fullUrl()]);
+            return redirect()->route('login.form')
+                ->with('warning', 'Please sign in with your Vendor account to continue.');
+        }
+
+        $user = Auth::user();
+
+        // 2. If logged in as vendor, allow request to proceed
+        if ($user->role === 'vendor') {
             return $next($request);
         }
 
+        // 3. If logged in as Admin or Customer and trying to access a vendor KYC / organizer page
+        $currentRole = $user->role;
+        $targetUrl = $request->fullUrl();
 
-        return redirect('/')->with('error', 'Unauthorized access.');
+        // Log out the active non-vendor session so the vendor can log in cleanly
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        session(['url.intended' => $targetUrl]);
+
+        return redirect()->route('login.form')
+            ->with('warning', 'You were signed in as ' . ucfirst($currentRole) . '. Please sign in with the Vendor account to access the KYC resubmission page.');
     }
 }

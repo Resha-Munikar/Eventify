@@ -146,9 +146,9 @@
 
                     @if($venue->price_type === 'package')
                         <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                            <p class="text-sm text-gray-700 dark:text-gray-200">
-                                🎁 <span class="font-semibold text-[#8d85ec]">Package Price:</span> 
-                                Rs {{ number_format($venue->package_price ?? 0, 2) }}
+                            <p class="text-sm text-gray-700 dark:text-gray-200 flex items-center">
+                                <iconify-icon icon="solar:gift-bold" class="text-[#8d85ec] text-base mr-1.5 flex-shrink-0"></iconify-icon>
+                                <span><span class="font-semibold text-[#8d85ec]">Package Price:</span> Rs {{ number_format($venue->package_price ?? 0, 2) }}</span>
                             </p>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                 Package Includes: {{ $venue->package_details ?? '-' }}
@@ -164,7 +164,9 @@
                     @if($venue->has_catering)
                         <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
                             <p class="text-sm text-gray-700 dark:text-gray-200">
-                                🍽️ <span class="font-semibold text-[#8d85ec]">Catering Available</span><br>
+                                <span class="inline-flex items-center gap-1.5 font-semibold text-[#8d85ec]">
+                                    <iconify-icon icon="solar:chef-hat-bold" class="text-base"></iconify-icon> Catering Available
+                                </span><br>
                                 Rs {{ number_format($venue->catering_price_per_person ?? 0, 2) }} per person
                             </p>
                             @if($venue->catering_menu)
