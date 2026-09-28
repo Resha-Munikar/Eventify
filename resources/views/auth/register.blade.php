@@ -118,20 +118,20 @@
     switch (strength) {
       case 0:
       case 1:
-        strengthText.textContent = "Weak password ❌";
-        strengthText.className = "mt-2 text-xs font-medium text-red-600";
+        strengthText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Weak password';
+        strengthText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
         break;
       case 2:
-        strengthText.textContent = "Fair password ⚠️";
-        strengthText.className = "mt-2 text-xs font-medium text-yellow-600";
+        strengthText.innerHTML = '<iconify-icon icon="solar:danger-triangle-bold" class="inline align-middle mr-1"></iconify-icon> Fair password';
+        strengthText.className = "mt-2 text-xs font-medium text-yellow-600 flex items-center";
         break;
       case 3:
-        strengthText.textContent = "Good password 🙂";
-        strengthText.className = "mt-2 text-xs font-medium text-blue-600";
+        strengthText.innerHTML = '<iconify-icon icon="solar:shield-check-bold" class="inline align-middle mr-1"></iconify-icon> Good password';
+        strengthText.className = "mt-2 text-xs font-medium text-blue-600 flex items-center";
         break;
       case 4:
-        strengthText.textContent = "Strong password ✅";
-        strengthText.className = "mt-2 text-xs font-medium text-green-600";
+        strengthText.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Strong password';
+        strengthText.className = "mt-2 text-xs font-medium text-green-600 flex items-center";
         break;
     }
 
@@ -154,15 +154,15 @@
 
   function checkMatch() {
     if (confirmInput.value === "") {
-      matchText.textContent = "";
+      matchText.innerHTML = "";
       return;
     }
     if (passwordInput.value === confirmInput.value) {
-      matchText.textContent = "Password match ✅";
-      matchText.className = "mt-2 text-xs font-medium text-green-600";
+      matchText.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords match';
+      matchText.className = "mt-2 text-xs font-medium text-green-600 flex items-center";
     } else {
-      matchText.textContent = "Password does not match ❌";
-      matchText.className = "mt-2 text-xs font-medium text-red-600";
+      matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords do not match';
+      matchText.className = "mt-2 text-xs font-medium text-red-600 flex items-center";
     }
   }
 </script>

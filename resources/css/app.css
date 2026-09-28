@@ -18,3 +18,5 @@
 
 /* For Flowbite Dark Mode */
 @custom-variant dark (&:where(.dark, .dark *));
+
+

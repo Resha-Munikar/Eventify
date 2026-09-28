@@ -38,7 +38,8 @@
                 <div class="mb-3">
                     <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Email</label>
                     <input name="email" type="email" id="email" 
-                        class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#C48F3A] outline-none dark:bg-gray-700 dark:text-gray-200" 
+                        value="{{ old('email', request('email')) }}"
+                        class="w-full mt-1 px-2 py-2 border rounded-lg focus:ring-2 focus:ring-[#8d85ec] outline-none dark:bg-gray-700 dark:text-gray-200" 
                         placeholder="eventify@gmail.com" required />
                 </div>
                 <!-- Password -->

@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Venue;
-
-
+use App\Services\ActivityLogger;
 
 class VendorVenueController extends Controller
 {
@@ -22,6 +21,12 @@ class VendorVenueController extends Controller
         }
 
         return view('vendor.venues.index', compact('venues'));
+    }
+
+    // Show form to create a new venue
+    public function create()
+    {
+        return view('vendor.venues.create');
     }
 
     // Store new venue
@@ -68,6 +73,8 @@ class VendorVenueController extends Controller
         $venue->image = $imageName;
         $venue->vendor_id = auth()->id();
         $venue->save();
+
+        ActivityLogger::log('venue_added', 'Added venue "' . $venue->venue_name . '"', $venue);
 
         return redirect()->route('vendor.venues.index')
             ->with('success', 'Venue added successfully!');
@@ -126,6 +133,8 @@ class VendorVenueController extends Controller
 
         $venue->save();
 
+        ActivityLogger::log('venue_updated', 'Updated venue "' . $venue->venue_name . '"', $venue);
+
         return redirect()->route('vendor.venues.index')
             ->with('success', 'Venue updated successfully!');
     }
@@ -133,11 +142,15 @@ class VendorVenueController extends Controller
     // Delete venue
     public function destroy(Venue $venue)
     {
+        $venueName = $venue->venue_name;
+
         if ($venue->image && file_exists(public_path('uploads/' . $venue->image))) {
             unlink(public_path('uploads/' . $venue->image));
         }
 
         $venue->delete();
+
+        ActivityLogger::log('venue_deleted', 'Deleted venue "' . $venueName . '"');
 
         return redirect()->route('vendor.venues.index')
             ->with('success', 'Venue deleted successfully!');

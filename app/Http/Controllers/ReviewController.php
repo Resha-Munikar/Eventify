@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\VenueBooking;
 use App\Models\Review;
+use App\Services\ActivityLogger;
 
 class ReviewController extends Controller
 {
@@ -16,15 +17,18 @@ class ReviewController extends Controller
             'comment' => 'nullable|string'
         ]);
 
-        $booking = VenueBooking::findOrFail($request->booking_id);
+        $booking = VenueBooking::with('venue')->findOrFail($request->booking_id);
 
-        Review::create([
+        $review = Review::create([
             'user_id' => auth()->id(),
             'venue_id' => $booking->venue_id,
             'booking_id' => $booking->id,
             'rating' => $request->rating,
             'comment' => $request->comment,
         ]);
+
+        $venueName = $booking->venue ? $booking->venue->venue_name : 'Venue #' . $booking->venue_id;
+        ActivityLogger::log('review_submitted', 'Submitted a ' . $request->rating . '-star review for "' . $venueName . '"', $review);
 
         return back()->with('success', 'Review Submitted Successfully!');
     }
@@ -38,7 +42,13 @@ class ReviewController extends Controller
     }
     public function destroy(Review $review)
     {
+        $review->load('venue');
+        $venueName = $review->venue ? $review->venue->venue_name : 'Venue #' . $review->venue_id;
+
         $review->delete();
+
+        ActivityLogger::log('review_deleted', 'Deleted a review for "' . $venueName . '"');
+
         return redirect()->back()->with('success', 'Review deleted successfully.');
     }
     public function vendorIndex()

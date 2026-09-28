@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Services\EventifyCacheService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Venue extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::saved(function (Venue $venue) {
+            EventifyCacheService::clearVenueCaches();
+        });
+
+        static::deleted(function (Venue $venue) {
+            EventifyCacheService::clearVenueCaches();
+        });
+    }
 
     protected $fillable = [
         'venue_name',
@@ -32,5 +44,9 @@ class Venue extends Model
     public function reviews()
     {
         return $this->hasMany(\App\Models\Review::class);
+    }
+    public function inquiries()
+    {
+        return $this->hasMany(\App\Models\Inquiry::class);
     }
 }

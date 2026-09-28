@@ -59,9 +59,9 @@
                 <!-- Pricing -->
                 @if($venue->price_type === 'package')
                     <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                        <p class="text-sm text-gray-700 dark:text-gray-200">
-                            🎁 <span class="font-semibold text-[#8d85ec]">Package Price:</span> 
-                            Rs {{ number_format($venue->package_price ?? 0, 2) }}
+                        <p class="text-sm text-gray-700 dark:text-gray-200 flex items-center">
+                            <iconify-icon icon="solar:gift-bold" class="text-[#8d85ec] mr-1.5 text-base flex-shrink-0"></iconify-icon>
+                            <span><span class="font-semibold text-[#8d85ec]">Package Price:</span> Rs {{ number_format($venue->package_price ?? 0, 2) }}</span>
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Package Includes: {{ $venue->package_details ?? '-' }}
@@ -78,7 +78,9 @@
                 @if($venue->has_catering)
                     <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
                         <p class="text-sm text-gray-700 dark:text-gray-200">
-                            🍽️ <span class="font-semibold text-[#8d85ec]">Catering Available</span><br>
+                            <span class="inline-flex items-center gap-1.5 font-semibold text-[#8d85ec]">
+                                <iconify-icon icon="solar:chef-hat-bold" class="text-base"></iconify-icon> Catering Available
+                            </span><br>
                             Rs {{ number_format($venue->catering_price_per_person ?? 0, 2) }} per person
                         </p>
                         @if($venue->catering_menu)
@@ -322,8 +324,8 @@ reviewDiv.className = 'border rounded p-5 bg-purple-100';
 reviewDiv.innerHTML = `
   <div class="flex items-center space-x-3 mb-2">
 <img src="${profilePhotosUrl}/${review.profile_photos}" alt="${review.user_name}" class="w-8 h-8 rounded-full object-cover">      <p class="font-semibold text-gray-900 dark:text-black">${review.user_name}</p>
-      <div class="flex items-center space-x-1">
-        ${'⭐'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
+      <div class="flex items-center space-x-1 text-amber-400">
+        ${Array(review.rating).fill('<iconify-icon icon="solar:star-bold" class="text-amber-400 inline text-sm"></iconify-icon>').join('')}${Array(5 - review.rating).fill('<iconify-icon icon="solar:star-linear" class="text-gray-300 inline text-sm"></iconify-icon>').join('')}
       </div>
     </div>
   </div>

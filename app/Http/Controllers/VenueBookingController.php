@@ -7,6 +7,7 @@ use App\Models\VenueBooking;
 use Illuminate\Database\QueryException;
 use Carbon\Carbon;
 use App\Mail\BookingConfirmation;
+use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\Mail;   
 use PDF;
 
@@ -59,6 +60,9 @@ public function getBookedDates(Venue $venue)
             'status' => 'unpaid',
         ]);
 
+        $venueName = $booking->venue ? $booking->venue->venue_name : 'Venue #' . $booking->venue_id;
+        ActivityLogger::log('venue_booked', 'Booked venue "' . $venueName . '" for ' . Carbon::parse($booking->event_date)->format('M d, Y'), $booking);
+
         // Send confirmation email
         Mail::to($booking->user->email)->send(new BookingConfirmation($booking));
 
@@ -70,9 +74,12 @@ public function getBookedDates(Venue $venue)
 }
 public function markAsPaid($id)
 {
-    $booking = VenueBooking::findOrFail($id);
+    $booking = VenueBooking::with('venue')->findOrFail($id);
     $booking->status = 'paid';
     $booking->save();
+
+    $venueName = $booking->venue ? $booking->venue->venue_name : 'Venue #' . $booking->venue_id;
+    ActivityLogger::log('venue_booking_paid', 'Marked booking for venue "' . $venueName . '" as paid', $booking);
 
     return redirect()->back()->with('success', 'Booking marked as paid.');
 }
@@ -205,14 +212,18 @@ public function showReport(Request $request)
 } 
 public function cancel($id)
 {
-    $booking = VenueBooking::findOrFail($id);
+    $booking = VenueBooking::with('venue')->findOrFail($id);
 
     // Optional: prevent deleting paid bookings
     if($booking->status === 'paid') {
         return redirect()->back()->with('error', 'Paid bookings cannot be cancelled.');
     }
 
+    $venueName = $booking->venue ? $booking->venue->venue_name : 'Venue #' . $booking->venue_id;
+
     $booking->delete(); // this removes the booking from the DB
+
+    ActivityLogger::log('venue_booking_cancelled', 'Cancelled booking for venue "' . $venueName . '"');
 
     return redirect()->back()->with('success', 'Booking cancelled successfully.');
 }

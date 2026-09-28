@@ -103,15 +103,15 @@ function updateRule(element, isValid) {
 
 function checkMatch() {
     if (confirmPasswordInput.value === "") {
-        matchText.textContent = "";
+        matchText.innerHTML = "";
         return;
     }
     if (newPasswordInput.value === confirmPasswordInput.value) {
-        matchText.textContent = "Passwords match ✅";
-        matchText.className = "mt-1 text-xs font-medium text-green-600";
+        matchText.innerHTML = '<iconify-icon icon="solar:check-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords match';
+        matchText.className = "mt-1 text-xs font-medium text-green-600 flex items-center";
     } else {
-        matchText.textContent = "Passwords do not match ❌";
-        matchText.className = "mt-1 text-xs font-medium text-red-600";
+        matchText.innerHTML = '<iconify-icon icon="solar:close-circle-bold" class="inline align-middle mr-1"></iconify-icon> Passwords do not match';
+        matchText.className = "mt-1 text-xs font-medium text-red-600 flex items-center";
     }
 }
 
