@@ -85,15 +85,15 @@
                 @auth
                 <div x-data="{ open: false }" class="relative">
                     <!-- Profile button -->
-                    <button @click="open = !open" class="flex items-center focus:outline-none">
-                        <img src="{{ Auth::user()->profile_image ?? asset('uploads/avatar.jpg') }}"
+                    <button @click="open = !open" class="flex items-center gap-2 focus:outline-none p-1 rounded-full hover:bg-white/20 transition">
+                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : (Auth::user()->profile_image ?? asset('uploads/avatar.jpg')) }}"
                             alt="Profile"
-                            class="w-8 h-8 rounded-full border-2 border-purple-500 hover:border-purple-700 transition">
+                            class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-xs">
                     </button>
 
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" 
-                        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl py-2 z-50 transition duration-200"
+                        class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 z-50 border border-gray-100 dark:border-gray-700"
                         x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="opacity-0 transform scale-95"
                         x-transition:enter-end="opacity-100 transform scale-100"
@@ -101,27 +101,75 @@
                         x-transition:leave-start="opacity-100 transform scale-100"
                         x-transition:leave-end="opacity-0 transform scale-95">
 
+                        <!-- User Info Header -->
+                        <div class="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
+                            <p class="text-xs font-bold text-gray-900 dark:text-white truncate">{{ Auth::user()->name }}</p>
+                            <div class="flex items-center justify-between mt-0.5">
+                                <span class="text-[10px] text-gray-400 truncate max-w-[120px]">{{ Auth::user()->email }}</span>
+                                <span class="text-[9px] font-bold px-1.5 py-0.2 rounded uppercase 
+                                    {{ Auth::user()->role === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300' : (Auth::user()->role === 'vendor' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300') }}">
+                                    {{ Auth::user()->role }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Role-based Dashboard Link -->
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}"
+                               class="flex items-center px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition">
+                                <svg class="w-4 h-4 mr-2.5 text-[#8D85EC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                Admin Dashboard
+                            </a>
+                        @elseif(Auth::user()->role === 'vendor')
+                            <a href="{{ route('vendor.dashboard') }}"
+                               class="flex items-center px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition">
+                                <svg class="w-4 h-4 mr-2.5 text-[#8D85EC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                Vendor Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('customer.dashboard') }}"
+                               class="flex items-center px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition">
+                                <svg class="w-4 h-4 mr-2.5 text-[#8D85EC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                My Dashboard
+                            </a>
+                            <a href="{{ route('usereventbook') }}"
+                               class="flex items-center px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition">
+                                <svg class="w-4 h-4 mr-2.5 text-[#8D85EC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                </svg>
+                                My Bookings
+                            </a>
+                        @endif
+
                         <!-- Profile link -->
                         <a href="{{ route('profile') }}"
-                          class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-purple-700 rounded-lg transition">
-                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                          class="flex items-center px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition">
+                            <svg class="w-4 h-4 mr-2.5 text-[#8D85EC]" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm-6 8a6 6 0 1112 0H4z"/>
                             </svg>
-                            Profile
+                            Account Profile
                         </a>
 
                         <!-- Logout button -->
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                            @csrf
-                        </form>
+                        <div class="pt-1 mt-1 border-t border-gray-100 dark:border-gray-700">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                @csrf
+                            </form>
 
-                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                        class="flex items-center w-full px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-red-100 dark:hover:bg-red-700 rounded-lg transition">
-                            <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M3 10a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm9-4a1 1 0 00-1-1H4a1 1 0 100 2h7a1 1 0 001-1zm0 8a1 1 0 00-1-1H4a1 1 0 100 2h7a1 1 0 001-1z"/>
-                            </svg>
-                            Logout
-                        </a>
+                            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="flex items-center w-full px-4 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
+                                <svg class="w-4 h-4 mr-2.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Log Out
+                            </a>
+                        </div>
 
                     </div>
                 </div>

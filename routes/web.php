@@ -14,6 +14,7 @@ use App\Http\Controllers\KhaltiController;
 use App\Http\Controllers\VenueBookingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminInquiryController;
 use App\Http\Controllers\AdminKycController;
@@ -51,6 +52,10 @@ Route::get('/usereventbook', [UserController::class, 'showUserEvent'])->name('us
 
 // Authenticated and Verified User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [UserController::class, 'customerDashboard'])->name('dashboard');
+    Route::get('/customer/dashboard', [UserController::class, 'customerDashboard'])->name('customer.dashboard');
+    Route::post('/bookings/{id}/cancel', [UserController::class, 'cancelEventBooking'])->name('bookings.cancel');
+
     Route::get('/chirps', [ChirpController::class, 'index'])->name('chirps.index');
     Route::post('/chirps', [ChirpController::class, 'store'])->name('chirps.store');
 
@@ -63,7 +68,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin Routes (Auth, Verified, Admin)
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-    Route::get('/admin/chirps', [ChirpController::class, 'adminIndex'])->name('chirps.adminIndex');
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/chirps', [AdminDashboardController::class, 'index'])->name('chirps.adminIndex');
+    Route::get('/admin', [AdminDashboardController::class, 'index']);
     Route::post('/admin/chirps', [ChirpController::class, 'adminStore'])->name('chirps.adminStore');
     Route::get('/admin/users/{id}/edit', [UserController::class, 'adminEdit'])->name('users.adminEdit');
     Route::put('/admin/users/{id}', [UserController::class, 'adminUpdate'])->name('users.adminUpdate');

@@ -252,4 +252,73 @@ public function showReport()
         return redirect()->back()->with('success', 'Event booking cancelled successfully! ' . $booking->tickets . ' seat(s) have been restored.');
     }
 
+    /**
+     * Render the customer / attendee dashboard.
+     */
+    public function customerDashboard()
+    {
+        $user = Auth::user();
+        $user->load('savedEvents.ticketTypes');
+
+        // 1. Core customer metrics
+        $totalBookings = Booking::where('user_id', $user->id)
+            ->where('booking_status', '!=', 'cancelled')
+            ->count();
+
+        $totalTicketsPurchased = (int) Booking::where('user_id', $user->id)
+            ->where('booking_status', '!=', 'cancelled')
+            ->sum('tickets');
+
+        $totalSpent = (float) Booking::where('user_id', $user->id)
+            ->whereIn('payment_status', ['paid', 'confirmed', 'completed'])
+            ->where('booking_status', '!=', 'cancelled')
+            ->sum(DB::raw('COALESCE(total_amount, amount)'));
+
+        $savedEventsCount = $user->savedEvents()->count();
+
+        // 2. Upcoming events the customer has booked tickets for
+        $upcomingAttendingBookings = Booking::with(['event.ticketTypes', 'ticketType'])
+            ->where('user_id', $user->id)
+            ->where('booking_status', '!=', 'cancelled')
+            ->whereHas('event', function ($q) {
+                $q->where('event_date', '>=', now());
+            })
+            ->latest()
+            ->get();
+
+        $upcomingCount = $upcomingAttendingBookings->count();
+
+        // 3. Most recent booking
+        $latestBooking = Booking::with(['event.ticketTypes', 'ticketType'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->first();
+
+        // 4. Recent bookings list
+        $recentBookings = Booking::with(['event', 'ticketType'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // 5. Saved Events for fast booking
+        $savedEvents = $user->savedEvents()
+            ->with('ticketTypes')
+            ->take(4)
+            ->get();
+
+        return view('customer.dashboard', compact(
+            'user',
+            'totalBookings',
+            'totalTicketsPurchased',
+            'totalSpent',
+            'savedEventsCount',
+            'upcomingAttendingBookings',
+            'upcomingCount',
+            'latestBooking',
+            'recentBookings',
+            'savedEvents'
+        ));
+    }
 }
+
