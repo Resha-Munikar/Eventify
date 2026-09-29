@@ -1042,7 +1042,7 @@
 
             <div class="w-full aspect-[4/4.5] overflow-hidden rounded-2xl bg-purple-50">
                 <img
-                    src="{{ asset('uploads/jane1.jpg') }}"
+                    src="{{ asset('uploads/Bristi.jpg') }}"
                     alt="Bristi Maharjan"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -1068,7 +1068,7 @@
 
             <div class="w-full aspect-[4/4.5] overflow-hidden rounded-2xl bg-purple-50">
                 <img
-                    src="{{ asset('uploads/Sara.jpg') }}"
+                    src="{{ asset('uploads/Resha.jpg') }}"
                     alt="Resha Munikar"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -1094,7 +1094,7 @@
 
             <div class="w-full aspect-[4/4.5] overflow-hidden rounded-2xl bg-purple-50">
                 <img
-                    src="{{ asset('uploads/Sara.jpg') }}"
+                    src="{{ asset('uploads/sony.jpg') }}"
                     alt="Sony Tamang"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

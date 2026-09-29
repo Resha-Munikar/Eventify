@@ -13,7 +13,7 @@
 @endif
 
 @section('content')
-<div x-data="{ openChange: false, openForgot: false, confirmDeletePhoto: false }" class="min-h-[calc(100vh-80px)] bg-[#f6f8fd] dark:bg-gray-900 relative overflow-hidden py-10 px-4 sm:px-6 lg:px-8">
+<div x-data="{ openChange: false, openForgot: false, confirmDeletePhoto: false }" class="ml-0 sm:ml-64 min-h-[calc(100vh-80px)] bg-[#f6f8fd] dark:bg-gray-900 relative overflow-hidden py-10 px-4 sm:px-6 lg:px-8">
 
     <!-- Ambient Decorative Gradients -->
     <div class="pointer-events-none absolute -top-24 -right-24 w-96 h-96 bg-purple-200/40 dark:bg-purple-900/20 rounded-full blur-3xl"></div>
