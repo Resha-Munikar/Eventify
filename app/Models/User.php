@@ -125,4 +125,36 @@ class User extends Authenticatable
     {
         return $query->whereIn('role', $roles);
     }
+
+    /**
+     * Get the resolved public URL for the user's profile photo.
+     */
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        if (!empty($this->profile_photo)) {
+            if (file_exists(public_path('uploads/profile_photos/' . $this->profile_photo))) {
+                return asset('uploads/profile_photos/' . $this->profile_photo);
+            }
+            if (file_exists(public_path('storage/' . $this->profile_photo))) {
+                return asset('storage/' . $this->profile_photo);
+            }
+            if (str_starts_with($this->profile_photo, 'http://') || str_starts_with($this->profile_photo, 'https://')) {
+                return $this->profile_photo;
+            }
+            if (file_exists(public_path($this->profile_photo))) {
+                return asset($this->profile_photo);
+            }
+            return asset('uploads/profile_photos/' . $this->profile_photo);
+        }
+
+        if (!empty($this->profile_image)) {
+            return $this->profile_image;
+        }
+
+        if (file_exists(public_path('uploads/avatar.jpg'))) {
+            return asset('uploads/avatar.jpg');
+        }
+
+        return null;
+    }
 }

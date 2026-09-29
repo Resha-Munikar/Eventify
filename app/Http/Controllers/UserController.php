@@ -124,8 +124,13 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->profile_photo && file_exists(public_path('uploads/profile_photos/' . $user->profile_photo))) {
-            unlink(public_path('uploads/profile_photos/' . $user->profile_photo));
+        if ($user->profile_photo) {
+            if (file_exists(public_path('uploads/profile_photos/' . $user->profile_photo))) {
+                @unlink(public_path('uploads/profile_photos/' . $user->profile_photo));
+            }
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($user->profile_photo)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_photo);
+            }
         }
 
         $user->profile_photo = null;
@@ -133,7 +138,7 @@ class UserController extends Controller
 
         ActivityLogger::log('profile_photo_deleted', 'Removed profile photo', $user, $user);
 
-        return redirect()->route('profile')->with('success', 'Profile photo deleted successfully!');
+        return back()->with('success', 'Profile photo removed successfully!');
     }
     
 

@@ -3,10 +3,7 @@
 namespace App\Services;
 
 use App\Models\Event;
-use App\Models\Venue;
 use App\Models\Booking;
-use App\Models\VenueBooking;
-use App\Models\Review;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -148,6 +145,7 @@ class EventBotService
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt]
         ];
+
         foreach ($history as $item) {
             $role = ($item['role'] === 'user') ? 'user' : 'assistant';
             $messages[] = ['role' => $role, 'content' => $item['content']];
@@ -185,42 +183,45 @@ class EventBotService
     public function buildSystemKnowledgePrompt(?User $user = null): string
     {
         $eventsData = $this->getDynamicEventsSummary();
-        $venuesData = $this->getDynamicVenuesSummary();
         $userData = $this->getUserContextSummary($user);
 
         return <<<PROMPT
-You are **EventBot AI**, the official intelligent assistant for **Eventify** — a premier event and venue management & booking platform in Nepal.
+You are **EventBot AI**, the official intelligent assistant for **Eventify** — Nepal's premier digital event discovery, ticketing, and management platform.
 
 ### Your Personality & Tone:
-- Friendly, professional, concise, proactive, and exceptionally knowledgeable about all Eventify features and real-time database data.
-- Format your responses using clean Markdown (bold headings, bullet points, numbered lists, links formatted as Markdown `[Link Text](/route)`).
-- When mentioning pages, provide direct markdown links:
-  - Events page: `[Browse Events](/events)`
-  - Venues page: `[Explore Venues](/venues)`
-  - Contact Us: `[Contact Us](/contact)`
+- Friendly, helpful, professional, concise, proactive, and exceptionally knowledgeable about all Eventify features, event listings, ticket bookings, Khalti payments, vendor tools, and account management.
+- Format your responses using clean, structured Markdown (bold headings, bullet points, numbered steps, and markdown links `[Link Text](/route)`).
+- When mentioning pages and actions, provide direct markdown links:
+  - Events directory: `[Browse Events](/events)`
+  - User Bookings & Tickets: `[My Tickets](/usereventbook)` or `[Attendee Dashboard](/customer/dashboard)`
+  - Profile & Account: `[My Profile](/profile)`
+  - Login & Register: `[Login](/login)` or `[Sign Up](/register)`
+  - Forgot Password: `[Forgot Password](/forgot-password)` (or Vendor Forgot Password: `[Vendor Forgot Password](/vendor/forgot-password)`)
+  - Vendor Portal: `[Vendor Dashboard](/vendor/dashboard)`
+  - Vendor KYC Verification: `[Vendor KYC](/vendor/kyc)`
+  - Create Event (for Vendors): `[Create Event](/vendor/events/create)`
+  - Community Board: `[Chirps Community](/chirps)`
+  - Contact & Support: `[Contact Us](/contact)`
   - About Eventify: `[About Us](/about)`
-  - User Profile & Bookings: `[Profile](/profile)`
-  - User Bookings: `[User Bookings](/userbooking)` or `[Event Bookings](/usereventbook)`
-  - Login / Sign Up: `[Login](/login)` or `[Register](/register)`
-  - Vendor Dashboard: `[Vendor Dashboard](/vendor/dashboard)`
-  - Chirps Community: `[Chirps](/chirps)`
 
-### Project Overview & Key Features:
-1. **Event Booking**: Users can explore upcoming events across categories (Music, Tech, Workshop, Sports, Festivals, etc.), view event dates, venue details, pricing (in NPR), available tickets, and book tickets instantly.
-2. **Venue Booking**: Users can book premier venues with base pricing, guest count calculation, customized packages, and catering menu options (per person pricing).
-3. **Payment**: Seamlessly integrated with **Khalti Digital Wallet** for secure and instant verification in Nepal.
-4. **Vendor Portal**: Vendors can register, list venues & events, track bookings, analyze revenue, download PDF booking reports, and manage customer reviews.
-5. **Admin Portal**: Admins have complete control to manage users, monitor all event & venue bookings, generate admin PDF reports, and view platform statistics.
-6. **Reviews & Ratings**: Real user reviews and star ratings for venues.
-7. **Ticket & Invoice Downloads**: Automated email confirmations and downloadable PDF reports.
+### Project Overview & Key Features of Eventify:
+1. **Event Discovery**: Attendees can discover upcoming events across a wide range of categories including Music & Concerts, Technology & Hackathons, Educational Workshops, Sports Tournaments, Cultural Festivals, Arts & Exhibitions, Business Conferences, and Parties.
+2. **Multi-Tier Ticket Booking**: Events feature flexible ticket tiers (VIP, Standard, Early Bird, General Admission) with real-time seat availability and transparent pricing in NPR.
+3. **Instant Khalti Payment Integration**: Secure digital payments powered by Khalti Digital Wallet with instant verification and automatic digital ticket generation.
+4. **Attendee Dashboard & Ticket Management**: Users can view all active and past ticket bookings, download tickets, check transaction statuses, and manage their personal profile and photo.
+5. **Vendor & Organizer Hub**:
+   - Register as an organizer/vendor to host and manage events.
+   - **KYC Verification**: Vendors submit citizenship/PAN/business documentation for admin review to ensure secure and trustworthy event hosting.
+   - **Event Creation & Management**: Publish events with custom banners, locations, dates, descriptions, ticket types, seat capacity, and prices.
+   - **Real-Time Analytics & PDF Reports**: Track live ticket sales, view attendee rosters, and download official PDF booking reports.
+6. **Admin Management**: Admins review vendor KYC submissions, monitor platform-wide events and bookings, manage users, and ensure platform integrity.
+7. **Chirps Community**: A social micro-post board where users and organizers can discuss upcoming events, share photos, ask questions, and engage with the community.
+8. **Account Security**: Profile customization with photo upload/removal, secure email OTP verification, password updates, and automated password recovery links.
 
 ---
 ### Real-Time Live Database Knowledge:
 #### Available / Upcoming Events:
 {$eventsData}
-
-#### Available Venues & Pricing:
-{$venuesData}
 
 #### Current User Status:
 {$userData}
@@ -228,11 +229,12 @@ You are **EventBot AI**, the official intelligent assistant for **Eventify** —
 
 ### Response Guidelines:
 - Answer questions accurately using the real database data provided above.
-- If a user asks about events, list the relevant ones with name, date, venue, category, and price in NPR.
-- If a user asks about venues, provide details on location, pricing, packages, and catering options.
-- If a user asks about how booking or Khalti payment works, give clear step-by-step instructions.
-- If a user asks for their bookings and they are logged in, summarize their personal bookings using the Current User Status section. If not logged in, kindly invite them to `[Login](/login)`.
-- Keep answers informative yet neat. Avoid unnecessary fluff.
+- When users ask about events, provide specific event names, categories, dates, locations, ticket tier pricing (in NPR), and remaining seats.
+- If a user asks how to book or how Khalti payment works, provide clean, step-by-step instructions.
+- If a logged-in user asks for their bookings or tickets, summarize their bookings from the Current User Status section. If not logged in, invite them to `[Login](/login)`.
+- If a user asks about hosting an event or becoming a vendor, guide them through vendor registration, KYC submission, and event creation tools.
+- Never mention venue booking or venue rental features as Eventify focuses exclusively on events, ticketing, and organizer management.
+- Keep answers neat, engaging, and directly actionable.
 PROMPT;
     }
 
@@ -243,181 +245,183 @@ PROMPT;
     {
         $lower = strtolower($message);
 
-        // 1. User Bookings Inquiries
-        if (str_contains($lower, 'my booking') || str_contains($lower, 'my ticket') || str_contains($lower, 'my event') || str_contains($lower, 'my reservation')) {
+        // 1. User Bookings & Tickets Inquiries
+        if (str_contains($lower, 'my booking') || str_contains($lower, 'my ticket') || str_contains($lower, 'my event') || str_contains($lower, 'my reservation') || str_contains($lower, 'purchased ticket') || str_contains($lower, 'check my booking')) {
             if (!$user) {
                 return [
-                    'reply' => "🔒 **Login Required**\n\nYou need to be logged in to view your personal bookings and tickets.\n\n👉 Please **[Login to your account](/login)** or **[Create a new account](/register)** to access your bookings in your **[Profile](/profile)**.",
-                    'suggestions' => ['🔑 Login Now', '📅 Browse Events', '🏰 Explore Venues'],
+                    'reply' => "🔒 **Login Required to View Bookings**\n\nYou need to be logged in to view your personal event bookings and digital tickets.\n\n👉 Please **[Login to your account](/login)** or **[Create a new account](/register)** to access your tickets at **[My Tickets](/usereventbook)** or your **[Profile](/profile)**.",
+                    'suggestions' => ['🔑 Login Now', '🎉 Browse Events', '💳 Payment Info'],
                 ];
             }
 
-            $eventBookings = Booking::with('event')->where('user_id', $user->id)->latest()->take(5)->get();
-            $venueBookings = VenueBooking::with('venue')->where('user_id', $user->id)->latest()->take(5)->get();
+            $bookings = Booking::with(['event', 'ticketType'])->where('user_id', $user->id)->latest()->take(5)->get();
 
-            $reply = "👤 **Hello {$user->name}, here are your recent bookings:**\n\n";
+            $reply = "👤 **Hello {$user->name}, here are your recent event bookings:**\n\n";
 
-            if ($eventBookings->isEmpty() && $venueBookings->isEmpty()) {
-                $reply .= "You don't have any active event or venue bookings yet.\n\nReady to book? Explore our **[Upcoming Events](/events)** or **[Available Venues](/venues)**!";
+            if ($bookings->isEmpty()) {
+                $reply .= "You don't have any active event ticket bookings yet.\n\nReady to discover exciting experiences? Explore our **[Upcoming Events](/events)** and secure your tickets!";
             } else {
-                if ($eventBookings->isNotEmpty()) {
-                    $reply .= "🎟️ **Event Bookings:**\n";
-                    foreach ($eventBookings as $b) {
-                        $eventName = $b->event->event_name ?? 'Event #' . $b->event_id;
-                        $date = $b->event && $b->event->event_date ? $b->event->event_date->format('M d, Y') : 'Scheduled';
-                        $reply .= "- **{$eventName}** — {$b->tickets} ticket(s) | NPR {$b->amount} | Date: {$date}\n";
-                    }
-                    $reply .= "\n";
+                $reply .= "🎟️ **Your Active & Past Bookings:**\n";
+                foreach ($bookings as $b) {
+                    $eventName = $b->event->event_name ?? 'Event #' . $b->event_id;
+                    $date = $b->event && $b->event->event_date ? $b->event->event_date->format('M d, Y - h:i A') : 'Scheduled';
+                    $tier = $b->ticketType ? " ({$b->ticketType->name} Tier)" : "";
+                    $location = $b->event->venue ?? 'Announced on ticket';
+                    $reply .= "• **{$eventName}**{$tier}\n";
+                    $reply .= "  📅 Date: {$date} | 📍 Location: {$location}\n";
+                    $reply .= "  🎫 Tickets: {$b->tickets} | 💰 Amount: NPR " . number_format($b->amount) . "\n\n";
                 }
-
-                if ($venueBookings->isNotEmpty()) {
-                    $reply .= "🏰 **Venue Bookings:**\n";
-                    foreach ($venueBookings as $vb) {
-                        $venueName = $vb->venue->venue_name ?? 'Venue #' . $vb->venue_id;
-                        $status = ucfirst($vb->status ?? 'Confirmed');
-                        $date = $vb->event_date ?? 'N/A';
-                        $reply .= "- **{$venueName}** — Date: {$date} | Guests: {$vb->guests} | NPR {$vb->total_price} ({$status})\n";
-                    }
-                }
-                $reply .= "\nYou can view full details and tickets on your **[Profile Bookings](/profile)** page.";
+                $reply .= "👉 You can view and manage all your tickets anytime at **[My Tickets](/usereventbook)** or your **[Attendee Dashboard](/customer/dashboard)**.";
             }
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['📅 Browse Events', '🏰 Explore Venues', '💳 Payment Methods'],
+                'suggestions' => ['🎉 Browse Events', '💳 Payment Methods', '👤 My Profile'],
             ];
         }
 
         // 2. Greetings
-        if (preg_match('/^(hi|hello|hey|namaste|greetings|good\s+(morning|afternoon|evening))\b/i', $message) || $lower === 'hi' || $lower === 'hello') {
+        if (preg_match('/^(hi|hello|hey|namaste|greetings|good\s+(morning|afternoon|evening))\b/i', $message) || $lower === 'hi' || $lower === 'hello' || $lower === 'hey' || $lower === 'namaste') {
             $greeting = ($user) ? "Hello **{$user->name}**! 👋" : "Hello there! 👋";
             return [
-                'reply' => "{$greeting} Welcome to **EventBot AI**!\n\nI can help you discover exciting events, find & book top venues, explain Khalti payments, check your bookings, or guide you on vendor tools.\n\nHow can I help you today?",
-                'suggestions' => ['🎉 Upcoming Events', '🏰 Find Venues', '💳 How Payment Works', '👤 My Bookings'],
+                'reply' => "{$greeting} Welcome to **EventBot AI**!\n\nI can assist you with discovering upcoming events, booking tickets, explaining Khalti payments, vendor event hosting, KYC verification, and attendee dashboards across **Eventify**.\n\nHow can I help you today?",
+                'suggestions' => ['🎉 Upcoming Events', '🎟️ How to Book', '💳 Khalti Payments', '💼 Host an Event'],
             ];
         }
 
-        // 3. About Eventify Platform
-        if (str_contains($lower, 'what is eventify') || str_contains($lower, 'about eventify') || str_contains($lower, 'who are you') || str_contains($lower, 'about us') || str_contains($lower, 'what does eventify do') || $lower === 'about') {
+        // 3. About Eventify Platform / What is Eventify
+        if (str_contains($lower, 'about eventify') || str_contains($lower, 'what is eventify') || str_contains($lower, 'who are you') || str_contains($lower, 'what does eventify do') || str_contains($lower, 'about us') || $lower === 'about' || $lower === 'eventify') {
             $reply = "🌟 **About Eventify:**\n\n";
-            $reply .= "**Eventify** is Nepal's all-in-one digital platform for discovering, organizing, and booking memorable events and premium venues.\n\n";
-            $reply .= "✨ **What you can do:**\n";
-            $reply .= "• Discover live concerts, workshops, technology summits, and cultural festivals.\n";
-            $reply .= "• Book banquet halls, party palaces, and conference spaces with full catering.\n";
-            $reply .= "• Pay securely with **Khalti**.\n";
-            $reply .= "• Share updates and thoughts with the community in **[Chirps](/chirps)**.\n\n";
+            $reply .= "**Eventify** is Nepal's premier all-in-one digital platform for discovering, organizing, and booking memorable events.\n\n";
+            $reply .= "✨ **Key Highlights:**\n";
+            $reply .= "• **Event Discovery**: Find live concerts, tech hackathons, workshops, sports, and cultural festivals.\n";
+            $reply .= "• **Instant Ticketing**: Multi-tier passes (VIP, Standard, Early Bird) with real-time seat availability.\n";
+            $reply .= "• **Khalti Payments**: Seamless and secure digital wallet transactions across Nepal.\n";
+            $reply .= "• **Organizer Suite**: End-to-end event hosting, KYC verification, ticket analytics, and PDF reports.\n";
+            $reply .= "• **Community**: Connect with attendees on **[Chirps](/chirps)**.\n\n";
             $reply .= "Learn more on our **[About Us](/about)** page!";
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['📅 Browse Events', '🏰 Find Venues', '💳 Payment Info'],
+                'suggestions' => ['🎉 Browse Events', '🎟️ How to Book', '💼 Host an Event'],
             ];
         }
 
         // 4. Contact & Support
-        if (str_contains($lower, 'contact') || str_contains($lower, 'support') || str_contains($lower, 'help center') || str_contains($lower, 'phone number') || str_contains($lower, 'email') || str_contains($lower, 'reach out')) {
+        if (str_contains($lower, 'contact') || str_contains($lower, 'support') || str_contains($lower, 'help center') || str_contains($lower, 'phone') || str_contains($lower, 'email') || str_contains($lower, 'reach out') || str_contains($lower, 'customer service')) {
             $reply = "📞 **Contact & Support:**\n\n";
-            $reply .= "We're here to assist you with any questions or issues:\n\n";
+            $reply .= "We're here to assist you with any questions, ticketing issues, or organizer inquiries:\n\n";
             $reply .= "• 📧 **Email**: `resa.munikar@gmail.com`\n";
             $reply .= "• 📍 **Location**: Kathmandu, Nepal\n";
-            $reply .= "• 📝 **Support Form**: Fill out our quick form on the **[Contact Us](/contact)** page.\n\n";
-            $reply .= "Our team typically responds within 24 hours!";
+            $reply .= "• 📝 **Support Form**: Submit an inquiry on the **[Contact Us](/contact)** page.\n\n";
+            $reply .= "Our support team typically responds within 24 hours!";
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['📝 Open Contact Page', '📅 Browse Events', '🏰 Explore Venues'],
+                'suggestions' => ['📝 Open Contact Page', '🎉 Browse Events', '🎟️ How to Book'],
             ];
         }
 
-        // 5. Booking Guide (Event or Venue)
-        if (str_contains($lower, 'how to book') || str_contains($lower, 'how do i book') || str_contains($lower, 'how can i book') || str_contains($lower, 'booking process') || (str_contains($lower, 'book') && (str_contains($lower, 'how') || str_contains($lower, 'step') || str_contains($lower, 'guide')))) {
-            $reply = "📝 **How to Book on Eventify:**\n\n";
-            $reply .= "### 🎟️ For Events:\n";
-            $reply .= "1. **[Sign In](/login)** to your Eventify account.\n";
-            $reply .= "2. Navigate to **[Browse Events](/events)** and select your desired event.\n";
-            $reply .= "3. Click **'Book Now'**, choose the number of tickets.\n";
-            $reply .= "4. Complete instant payment securely via **Khalti**.\n";
-            $reply .= "5. Receive immediate booking confirmation and ticket via email!\n\n";
-
-            $reply .= "### 🏰 For Venues:\n";
-            $reply .= "1. Head to **[Explore Venues](/venues)** and pick a venue.\n";
-            $reply .= "2. Select your event date, number of guests, and optional catering package.\n";
-            $reply .= "3. Confirm booking and proceed with payment.\n\n";
-            $reply .= "You can view and manage all your tickets anytime in your **[Profile](/profile)**.";
+        // 5. Account, Profile, Password Reset & Login
+        if (str_contains($lower, 'password') || str_contains($lower, 'forgot password') || str_contains($lower, 'reset password') || str_contains($lower, 'change password') || str_contains($lower, 'profile') || str_contains($lower, 'photo') || str_contains($lower, 'avatar') || str_contains($lower, 'login') || str_contains($lower, 'register') || str_contains($lower, 'sign up') || str_contains($lower, 'account')) {
+            $reply = "👤 **Account & Profile Management on Eventify:**\n\n";
+            $reply .= "• **Profile Customization**: Update your name, email, contact info, and manage your avatar photo at **[My Profile](/profile)**.\n";
+            $reply .= "• **Password Reset**: Forgot your password? Request an automated recovery link from **[Forgot Password](/forgot-password)** (or **[Vendor Forgot Password](/vendor/forgot-password)** for organizers).\n";
+            $reply .= "• **Show/Hide Password**: Use the interactive eye toggle on login, register, and reset password forms for easy typing.\n";
+            $reply .= "• **Attendee Portal**: Access all your tickets at **[My Tickets](/usereventbook)**.\n\n";
+            $reply .= "Need help accessing your account? Reach out to **[Customer Support](/contact)**.";
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['📅 Browse Events', '🏰 Explore Venues', '💳 Payment Methods'],
+                'suggestions' => ['👤 My Profile', '🔑 Login Page', '📞 Contact Support'],
             ];
         }
 
-        // 6. Payment & Khalti
-        if (str_contains($lower, 'payment') || str_contains($lower, 'khalti') || str_contains($lower, 'how to pay') || str_contains($lower, 'refund') || (str_contains($lower, 'pay') && !str_contains($lower, 'party') && !str_contains($lower, 'palace'))) {
-            $reply = "💳 **Payment Methods on Eventify:**\n\n";
-            $reply .= "• **Khalti Digital Wallet**: We integrate official Khalti digital wallet payments for seamless transactions across Nepal.\n";
-            $reply .= "• **Instant Verification**: Once verified through Khalti, your booking is automatically secured and an instant digital ticket is sent to your registered email.\n";
-            $reply .= "• **Security**: Transactions are encrypted and processed safely.\n\n";
-            $reply .= "Need help with a payment transaction? **[Contact Support](/contact)** anytime.";
+        // 6. How to Book Tickets / Booking Process
+        if (str_contains($lower, 'how to book') || str_contains($lower, 'how do i book') || str_contains($lower, 'how can i book') || str_contains($lower, 'booking process') || str_contains($lower, 'buy ticket') || str_contains($lower, 'purchase ticket') || (str_contains($lower, 'book') && (str_contains($lower, 'step') || str_contains($lower, 'guide') || str_contains($lower, 'how')))) {
+            $reply = "🎟️ **How to Book Event Tickets on Eventify:**\n\n";
+            $reply .= "Booking your favorite events on Eventify is quick, simple, and secure:\n\n";
+            $reply .= "1. **[Sign In / Register](/login)**: Log into your Eventify account.\n";
+            $reply .= "2. **[Browse Events](/events)**: Explore featured events or filter by category (Music, Tech, Workshops, Sports, etc.).\n";
+            $reply .= "3. **Select Ticket Tier**: Choose your preferred ticket tier (VIP, Standard, Early Bird) and number of seats.\n";
+            $reply .= "4. **Proceed to Checkout**: Click **'Book Now'** to initiate payment.\n";
+            $reply .= "5. **Pay with Khalti**: Complete the instant and secure payment using your **Khalti Digital Wallet**.\n";
+            $reply .= "6. **Get Digital Ticket**: Instantly receive your confirmed digital ticket via email and view it anytime in **[My Tickets](/usereventbook)**!\n\n";
+            $reply .= "Ready to find your next experience? **[Explore Events Now](/events)**!";
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['🎟️ How to Book', '📅 View Events', '📞 Contact Support'],
+                'suggestions' => ['🎉 Browse Events', '💳 Khalti Payments', '👤 My Tickets'],
             ];
         }
 
-        // 7. Vendor & Organizer Inquiries
-        if (str_contains($lower, 'vendor') || str_contains($lower, 'organizer') || str_contains($lower, 'host event') || str_contains($lower, 'list venue') || str_contains($lower, 'create event')) {
+        // 7. Payment & Khalti Gateway FAQs
+        if (str_contains($lower, 'payment') || str_contains($lower, 'khalti') || str_contains($lower, 'how to pay') || str_contains($lower, 'wallet') || str_contains($lower, 'refund') || str_contains($lower, 'transaction') || (str_contains($lower, 'pay') && !str_contains($lower, 'party'))) {
+            $reply = "💳 **Payment Methods & Security on Eventify:**\n\n";
+            $reply .= "• **Khalti Digital Wallet**: Eventify integrates official **Khalti** payment gateway for seamless digital transactions across Nepal.\n";
+            $reply .= "• **Instant Verification**: Once confirmed via Khalti, your booking is verified in real-time and an automated digital ticket is generated immediately.\n";
+            $reply .= "• **Safety & Encryption**: All financial transactions are encrypted with bank-grade security protocols.\n";
+            $reply .= "• **Transaction Records**: View your payment receipts and booking references under **[My Tickets](/usereventbook)**.\n\n";
+            $reply .= "Have an issue with a transaction? Feel free to reach out via our **[Contact Support](/contact)** page.";
+
+            return [
+                'reply' => $reply,
+                'suggestions' => ['🎟️ How to Book', '🎉 View Events', '📞 Contact Support'],
+            ];
+        }
+
+        // 8. Vendor & Organizer Inquiries (Hosting Events, Dashboard, Reports)
+        if (str_contains($lower, 'vendor') || str_contains($lower, 'organizer') || str_contains($lower, 'host event') || str_contains($lower, 'host an event') || str_contains($lower, 'create event') || str_contains($lower, 'add event') || str_contains($lower, 'publish event') || str_contains($lower, 'organize event') || str_contains($lower, 'sell ticket')) {
             $reply = "💼 **Vendor & Organizer Hub on Eventify:**\n\n";
-            $reply .= "Are you an event organizer or venue owner? Eventify gives you powerful tools:\n\n";
-            $reply .= "• **[Vendor Dashboard](/vendor/dashboard)**: Real-time analytics, revenue tracking, and booking reports.\n";
-            $reply .= "• **Create & Manage Venues**: List your halls, customize base prices, packages, and catering menus.\n";
-            $reply .= "• **Host Events**: Publish upcoming workshops, concerts, and parties with custom ticket counts.\n";
-            $reply .= "• **Download PDF Reports**: Generate official PDF invoices and attendee booking reports.\n\n";
-            $reply .= "👉 To become a vendor, select the **Vendor** role during **[Sign Up](/register)** or log in to your **[Vendor Portal](/vendor/dashboard)**.";
+            $reply .= "Are you an event organizer, company, or artist? Eventify provides powerful tools to manage and scale your events:\n\n";
+            $reply .= "• **[Vendor Dashboard](/vendor/dashboard)**: Real-time overview of ticket sales, revenue metrics, and attendee stats.\n";
+            $reply .= "• **[Host a New Event](/vendor/events/create)**: Publish events with custom banners, descriptions, dates, venues, seat quotas, and multi-tier pricing.\n";
+            $reply .= "• **[KYC Verification](/vendor/kyc)**: Complete one-time KYC verification (citizenship/PAN) for official organizer approval.\n";
+            $reply .= "• **Attendee Management & PDF Reports**: Track attendee rosters and download official PDF sales reports for accounting.\n\n";
+            $reply .= "👉 To get started, register with the **Vendor** role at **[Sign Up](/register)** or manage your events in the **[Vendor Dashboard](/vendor/dashboard)**.";
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['📝 Vendor Sign Up', '📅 View Events', '🏰 View Venues'],
+                'suggestions' => ['💼 Vendor Dashboard', '📋 Vendor KYC', '🎉 Browse Events'],
             ];
         }
 
-        // 8. Specific Venue Search or General Venues Query
-        if (str_contains($lower, 'venue') || str_contains($lower, 'hall') || str_contains($lower, 'catering') || str_contains($lower, 'party palace') || str_contains($lower, 'banquet')) {
-            $venues = Venue::with('reviews')->take(5)->get();
-
-            if ($venues->isNotEmpty()) {
-                $reply = "🏰 **Premier Venues Available on Eventify:**\n\n";
-                foreach ($venues as $venue) {
-                    $price = $venue->base_price ? "NPR " . number_format($venue->base_price) : "Contact for Price";
-                    $catering = $venue->has_catering ? " | 🍽️ Catering Available (NPR {$venue->catering_price_per_person}/person)" : "";
-                    $rating = $venue->reviews->count() > 0 ? " ⭐ " . round($venue->reviews->avg('rating'), 1) . "/5" : "";
-
-                    $reply .= "• **{$venue->venue_name}**{$rating}\n";
-                    $reply .= "  📍 Location: {$venue->location}\n";
-                    $reply .= "  💵 Base Price: {$price}{$catering}\n";
-                    if ($venue->package_price) {
-                        $reply .= "  📦 Special Package: NPR " . number_format($venue->package_price) . "\n";
-                    }
-                    $reply .= "\n";
-                }
-                $reply .= "👉 Explore photos, check date availability, and reserve directly at **[Explore All Venues](/venues)**!";
-            } else {
-                $reply = "Discover stunning venues for weddings, conferences, and parties on our **[Venues Page](/venues)**.";
-            }
+        // 9. KYC Verification Inquiries
+        if (str_contains($lower, 'kyc') || str_contains($lower, 'verification') || str_contains($lower, 'verify vendor') || str_contains($lower, 'pan') || str_contains($lower, 'citizenship')) {
+            $reply = "📋 **Vendor KYC Verification on Eventify:**\n\n";
+            $reply .= "To maintain platform trust and security, event organizers undergo quick KYC verification:\n\n";
+            $reply .= "1. **Submit Documents**: Go to **[Vendor KYC](/vendor/kyc)** and provide your government ID (Citizenship / Passport) or Business PAN registration.\n";
+            $reply .= "2. **Admin Review**: Our team reviews your submitted documents promptly.\n";
+            $reply .= "3. **Approval**: Once verified, you gain full access to publish paid ticketed events and withdraw revenues.\n\n";
+            $reply .= "You can check or update your submission status anytime at **[Vendor KYC Portal](/vendor/kyc)**.";
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['🎟️ How to Book a Venue', '📅 Upcoming Events', '💳 Payment Details'],
+                'suggestions' => ['📋 Go to KYC Portal', '💼 Vendor Dashboard', '📞 Contact Support'],
             ];
         }
 
-        // 9. Specific Event Search or General Events Query
-        if (str_contains($lower, 'event') || str_contains($lower, 'concert') || str_contains($lower, 'workshop') || str_contains($lower, 'festival') || preg_match('/\b(music|technology|tech|sports|conference)\b/i', $lower)) {
-            // Check for specific category filter
-            $categories = ['music', 'technology', 'tech', 'workshop', 'sports', 'festival', 'art', 'business', 'party'];
+        // 10. Community Board (Chirps)
+        if (str_contains($lower, 'chirp') || str_contains($lower, 'community') || str_contains($lower, 'forum') || str_contains($lower, 'social')) {
+            $reply = "💬 **Eventify Chirps Community:**\n\n";
+            $reply .= "**[Chirps](/chirps)** is our interactive community space where attendees and event creators connect!\n\n";
+            $reply .= "• **Share Experiences**: Post thoughts, reviews, and memories from recent events.\n";
+            $reply .= "• **Stay Updated**: Catch announcements and behind-the-scenes updates directly from event organizers.\n";
+            $reply .= "• **Connect**: Engage with fellow enthusiasts who share your passions.\n\n";
+            $reply .= "👉 Join the conversation today at **[Chirps Community](/chirps)**!";
+
+            return [
+                'reply' => $reply,
+                'suggestions' => ['💬 Open Chirps', '🎉 Browse Events', '👤 My Profile'],
+            ];
+        }
+
+        // 11. Event Category Searches & Specific Events Query
+        if (preg_match('/\b(event|events|concert|concerts|workshop|workshops|festival|festivals|hackathon|hackathons|seminar|seminars|music|technology|tech|sports|conference|party|parties|art|business|coding|cultural|upcoming)\b/i', $lower)) {
+            $categories = ['music', 'technology', 'tech', 'workshop', 'sports', 'festival', 'art', 'business', 'party', 'conference'];
             $matchedCategory = null;
             foreach ($categories as $cat) {
-                if (str_contains($lower, $cat)) {
+                if (preg_match('/\b' . preg_quote($cat, '/') . '\b/i', $lower)) {
                     $matchedCategory = ($cat === 'tech') ? 'technology' : $cat;
                     break;
                 }
@@ -430,104 +434,44 @@ PROMPT;
             $events = $query->orderBy('event_date', 'asc')->take(5)->get();
 
             if ($events->isNotEmpty()) {
-                $reply = $matchedCategory 
+                $title = $matchedCategory 
                     ? "🎉 **Top " . ucfirst($matchedCategory) . " Events on Eventify:**\n\n"
                     : "🎉 **Featured & Upcoming Events on Eventify:**\n\n";
 
+                $reply = $title;
                 foreach ($events as $event) {
                     $date = $event->event_date ? $event->event_date->format('D, M d, Y - h:i A') : 'Upcoming';
                     $price = $event->price > 0 ? "NPR " . number_format($event->price) : "FREE";
                     $seats = $event->available_seats !== null ? " ({$event->available_seats} seats left)" : "";
+                    $location = $event->venue ? "📍 Location: {$event->venue}" : "📍 Location: Kathmandu";
+                    
                     $reply .= "• **{$event->event_name}** ({$event->category})\n";
                     $reply .= "  📅 Date: {$date}\n";
-                    $reply .= "  📍 Venue: {$event->venue}\n";
+                    $reply .= "  {$location}\n";
                     $reply .= "  💰 Price: {$price}{$seats}\n\n";
                 }
-                $reply .= "👉 View all events and book your passes at **[Browse All Events](/events)**!";
+                $reply .= "👉 Discover full lineups, select ticket tiers, and book passes at **[Browse All Events](/events)**!";
             } else {
-                $reply = "We currently have exciting events coming soon! Check out the complete listing on our **[Events Page](/events)**.";
+                $reply = "We have exciting upcoming events in the works! Check out the complete, up-to-date listing on our **[Events Page](/events)**.";
             }
 
             return [
                 'reply' => $reply,
-                'suggestions' => ['🎟️ How to Book an Event', '🏰 Find Venues', '💳 Payment Options'],
+                'suggestions' => ['🎟️ How to Book', '💳 Khalti Payments', '💼 Host an Event'],
             ];
         }
 
-        // 5. Payment & Khalti
-        if (str_contains($lower, 'payment') || str_contains($lower, 'khalti') || str_contains($lower, 'pay') || str_contains($lower, 'cost') || str_contains($lower, 'refund')) {
-            $reply = "💳 **Payment Methods on Eventify:**\n\n";
-            $reply .= "• **Khalti Digital Wallet**: We integrate official Khalti digital wallet payments for seamless transactions across Nepal.\n";
-            $reply .= "• **Instant Verification**: Once verified through Khalti, your booking is automatically secured and an instant digital ticket is sent to your registered email.\n";
-            $reply .= "• **Security**: Transactions are encrypted and processed safely.\n\n";
-            $reply .= "Need help with a payment transaction? **[Contact Support](/contact)** anytime.";
-
+        // 12. Thanks / Politeness
+        if (str_contains($lower, 'thank') || str_contains($lower, 'awesome') || str_contains($lower, 'great') || str_contains($lower, 'good job') || str_contains($lower, 'bye') || str_contains($lower, 'goodbye')) {
             return [
-                'reply' => $reply,
-                'suggestions' => ['🎟️ How to Book', '📅 View Events', '📞 Contact Support'],
+                'reply' => "You're very welcome! 😊 It's always my pleasure to assist you.\n\nEnjoy your experience on **Eventify**, and let me know whenever you need anything else!",
+                'suggestions' => ['🎉 Upcoming Events', '🎟️ How to Book', '👤 My Profile'],
             ];
         }
 
-        // 6. Vendor & Organizer Inquiries
-        if (str_contains($lower, 'vendor') || str_contains($lower, 'organizer') || str_contains($lower, 'host') || str_contains($lower, 'list venue') || str_contains($lower, 'create event')) {
-            $reply = "💼 **Vendor & Organizer Hub on Eventify:**\n\n";
-            $reply .= "Are you an event organizer or venue owner? Eventify gives you powerful tools:\n\n";
-            $reply .= "• **[Vendor Dashboard](/vendor/dashboard)**: Real-time analytics, revenue tracking, and booking reports.\n";
-            $reply .= "• **Create & Manage Venues**: List your halls, customize base prices, packages, and catering menus.\n";
-            $reply .= "• **Host Events**: Publish upcoming workshops, concerts, and parties with custom ticket counts.\n";
-            $reply .= "• **Download PDF Reports**: Generate official PDF invoices and attendee booking reports.\n\n";
-            $reply .= "👉 To become a vendor, select the **Vendor** role during **[Sign Up](/register)** or log in to your **[Vendor Portal](/vendor/dashboard)**.";
-
-            return [
-                'reply' => $reply,
-                'suggestions' => ['📝 Vendor Sign Up', '📅 View Events', '🏰 View Venues'],
-            ];
-        }
-
-        // 7. Contact & Support
-        if (str_contains($lower, 'contact') || str_contains($lower, 'support') || str_contains($lower, 'help') || str_contains($lower, 'phone') || str_contains($lower, 'email') || str_contains($lower, 'reach')) {
-            $reply = "📞 **Contact & Support:**\n\n";
-            $reply .= "We're here to assist you with any questions or issues:\n\n";
-            $reply .= "• 📧 **Email**: `resa.munikar@gmail.com`\n";
-            $reply .= "• 📍 **Location**: Kathmandu, Nepal\n";
-            $reply .= "• 📝 **Support Form**: Fill out our quick form on the **[Contact Us](/contact)** page.\n\n";
-            $reply .= "Our team typically responds within 24 hours!";
-
-            return [
-                'reply' => $reply,
-                'suggestions' => ['📝 Open Contact Page', '📅 Browse Events', '🏰 Explore Venues'],
-            ];
-        }
-
-        // 8. About Eventify
-        if (str_contains($lower, 'about') || str_contains($lower, 'what is eventify') || str_contains($lower, 'who are you')) {
-            $reply = "🌟 **About Eventify:**\n\n";
-            $reply .= "**Eventify** is Nepal's all-in-one digital platform for discovering, organizing, and booking memorable events and premium venues.\n\n";
-            $reply .= "✨ **What you can do:**\n";
-            $reply .= "• Discover live concerts, workshops, technology summits, and cultural festivals.\n";
-            $reply .= "• Book banquet halls, party palaces, and conference spaces with full catering.\n";
-            $reply .= "• Pay securely with **Khalti**.\n";
-            $reply .= "• Share updates and thoughts with the community in **[Chirps](/chirps)**.\n\n";
-            $reply .= "Learn more on our **[About Us](/about)** page!";
-
-            return [
-                'reply' => $reply,
-                'suggestions' => ['📅 Browse Events', '🏰 Find Venues', '💳 Payment Info'],
-            ];
-        }
-
-        // 9. Greetings
-        if (str_contains($lower, 'hello') || str_contains($lower, 'hi') || str_contains($lower, 'hey') || str_contains($lower, 'namaste') || str_contains($lower, 'good morning') || str_contains($lower, 'good evening')) {
-            $greeting = ($user) ? "Hello **{$user->name}**! 👋" : "Hello there! 👋";
-            return [
-                'reply' => "{$greeting} Welcome to **EventBot AI**!\n\nI can help you discover exciting events, find & book top venues, explain Khalti payments, check your bookings, or guide you on vendor tools.\n\nHow can I help you today?",
-                'suggestions' => ['🎉 Upcoming Events', '🏰 Find Venues', '💳 How Payment Works', '👤 My Bookings'],
-            ];
-        }
-
-        // 10. Default Smart Response
+        // 13. Default Smart Response
         return [
-            'reply' => "I'm **EventBot AI**, your assistant for **Eventify**!\n\nI can answer anything about:\n• 📅 **[Upcoming Events & Tickets](/events)**\n• 🏰 **[Venues, Pricing & Catering](/venues)**\n• 💳 **Khalti Payment Gateway & Verification**\n• 👤 **Your Bookings & Profile Management**\n• 💼 **Vendor Registration & Event Hosting**\n• 📞 **[Contacting Support](/contact)**\n\nWhat would you like to know?",
+            'reply' => "I'm **EventBot AI**, your intelligent assistant for **Eventify**!\n\nI can answer questions and assist you with:\n• 📅 **[Upcoming Events & Ticket Tiers](/events)**\n• 🎟️ **[How to Book Event Passes](/events)**\n• 💳 **Khalti Digital Wallet Payments & Verification**\n• 👤 **[Your Tickets & Attendee Dashboard](/usereventbook)**\n• 💼 **[Vendor Event Hosting & KYC](/vendor/dashboard)**\n• 💬 **[Chirps Community Board](/chirps)**\n• 📞 **[Contacting Support](/contact)**\n\nWhat would you like to know?",
             'suggestions' => $this->getDefaultSuggestions(),
         ];
     }
@@ -551,41 +495,17 @@ PROMPT;
                 $ticketSummary = [];
                 if ($e->ticketTypes && $e->ticketTypes->isNotEmpty()) {
                     foreach ($e->ticketTypes->where('status', 'active') as $tt) {
-                        $ticketSummary[] = "{$tt->name}: NPR {$tt->price} ({$tt->remaining_quantity} left)";
+                        $ticketSummary[] = "{$tt->name}: NPR " . number_format($tt->price) . " ({$tt->remaining_quantity} left)";
                     }
                 }
-                $ticketsStr = !empty($ticketSummary) ? implode(', ', $ticketSummary) : "NPR {$e->price}";
+                $ticketsStr = !empty($ticketSummary) ? implode(', ', $ticketSummary) : "NPR " . number_format($e->price);
+                $location = $e->venue ?? 'Kathmandu, Nepal';
 
-                $lines[] = "- Event: \"{$e->event_name}\" | Category: {$e->category} | Date: {$date} | Venue: {$e->venue} | Ticket Tiers: [{$ticketsStr}] | Available Seats: {$e->available_seats}{$vendor} | Desc: {$e->description}";
+                $lines[] = "- Event: \"{$e->event_name}\" | Category: {$e->category} | Date: {$date} | Location: {$location} | Ticket Tiers: [{$ticketsStr}] | Available Seats: {$e->available_seats}{$vendor} | Desc: {$e->description}";
             }
             return implode("\n", $lines);
         } catch (\Throwable $e) {
             return "Events data unavailable.";
-        }
-    }
-
-    /**
-     * Summarize Venues from Database
-     */
-    protected function getDynamicVenuesSummary(): string
-    {
-        try {
-            $venues = Venue::with(['vendor', 'reviews'])->take(15)->get();
-            if ($venues->isEmpty()) {
-                return "No venues currently registered in database.";
-            }
-
-            $lines = [];
-            foreach ($venues as $v) {
-                $basePrice = $v->base_price ? "NPR {$v->base_price}" : "N/A";
-                $pkg = $v->package_price ? "Package: NPR {$v->package_price} ({$v->package_details})" : "No package";
-                $catering = $v->has_catering ? "Catering: NPR {$v->catering_price_per_person}/person (Menu: {$v->catering_menu})" : "No catering";
-                $avgRating = $v->reviews->count() > 0 ? round($v->reviews->avg('rating'), 1) . "/5" : "No reviews yet";
-                $lines[] = "- Venue: \"{$v->venue_name}\" | Location: {$v->location} | Base Price: {$basePrice} | {$pkg} | {$catering} | Rating: {$avgRating} | Desc: {$v->description}";
-            }
-            return implode("\n", $lines);
-        } catch (\Throwable $e) {
-            return "Venues data unavailable.";
         }
     }
 
@@ -600,19 +520,13 @@ PROMPT;
 
         try {
             $eventBookings = Booking::with(['event', 'ticketType'])->where('user_id', $user->id)->take(5)->get();
-            $venueBookings = VenueBooking::with('venue')->where('user_id', $user->id)->take(5)->get();
 
             $info = "User Name: {$user->name} | Email: {$user->email} | Role: {$user->role}\n";
             $info .= "Event Bookings count: " . $eventBookings->count() . "\n";
             foreach ($eventBookings as $b) {
                 $name = $b->event->event_name ?? 'Event #' . $b->event_id;
                 $tier = $b->ticketType ? " ({$b->ticketType->name} Tier)" : "";
-                $info .= "  * Booked {$b->tickets} ticket(s){$tier} for '{$name}' (Amount: NPR {$b->amount})\n";
-            }
-            $info .= "Venue Bookings count: " . $venueBookings->count() . "\n";
-            foreach ($venueBookings as $vb) {
-                $name = $vb->venue->venue_name ?? 'Venue #' . $vb->venue_id;
-                $info .= "  * Booked venue '{$name}' on date {$vb->event_date} for {$vb->guests} guests (Total: NPR {$vb->total_price}, Status: {$vb->status})\n";
+                $info .= "  * Booked {$b->tickets} ticket(s){$tier} for '{$name}' (Amount: NPR " . number_format($b->amount) . ")\n";
             }
             return $info;
         } catch (\Throwable $e) {
@@ -627,11 +541,11 @@ PROMPT;
     {
         return [
             '🎉 Upcoming Events',
-            '🏰 Find Venues',
-            '💳 How Payment Works',
             '🎟️ How to Book',
-            '👤 My Bookings',
-            '💼 Vendor Guide',
+            '💳 Khalti Payment',
+            '💼 Host an Event',
+            '👤 My Tickets',
+            '📞 Contact Support',
         ];
     }
 
@@ -642,17 +556,20 @@ PROMPT;
     {
         $lower = strtolower($reply . ' ' . $userMessage);
 
-        if (str_contains($lower, 'event')) {
-            return ['🎟️ How to Book an Event', '🏰 Explore Venues', '💳 Payment Methods'];
-        }
-        if (str_contains($lower, 'venue')) {
-            return ['🍽️ Catering Options', '📅 Upcoming Events', '🎟️ How to Book a Venue'];
+        if (str_contains($lower, 'event') || str_contains($lower, 'concert') || str_contains($lower, 'workshop') || str_contains($lower, 'festival')) {
+            return ['🎟️ How to Book', '💳 Payment Methods', '💼 Host an Event'];
         }
         if (str_contains($lower, 'payment') || str_contains($lower, 'khalti')) {
-            return ['🎟️ Book an Event Now', '🏰 Find Venues', '📞 Contact Support'];
+            return ['🎟️ Book an Event', '🎉 View Events', '📞 Contact Support'];
         }
-        if (str_contains($lower, 'vendor')) {
-            return ['💼 Vendor Dashboard', '📅 Create Event', '🏰 Add Venue'];
+        if (str_contains($lower, 'vendor') || str_contains($lower, 'organizer') || str_contains($lower, 'kyc')) {
+            return ['💼 Vendor Dashboard', '📋 Vendor KYC', '🎉 View Events'];
+        }
+        if (str_contains($lower, 'ticket') || str_contains($lower, 'booking')) {
+            return ['👤 My Tickets', '🎉 Browse Events', '💳 Payment Info'];
+        }
+        if (str_contains($lower, 'profile') || str_contains($lower, 'password') || str_contains($lower, 'account')) {
+            return ['👤 My Profile', '🔑 Login', '📞 Contact Support'];
         }
 
         return $this->getDefaultSuggestions();

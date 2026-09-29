@@ -39,11 +39,16 @@
         </div>
 
         <!-- Password -->
-        <div class="mb-3">
+        <div class="mb-3" x-data="{ showPassword: false }">
           <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Password</label>
           <div class="relative mt-1">
-            <input type="password" id="password" name="password" required 
-                   class="w-full px-2 py-2 border rounded-lg pr-10 dark:bg-gray-700 dark:text-gray-200"/>
+            <input :type="showPassword ? 'text' : 'password'" id="password" name="password" required 
+                   class="w-full px-3 py-2 border rounded-lg pr-10 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8d85ec] outline-none"/>
+            <button type="button" 
+                    @click="showPassword = !showPassword" 
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 cursor-pointer flex items-center justify-center">
+                <iconify-icon :icon="showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'" class="text-lg"></iconify-icon>
+            </button>
           </div>
 
           <!-- Password rules checklist -->
@@ -59,11 +64,16 @@
         </div>
 
         <!-- Confirm Password -->
-        <div class="mb-3">
+        <div class="mb-3" x-data="{ showConfirm: false }">
           <label class="block text-sm font-medium text-gray-900 dark:text-gray-200">Confirm Password</label>
           <div class="relative mt-1">
-            <input type="password" id="password_confirmation" name="password_confirmation" required 
-                   class="w-full px-2 py-2 border rounded-lg pr-10 dark:bg-gray-700 dark:text-gray-200"/>
+            <input :type="showConfirm ? 'text' : 'password'" id="password_confirmation" name="password_confirmation" required 
+                   class="w-full px-3 py-2 border rounded-lg pr-10 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8d85ec] outline-none"/>
+            <button type="button" 
+                    @click="showConfirm = !showConfirm" 
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 cursor-pointer flex items-center justify-center">
+                <iconify-icon :icon="showConfirm ? 'solar:eye-bold' : 'solar:eye-closed-bold'" class="text-lg"></iconify-icon>
+            </button>
           </div>
           <p id="password-match" class="mt-2 text-xs font-medium"></p>
         </div>

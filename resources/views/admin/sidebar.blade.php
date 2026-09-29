@@ -4,9 +4,15 @@
         <!-- Profile Section -->
         <div class="flex flex-col items-center mb-8">
             <div class="relative">
-                <img class="w-20 h-20 rounded-full border-4 border-[#8d85ec] object-cover" 
-                src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('uploads/avatar.jpg') }}" 
-                alt="Profile Picture">
+                @if(Auth::user()->profile_photo_url)
+                    <img class="w-20 h-20 rounded-full border-4 border-[#8d85ec] object-cover shadow-sm" 
+                         src="{{ Auth::user()->profile_photo_url }}" 
+                         alt="{{ Auth::user()->name }}">
+                @else
+                    <div class="w-20 h-20 rounded-full border-4 border-[#8d85ec] bg-[#8D85EC] text-white font-bold flex items-center justify-center text-2xl shadow-sm">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                @endif
 
                 <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>
             </div>

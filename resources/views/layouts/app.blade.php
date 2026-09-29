@@ -86,9 +86,15 @@
                 <div x-data="{ open: false }" class="relative">
                     <!-- Profile button -->
                     <button @click="open = !open" class="flex items-center gap-2 focus:outline-none p-1 rounded-full hover:bg-white/20 transition">
-                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : (Auth::user()->profile_image ?? asset('uploads/avatar.jpg')) }}"
-                            alt="Profile"
-                            class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-xs">
+                        @if(Auth::user()->profile_photo_url)
+                            <img src="{{ Auth::user()->profile_photo_url }}"
+                                alt="{{ Auth::user()->name }}"
+                                class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-xs">
+                        @else
+                            <div class="w-8 h-8 rounded-full bg-white text-[#8D85EC] font-bold flex items-center justify-center text-xs shadow-xs border-2 border-white">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                        @endif
                     </button>
 
                     <!-- Dropdown -->

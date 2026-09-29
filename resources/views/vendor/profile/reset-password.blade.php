@@ -28,33 +28,47 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('vendor.password.update') }}" id="resetPasswordForm">
+        <form method="POST" action="{{ route('vendor.password.update') }}" id="resetPasswordForm" x-data="{ showNew: false, showConfirm: false }">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
             <input type="hidden" name="email" value="{{ $email }}">
 
             <div>
-                <label class="block text-gray-700 dark:text-gray-200 mb-1 font-medium">New Password</label>
-                <input type="password" id="new_password" name="password" required
-                    class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC]">
+                <label class="block text-gray-700 dark:text-gray-200 mb-1 font-medium text-sm">New Password</label>
+                <div class="relative">
+                    <input :type="showNew ? 'text' : 'password'" id="new_password" name="password" required
+                        class="w-full pl-3 pr-10 py-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC] text-sm">
+                    <button type="button" 
+                            @click="showNew = !showNew" 
+                            class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 cursor-pointer flex items-center justify-center">
+                        <iconify-icon :icon="showNew ? 'solar:eye-bold' : 'solar:eye-closed-bold'" class="text-base"></iconify-icon>
+                    </button>
+                </div>
             </div>
 
             <!-- Password rules checklist -->
-            <ul class="mb-4 text-xs text-gray-600 dark:text-gray-400 space-y-1" id="password-rules">
+            <ul class="my-3 text-xs text-gray-600 dark:text-gray-400 space-y-1" id="password-rules">
                 <li id="rule-length" class="flex items-center"><span class="w-3 h-3 mr-2 border border-gray-400 rounded-full"></span> At least 8 characters</li>
                 <li id="rule-uppercase" class="flex items-center"><span class="w-3 h-3 mr-2 border border-gray-400 rounded-full"></span> At least one uppercase letter</li>
                 <li id="rule-number" class="flex items-center"><span class="w-3 h-3 mr-2 border border-gray-400 rounded-full"></span> At least one number</li>
                 <li id="rule-special" class="flex items-center"><span class="w-3 h-3 mr-2 border border-gray-400 rounded-full"></span> At least one special character (!@#$%)</li>
             </ul>
 
-            <div>
-                <label class="block text-gray-700 dark:text-gray-200 mb-1 font-medium">Confirm New Password</label>
-                <input type="password" id="confirm_password" name="password_confirmation" required
-                    class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC]">
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-200 mb-1 font-medium text-sm">Confirm New Password</label>
+                <div class="relative">
+                    <input :type="showConfirm ? 'text' : 'password'" id="confirm_password" name="password_confirmation" required
+                        class="w-full pl-3 pr-10 py-2 border rounded-lg dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-[#8D85EC] text-sm">
+                    <button type="button" 
+                            @click="showConfirm = !showConfirm" 
+                            class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 cursor-pointer flex items-center justify-center">
+                        <iconify-icon :icon="showConfirm ? 'solar:eye-bold' : 'solar:eye-closed-bold'" class="text-base"></iconify-icon>
+                    </button>
+                </div>
                 <p id="password-match" class="mt-2 text-xs font-medium"></p>
             </div>
 
-            <button type="submit" class="w-full py-2 bg-[#8D85EC] text-white rounded-lg hover:bg-[#7b76e4]">
+            <button type="submit" class="w-full py-2.5 bg-[#8D85EC] text-white font-semibold rounded-xl hover:bg-[#7b76e4] transition shadow-sm cursor-pointer text-sm">
                 Reset Password
             </button>
         </form>

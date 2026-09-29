@@ -46,7 +46,7 @@
             <p style="margin: 0 0 6px 0; font-weight: 600; color: #2D3748; display: flex; align-items: center; gap: 6px;">
                 Hello <iconify-icon icon="solar:hand-shake-bold" style="color: #F59E0B; font-size: 16px;"></iconify-icon>! How can I help you today?
             </p>
-            <p style="margin: 0; font-size: 12.5px; color: #6B7280; line-height: 1.4;">I can assist you with events, venues, bookings, and payments across Eventify.</p>
+            <p style="margin: 0; font-size: 12.5px; color: #6B7280; line-height: 1.4;">I can assist you with upcoming events, ticket booking, Khalti payments, organizer tools, and everything across Eventify.</p>
         </div>
 
         <!-- Quick Starter Prompt Chips -->
@@ -55,21 +55,21 @@
                 <iconify-icon icon="solar:sparkles-bold" style="color: #F59E0B; font-size: 14px;"></iconify-icon>
                 Upcoming Events
             </button>
-            <button type="button" onclick="sendQuickPrompt('Show me available venues and prices')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
-                <iconify-icon icon="solar:buildings-2-bold" style="color: #8D85EC; font-size: 14px;"></iconify-icon>
-                Find Venues
+            <button type="button" onclick="sendQuickPrompt('How do I book tickets on Eventify?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                <iconify-icon icon="solar:ticket-bold" style="color: #6366F1; font-size: 14px;"></iconify-icon>
+                How to Book
             </button>
             <button type="button" onclick="sendQuickPrompt('How does Khalti payment work?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
                 <iconify-icon icon="solar:card-bold" style="color: #10B981; font-size: 14px;"></iconify-icon>
                 Khalti Payment
             </button>
-            <button type="button" onclick="sendQuickPrompt('How do I book tickets or a venue?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
-                <iconify-icon icon="solar:ticket-bold" style="color: #6366F1; font-size: 14px;"></iconify-icon>
-                How to Book
+            <button type="button" onclick="sendQuickPrompt('How can I host an event as a vendor?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                <iconify-icon icon="solar:case-round-bold" style="color: #8D85EC; font-size: 14px;"></iconify-icon>
+                Host an Event
             </button>
-            <button type="button" onclick="sendQuickPrompt('What are my bookings?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+            <button type="button" onclick="sendQuickPrompt('What are my tickets and bookings?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
                 <iconify-icon icon="solar:user-circle-bold" style="color: #8D85EC; font-size: 14px;"></iconify-icon>
-                My Bookings
+                My Tickets
             </button>
         </div>
 
@@ -270,20 +270,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatContent.innerHTML = `
                     <div style="background: white; border: 1px solid #EAEAEA; border-radius: 14px; padding: 12px 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
                         <p style="margin: 0 0 6px 0; font-weight: 600; color: #2D3748;">Chat reset! How else can I help?</p>
-                        <p style="margin: 0; font-size: 12.5px; color: #6B7280;">Ask anything about events, venues, bookings, or payments.</p>
+                        <p style="margin: 0; font-size: 12.5px; color: #6B7280;">Ask anything about events, ticket booking, Khalti payments, or organizer tools.</p>
                     </div>
                     <div id="quick-prompts" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px;">
                         <button type="button" onclick="sendQuickPrompt('What upcoming events are available?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
                             <iconify-icon icon="solar:sparkles-bold" style="color: #F59E0B; font-size: 14px;"></iconify-icon>
                             Upcoming Events
                         </button>
-                        <button type="button" onclick="sendQuickPrompt('Show me available venues and prices')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
-                            <iconify-icon icon="solar:buildings-2-bold" style="color: #8D85EC; font-size: 14px;"></iconify-icon>
-                            Find Venues
-                        </button>
-                        <button type="button" onclick="sendQuickPrompt('How do I book tickets?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                        <button type="button" onclick="sendQuickPrompt('How do I book tickets on Eventify?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
                             <iconify-icon icon="solar:ticket-bold" style="color: #6366F1; font-size: 14px;"></iconify-icon>
                             How to Book
+                        </button>
+                        <button type="button" onclick="sendQuickPrompt('How does Khalti payment work?')" class="quick-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                            <iconify-icon icon="solar:card-bold" style="color: #10B981; font-size: 14px;"></iconify-icon>
+                            Khalti Payment
                         </button>
                     </div>`;
             });
