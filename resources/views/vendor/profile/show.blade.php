@@ -88,22 +88,34 @@
                     <input type="file" name="profile_photo" id="profile_photo" accept="image/*" class="hidden">
 
                     <!-- Photo Action Buttons -->
-                    <div class="mt-5 flex items-center gap-2">
+                    <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
                         <!-- Pill Change Photo Button -->
                         <button type="button" 
                                 onclick="document.getElementById('profile_photo').click()"
-                                class="inline-flex items-center gap-2 px-5 py-2 bg-[#e8ebff] hover:bg-[#dfe3fe] dark:bg-gray-700 dark:hover:bg-gray-600 text-[#6961e2] dark:text-[#a5a0f5] text-sm font-semibold rounded-full shadow-2xs transition transform hover:scale-105 active:scale-95 cursor-pointer">
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#e8ebff] hover:bg-[#dfe3fe] dark:bg-gray-700 dark:hover:bg-gray-600 text-[#6961e2] dark:text-[#a5a0f5] text-xs sm:text-sm font-semibold rounded-full shadow-2xs transition transform hover:scale-105 active:scale-95 cursor-pointer">
                             <iconify-icon icon="solar:camera-minimalistic-bold" class="text-base"></iconify-icon>
-                            <span>Change Photo</span>
+                            <span>Change</span>
+                        </button>
+
+                        <!-- Adjust Photo Button -->
+                        <button type="button" 
+                                id="btnAdjustPhoto"
+                                onclick="openPhotoAdjuster()"
+                                style="{{ ($user->profile_photo && $user->profile_photo_url) ? '' : 'display: none;' }}"
+                                title="Adjust Photo Position (Move Up / Down)"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white dark:bg-gray-800 border border-[#6961e2]/40 hover:border-[#6961e2] hover:bg-[#f6f7ff] dark:hover:bg-gray-700 text-[#6961e2] dark:text-[#a5a0f5] text-xs sm:text-sm font-semibold rounded-full shadow-2xs transition transform hover:scale-105 active:scale-95 cursor-pointer">
+                            <iconify-icon icon="solar:slider-vertical-bold" class="text-base"></iconify-icon>
+                            <span>Adjust</span>
                         </button>
 
                         <!-- Remove Photo Button (Only shown if user has photo) -->
                         @if($user->profile_photo)
                             <button type="button" 
+                                    id="btnRemovePhoto"
                                     @click="confirmDeletePhoto = true"
                                     title="Remove Profile Photo"
-                                    class="inline-flex items-center justify-center w-9 h-9 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full transition transform hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">
-                                <iconify-icon icon="solar:trash-bin-trash-bold" class="text-lg"></iconify-icon>
+                                    class="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full transition transform hover:scale-105 active:scale-95 cursor-pointer shadow-2xs">
+                                <iconify-icon icon="solar:trash-bin-trash-bold" class="text-base sm:text-lg"></iconify-icon>
                             </button>
                         @endif
                     </div>
@@ -380,29 +392,369 @@
         </div>
     </div>
 
+    <!-- ======================================================== -->
+    <!-- Photo Position Adjuster Modal                            -->
+    <!-- ======================================================== -->
+    <div id="photoAdjustModal" 
+         style="display: none;"
+         class="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
+        
+        <div class="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md shadow-2xl relative border border-gray-100 dark:border-gray-700 overflow-hidden my-auto animate-scaleUp">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700/80 flex items-center justify-between bg-gradient-to-r from-purple-50/60 to-indigo-50/60 dark:from-gray-800 dark:to-gray-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-[#6961e2]/10 text-[#6961e2] dark:text-[#a5a0f5] flex items-center justify-center">
+                        <iconify-icon icon="solar:slider-vertical-bold" class="text-xl"></iconify-icon>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-[#1a2340] dark:text-white leading-tight">Adjust Profile Photo</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Drag or slide to move photo up and down</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closePhotoAdjuster()" class="w-8 h-8 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center transition cursor-pointer text-xl">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Viewport & Drag Canvas Area -->
+            <div class="p-6 flex flex-col items-center select-none">
+                
+                <!-- Circular Crop Frame Area -->
+                <div class="relative w-64 h-64 rounded-full overflow-hidden bg-gray-900 ring-4 ring-[#6961e2] shadow-xl flex items-center justify-center cursor-grab active:cursor-grabbing touch-none select-none" id="adjustViewport">
+                    <img id="adjustImg" src="" alt="Adjust Photo" class="absolute max-w-none pointer-events-none transition-none" style="transform-origin: center center;" />
+                    
+                    <!-- Circular Guide Overlay / Vignette -->
+                    <div class="absolute inset-0 rounded-full border border-white/30 pointer-events-none shadow-[inset_0_0_25px_rgba(0,0,0,0.45)]"></div>
+                    
+                    <!-- Visual center guidelines -->
+                    <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-white/20 pointer-events-none"></div>
+                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-white/20 pointer-events-none"></div>
+                </div>
+
+                <div class="mt-2.5 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <iconify-icon icon="solar:hand-shake-bold" class="text-sm text-[#6961e2]"></iconify-icon>
+                    <span>Click & drag to move photo in any direction</span>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="w-full space-y-3.5 mt-4 bg-[#f8f9ff] dark:bg-gray-700/40 p-4 rounded-2xl border border-purple-50 dark:border-gray-600/30">
+                    
+                    <!-- Vertical Position Slider (Move Up / Down) -->
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1.5">
+                            <span class="flex items-center gap-1.5">
+                                <iconify-icon icon="solar:sort-vertical-bold" class="text-sm text-[#6961e2]"></iconify-icon>
+                                Move Up / Down
+                            </span>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="nudgePhotoY(-15)" title="Move Up" class="px-2 py-0.5 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-[#6961e2] hover:text-white border border-gray-200 dark:border-gray-600 text-xs font-bold transition cursor-pointer shadow-2xs">
+                                    ↑ Up
+                                </button>
+                                <button type="button" onclick="nudgePhotoY(15)" title="Move Down" class="px-2 py-0.5 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-[#6961e2] hover:text-white border border-gray-200 dark:border-gray-600 text-xs font-bold transition cursor-pointer shadow-2xs">
+                                    ↓ Down
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <iconify-icon icon="solar:arrow-up-linear" class="text-sm text-gray-400"></iconify-icon>
+                            <input type="range" id="adjustSliderY" min="-180" max="180" value="0" step="1" 
+                                   class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-[#6961e2]">
+                            <iconify-icon icon="solar:arrow-down-linear" class="text-sm text-gray-400"></iconify-icon>
+                        </div>
+                    </div>
+
+                    <!-- Zoom Slider -->
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1.5">
+                            <span class="flex items-center gap-1.5">
+                                <iconify-icon icon="solar:magnifer-zoom-in-bold" class="text-sm text-[#6961e2]"></iconify-icon>
+                                Zoom Scale
+                            </span>
+                            <button type="button" onclick="resetPhotoAdjust()" class="text-xs text-[#6961e2] dark:text-[#a5a0f5] hover:underline font-semibold cursor-pointer">
+                                ↺ Reset Center
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <iconify-icon icon="solar:magnifer-zoom-out-linear" class="text-sm text-gray-400"></iconify-icon>
+                            <input type="range" id="adjustSliderZoom" min="1" max="3" value="1" step="0.02" 
+                                   class="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-[#6961e2]">
+                            <iconify-icon icon="solar:magnifer-zoom-in-linear" class="text-sm text-gray-400"></iconify-icon>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end gap-2.5">
+                <button type="button" onclick="closePhotoAdjuster()" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 font-semibold rounded-xl text-sm transition cursor-pointer">
+                    Cancel
+                </button>
+                <button type="button" onclick="applyPhotoAdjust()" class="inline-flex items-center gap-1.5 px-5 py-2 bg-[#6961e2] hover:bg-[#5850d6] text-white font-semibold rounded-xl text-sm transition shadow-sm cursor-pointer transform hover:scale-[1.02] active:scale-95">
+                    <iconify-icon icon="solar:check-circle-bold" class="text-lg"></iconify-icon>
+                    <span>Apply Position</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
-<!-- Profile Photo Preview & Password Validation Script -->
+<!-- Profile Photo Adjuster, Preview & Password Validation Script -->
 <script>
     const profileInput = document.getElementById('profile_photo');
     const photoPreview = document.getElementById('photoPreview');
+    const adjustViewport = document.getElementById('adjustViewport');
+    const adjustImg = document.getElementById('adjustImg');
 
+    let adjustState = {
+        img: null,
+        naturalW: 0,
+        naturalH: 0,
+        zoom: 1,
+        baseScale: 1,
+        panX: 0,
+        panY: 0,
+        viewportSize: 256,
+        isDragging: false,
+        startX: 0,
+        startY: 0,
+        initialPanX: 0,
+        initialPanY: 0,
+        currentSourceUrl: ''
+    };
+
+    function openPhotoAdjuster(srcUrl) {
+        const modal = document.getElementById('photoAdjustModal');
+        let source = srcUrl;
+        if (!source) {
+            const previewEl = document.getElementById('photoPreview');
+            if (previewEl && previewEl.tagName === 'IMG' && previewEl.src) {
+                source = previewEl.src;
+            } else if (adjustState.currentSourceUrl) {
+                source = adjustState.currentSourceUrl;
+            }
+        }
+        
+        if (!source) {
+            profileInput.click();
+            return;
+        }
+
+        adjustState.currentSourceUrl = source;
+        modal.style.display = 'flex';
+
+        const tempImg = new Image();
+        tempImg.crossOrigin = 'anonymous';
+        tempImg.onload = function() {
+            adjustState.img = tempImg;
+            adjustState.naturalW = tempImg.naturalWidth;
+            adjustState.naturalH = tempImg.naturalHeight;
+            
+            adjustState.viewportSize = (adjustViewport && adjustViewport.clientWidth > 50) ? adjustViewport.clientWidth : 256;
+            
+            // Base scale to comfortably fill circular viewport
+            adjustState.baseScale = Math.max(
+                adjustState.viewportSize / adjustState.naturalW,
+                adjustState.viewportSize / adjustState.naturalH
+            );
+            
+            adjustState.zoom = 1;
+            adjustState.panX = 0;
+            adjustState.panY = 0;
+
+            const sliderZoomEl = document.getElementById('adjustSliderZoom');
+            const sliderYEl = document.getElementById('adjustSliderY');
+            if (sliderZoomEl) sliderZoomEl.value = 1;
+            if (sliderYEl) sliderYEl.value = 0;
+
+            adjustImg.src = source;
+            updateAdjustView();
+        };
+        tempImg.src = source;
+    }
+
+    function updateAdjustView() {
+        if (!adjustImg || !adjustState.img) return;
+
+        const currentW = adjustState.naturalW * adjustState.baseScale * adjustState.zoom;
+        const currentH = adjustState.naturalH * adjustState.baseScale * adjustState.zoom;
+
+        // Base center coordinates
+        const centerX = (adjustState.viewportSize - currentW) / 2;
+        const centerY = (adjustState.viewportSize - currentH) / 2;
+
+        // Allow generous movement up and down
+        const maxPanY = Math.max(currentH, adjustState.viewportSize) * 0.9;
+        const maxPanX = Math.max(currentW, adjustState.viewportSize) * 0.9;
+
+        adjustState.panY = Math.max(-maxPanY, Math.min(maxPanY, adjustState.panY));
+        adjustState.panX = Math.max(-maxPanX, Math.min(maxPanX, adjustState.panX));
+
+        const finalX = centerX + adjustState.panX;
+        const finalY = centerY + adjustState.panY;
+
+        adjustImg.style.width = `${currentW}px`;
+        adjustImg.style.height = `${currentH}px`;
+        adjustImg.style.left = `${finalX}px`;
+        adjustImg.style.top = `${finalY}px`;
+    }
+
+    function nudgePhotoY(delta) {
+        // delta negative = move image up, delta positive = move image down
+        adjustState.panY += delta;
+        updateAdjustView();
+        
+        const sliderY = document.getElementById('adjustSliderY');
+        if (sliderY) {
+            sliderY.value = Math.round(adjustState.panY);
+        }
+    }
+
+    function resetPhotoAdjust() {
+        if (!adjustState.img) return;
+        adjustState.zoom = 1;
+        adjustState.panX = 0;
+        adjustState.panY = 0;
+        
+        const sliderZoomEl = document.getElementById('adjustSliderZoom');
+        const sliderYEl = document.getElementById('adjustSliderY');
+        if (sliderZoomEl) sliderZoomEl.value = 1;
+        if (sliderYEl) sliderYEl.value = 0;
+        
+        updateAdjustView();
+    }
+
+    function closePhotoAdjuster() {
+        document.getElementById('photoAdjustModal').style.display = 'none';
+    }
+
+    function applyPhotoAdjust() {
+        if (!adjustState.img) return;
+
+        const exportSize = 450;
+        const canvas = document.createElement('canvas');
+        canvas.width = exportSize;
+        canvas.height = exportSize;
+        const ctx = canvas.getContext('2d');
+
+        const ratio = exportSize / adjustState.viewportSize;
+        const currentW = adjustState.naturalW * adjustState.baseScale * adjustState.zoom;
+        const currentH = adjustState.naturalH * adjustState.baseScale * adjustState.zoom;
+
+        const centerX = (adjustState.viewportSize - currentW) / 2;
+        const centerY = (adjustState.viewportSize - currentH) / 2;
+
+        const finalX = centerX + adjustState.panX;
+        const finalY = centerY + adjustState.panY;
+
+        // Clear and draw image at adjusted position
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, exportSize, exportSize);
+        ctx.drawImage(adjustState.img, finalX * ratio, finalY * ratio, currentW * ratio, currentH * ratio);
+
+        canvas.toBlob(function(blob) {
+            if (!blob) return;
+
+            const file = new File([blob], 'profile_photo.jpg', { type: 'image/jpeg' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            profileInput.files = dataTransfer.files;
+
+            const previewUrl = URL.createObjectURL(blob);
+            const currentPreview = document.getElementById('photoPreview');
+
+            if (currentPreview && currentPreview.tagName === 'IMG') {
+                currentPreview.src = previewUrl;
+            } else if (currentPreview) {
+                const img = document.createElement('img');
+                img.id = 'photoPreview';
+                img.src = previewUrl;
+                img.alt = 'Profile Photo';
+                img.className = 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105';
+                currentPreview.replaceWith(img);
+            }
+
+            const btnAdjust = document.getElementById('btnAdjustPhoto');
+            if (btnAdjust) btnAdjust.style.display = 'inline-flex';
+
+            closePhotoAdjuster();
+        }, 'image/jpeg', 0.92);
+    }
+
+    // Drag / Touch listeners on viewport
+    function onPointerDown(e) {
+        adjustState.isDragging = true;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        adjustState.startX = clientX;
+        adjustState.startY = clientY;
+        adjustState.initialPanX = adjustState.panX;
+        adjustState.initialPanY = adjustState.panY;
+    }
+
+    function onPointerMove(e) {
+        if (!adjustState.isDragging) return;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        const deltaX = clientX - adjustState.startX;
+        const deltaY = clientY - adjustState.startY;
+        
+        adjustState.panX = adjustState.initialPanX + deltaX;
+        adjustState.panY = adjustState.initialPanY + deltaY;
+        
+        updateAdjustView();
+
+        const sliderY = document.getElementById('adjustSliderY');
+        if (sliderY) {
+            sliderY.value = Math.round(adjustState.panY);
+        }
+    }
+
+    function onPointerUp() {
+        adjustState.isDragging = false;
+    }
+
+    if (adjustViewport) {
+        adjustViewport.addEventListener('mousedown', onPointerDown);
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+
+        adjustViewport.addEventListener('touchstart', onPointerDown, { passive: true });
+        window.addEventListener('touchmove', onPointerMove, { passive: true });
+        window.addEventListener('touchend', onPointerUp);
+    }
+
+    // Sliders
+    const sliderY = document.getElementById('adjustSliderY');
+    if (sliderY) {
+        sliderY.addEventListener('input', function(e) {
+            if (!adjustState.img) return;
+            adjustState.panY = parseFloat(e.target.value);
+            updateAdjustView();
+        });
+    }
+
+    const sliderZoom = document.getElementById('adjustSliderZoom');
+    if (sliderZoom) {
+        sliderZoom.addEventListener('input', function(e) {
+            if (!adjustState.img) return;
+            adjustState.zoom = parseFloat(e.target.value);
+            updateAdjustView();
+        });
+    }
+
+    // File input change: immediately open adjuster
     profileInput.addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                if(photoPreview.tagName === 'IMG') {
-                    photoPreview.src = e.target.result;
-                } else {
-                    const img = document.createElement('img');
-                    img.id = 'photoPreview';
-                    img.src = e.target.result;
-                    img.alt = 'Profile Photo';
-                    img.className = 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105';
-                    photoPreview.replaceWith(img);
-                }
-            }
+                openPhotoAdjuster(e.target.result);
+            };
             reader.readAsDataURL(file);
         }
     });
