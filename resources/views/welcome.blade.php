@@ -772,62 +772,90 @@
                 <p class="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">Find experiences that match your vibe and mood</p>
             </div>
 
-            <!-- 4 Column Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            <!-- 6 Column Responsive Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
                 
                 <!-- Category 1: Concerts -->
                 <a href="{{ route('events', ['category' => 'Concert']) }}" class="group block text-left">
-                    <div class="h-36 sm:h-48 md:h-52 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                    <div class="h-36 sm:h-44 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
                         <img src="{{ asset('uploads/concert.jpg') }}" alt="Concerts" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div class="mt-3 space-y-1">
                         <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded">
                             MUSIC
                         </span>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Concerts</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Concert'] ?? 0 }}+ Events</p>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Concerts</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Concert'] ?? 0 }} Events</p>
                     </div>
                 </a>
 
-                <!-- Category 2: Sports -->
+                <!-- Category 2: Festivals -->
+                <a href="{{ route('events', ['category' => 'Festival']) }}" class="group block text-left">
+                    <div class="h-36 sm:h-44 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                        <img src="{{ asset('uploads/event.jpg') }}" alt="Festivals" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div class="mt-3 space-y-1">
+                        <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded">
+                            CULTURE
+                        </span>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Festivals</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Festival'] ?? 0 }} Events</p>
+                    </div>
+                </a>
+
+                <!-- Category 3: Food & Drink -->
+                <a href="{{ route('events', ['category' => 'Food & Drink']) }}" class="group block text-left">
+                    <div class="h-36 sm:h-44 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                        <img src="{{ asset('uploads/Food Festival.jpg') }}" alt="Food & Drink" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div class="mt-3 space-y-1">
+                        <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2 py-0.5 rounded">
+                            FOOD
+                        </span>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Food & Drink</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Food & Drink'] ?? 0 }} Events</p>
+                    </div>
+                </a>
+
+                <!-- Category 4: Technology -->
+                <a href="{{ route('events', ['category' => 'Technology']) }}" class="group block text-left">
+                    <div class="h-36 sm:h-44 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                        <img src="{{ asset('uploads/Tech Conference.jpg') }}" alt="Technology" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div class="mt-3 space-y-1">
+                        <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded">
+                            TECH
+                        </span>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Technology</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Technology'] ?? 0 }} Events</p>
+                    </div>
+                </a>
+
+                <!-- Category 5: Sports -->
                 <a href="{{ route('events', ['category' => 'Sports']) }}" class="group block text-left">
-                    <div class="h-36 sm:h-48 md:h-52 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
-                        <img src="{{ asset('uploads/27d39cfb3009d08541a1b429a677df002ffec2cd.png') }}" alt="Sports" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <div class="h-36 sm:h-44 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                        <img src="{{ asset('uploads/Charity Run.jpg') }}" alt="Sports" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div class="mt-3 space-y-1">
                         <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded">
                             SPORT
                         </span>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Sports</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Sports'] ?? 0 }}+ Events</p>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Sports</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Sports'] ?? 0 }} Events</p>
                     </div>
                 </a>
 
-                <!-- Category 3: Theatre & Shows -->
-                <a href="{{ route('events', ['category' => 'Theatre']) }}" class="group block text-left">
-                    <div class="h-36 sm:h-48 md:h-52 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
-                        <img src="{{ asset('uploads/5d6d3c39ed125e58205d5ca13d839919649a3e0c.png') }}" alt="Theatre & Shows" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <!-- Category 6: Art & Workshops -->
+                <a href="{{ route('events', ['category' => 'Art']) }}" class="group block text-left">
+                    <div class="h-36 sm:h-44 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
+                        <img src="{{ asset('uploads/Art Exhibition.jpg') }}" alt="Exhibition & Art" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div class="mt-3 space-y-1">
                         <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded">
-                            STAGE
+                            EXHIBITION
                         </span>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Theatre & Shows</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Theatre'] ?? 0 }}+ Events</p>
-                    </div>
-                </a>
-
-                <!-- Category 4: Comedy -->
-                <a href="{{ route('events', ['category' => 'Comedy']) }}" class="group block text-left">
-                    <div class="h-36 sm:h-48 md:h-52 rounded-2xl overflow-hidden relative bg-gray-100 dark:bg-gray-800 shadow-sm group-hover:shadow-lg transition-all duration-300">
-                        <img src="{{ asset('uploads/a25912490f77ee8f15b5eb3e5275ae6c1469a2d9.png') }}" alt="Comedy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    </div>
-                    <div class="mt-3 space-y-1">
-                        <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded">
-                            STAND-UP
-                        </span>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Comedy</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $categoryCounts['Comedy'] ?? 0 }}+ Events</p>
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-[#6C5CE7] transition">Exhibition / Art</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ ($categoryCounts['Art'] ?? 0) + ($categoryCounts['Wellness'] ?? 0) }} Events</p>
                     </div>
                 </a>
 
@@ -969,8 +997,133 @@
 
 </div>
 
+@if(isset($nearestEvent) && $nearestEvent)
+<!-- ========================================== -->
+<!-- NEAREST UPCOMING EVENT POPUP ANNOUNCEMENT  -->
+<!-- ========================================== -->
+<div id="upcoming-event-popup" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 border border-gray-100 dark:border-gray-800" id="popup-content-box">
+        
+        <!-- Close Button (X) -->
+        <button type="button" onclick="closeUpcomingPopup()" class="absolute top-3 right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition shadow-md focus:outline-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <!-- Event Image with Gradient Banner -->
+        <div class="relative h-56 sm:h-64 w-full bg-gray-900">
+            <img src="{{ $nearestEvent->image ? asset('uploads/' . $nearestEvent->image) : asset('uploads/event.jpg') }}" 
+                 alt="{{ $nearestEvent->event_name }}" 
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+
+            <!-- Top Left Badge -->
+            <div class="absolute top-4 left-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-[#6C5CE7] text-white shadow-lg tracking-wider uppercase">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    Happening Soon
+                </span>
+            </div>
+
+            <!-- Bottom Title on Image -->
+            <div class="absolute bottom-4 left-4 right-4 text-white">
+                <span class="text-xs font-bold uppercase tracking-wider text-purple-300 bg-purple-900/60 px-2 py-0.5 rounded backdrop-blur-sm">
+                    {{ $nearestEvent->category ?? 'Special Event' }}
+                </span>
+                <h3 class="text-xl sm:text-2xl font-black text-white mt-1 leading-tight drop-shadow-md">
+                    {{ $nearestEvent->event_name }}
+                </h3>
+            </div>
+        </div>
+
+        <!-- Event Meta & CTA Section -->
+        <div class="p-5 sm:p-6 space-y-4">
+            
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                {{ $nearestEvent->description }}
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-800/60 p-3 rounded-2xl border border-gray-100 dark:border-gray-800 text-xs">
+                <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                    <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/50 text-[#6C5CE7] flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-gray-400 font-semibold uppercase">Date</div>
+                        <div class="font-bold">{{ \Carbon\Carbon::parse($nearestEvent->event_date)->format('M d, Y') }}</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                    <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/50 text-rose-500 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        </svg>
+                    </div>
+                    <div class="truncate">
+                        <div class="text-[10px] text-gray-400 font-semibold uppercase">Venue</div>
+                        <div class="font-bold truncate" title="{{ $nearestEvent->venue }}">{{ $nearestEvent->venue }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3 pt-1">
+                <a href="{{ route('events.show', $nearestEvent->slug ?: $nearestEvent->id) }}" 
+                   class="flex-1 py-3 px-4 rounded-xl bg-[#6C5CE7] hover:bg-[#5b4bc4] text-white font-extrabold text-xs sm:text-sm text-center shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition flex items-center justify-center gap-2">
+                    <span>Book Tickets</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+                <button type="button" onclick="closeUpcomingPopup()" class="py-3 px-4 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold text-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    Later
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+@endif
+
 <!-- Interactive Category Filter Script -->
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const popup = document.getElementById('upcoming-event-popup');
+    const popupBox = document.getElementById('popup-content-box');
+    if (popup && popupBox) {
+        setTimeout(function() {
+            popup.classList.remove('opacity-0', 'pointer-events-none');
+            popupBox.classList.remove('scale-95');
+            popupBox.classList.add('scale-100');
+        }, 500);
+
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                closeUpcomingPopup();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeUpcomingPopup();
+            }
+        });
+    }
+});
+
+function closeUpcomingPopup() {
+    const popup = document.getElementById('upcoming-event-popup');
+    const popupBox = document.getElementById('popup-content-box');
+    if (popup && popupBox) {
+        popupBox.classList.remove('scale-100');
+        popupBox.classList.add('scale-95');
+        popup.classList.add('opacity-0', 'pointer-events-none');
+    }
+}
 document.addEventListener('DOMContentLoaded', function () {
     const carousel = document.getElementById('hero-carousel');
     const slides = carousel ? Array.from(carousel.querySelectorAll('.hero-slide')) : [];

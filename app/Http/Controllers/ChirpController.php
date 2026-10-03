@@ -98,15 +98,19 @@ public function showWelcomePage()
     $categoryCounts = Cache::remember(EventifyCacheService::KEY_WELCOME_CATEGORY_COUNTS, EventifyCacheService::TTL_MEDIUM, function () {
         return [
             'Concert' => Event::where('category', 'Concert')->count(),
+            'Festival' => Event::where('category', 'Festival')->count(),
+            'Food & Drink' => Event::where('category', 'Food & Drink')->count(),
+            'Technology' => Event::where('category', 'Technology')->count(),
             'Sports' => Event::where('category', 'Sports')->count(),
-            'Theatre' => Event::where('category', 'Theatre')->count(),
-            'Comedy' => Event::where('category', 'Comedy')->count(),
+            'Art' => Event::where('category', 'Art')->count(),
+            'Wellness' => Event::where('category', 'Wellness')->count(),
         ];
     });
 
     $savedEventIds = Auth::check() ? Auth::user()->savedEvents()->pluck('events.id')->toArray() : [];
+    $nearestEvent = $upcomingEvents->first();
 
-    return view('welcome', compact('reviews', 'upcomingEvents', 'trendingEvents', 'categoryCounts', 'savedEventIds'));
+    return view('welcome', compact('reviews', 'upcomingEvents', 'trendingEvents', 'categoryCounts', 'savedEventIds', 'nearestEvent'));
 }
     public function about(){
         return view('about');

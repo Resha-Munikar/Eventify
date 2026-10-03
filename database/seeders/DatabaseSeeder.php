@@ -37,9 +37,8 @@ class DatabaseSeeder extends Seeder
             'role' => 'user',
         ]);
 
-        // $this->call([
-        //     PostSeeder::class,
-        //     TagSeeder::class,
-        // ]);
+        $this->call([
+            HomepageEventsSeeder::class,
+        ]);
     }
 }
